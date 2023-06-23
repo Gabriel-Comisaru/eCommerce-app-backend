@@ -18,10 +18,12 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
 
     @Override
     public ProductDto convertModelToDto(Product product) {
-        return ProductDto.builder()
+       ProductDto productDto = ProductDto.builder()
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .build();
+       productDto.setId(product.getId());
+        return productDto;
     }
 }

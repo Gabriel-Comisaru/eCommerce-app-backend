@@ -9,6 +9,9 @@ public interface ProductService {
     List<Product> getAllProducts();
     Optional<Product> saveProduct(Product product);
     Optional<Product> updateProduct(Long id,Product product);
+
+    Optional<Product> findProductById(Long id);
+
     void deleteProductById(Long id);
 
 }

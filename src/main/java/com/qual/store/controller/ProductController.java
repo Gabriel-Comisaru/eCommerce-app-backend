@@ -2,6 +2,7 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.model.Product;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class ProductController {
     @Autowired
     private ProductConverter productConverter;
 
+
     @GetMapping()
     public List<ProductDto> getAllCProducts() {
         return productService.getAllProducts().stream()
@@ -38,6 +40,34 @@ public class ProductController {
                     .body(productConverter.convertModelToDto(savedProduct));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody Product product) {
+        try {
+            Product productUpdated = productService.updateProduct(productId,product)
+                    .orElseThrow(() -> new IllegalArgumentException("product not saved"));
+
+            ProductDto responseProductDto = productConverter.convertModelToDto(productUpdated);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(responseProductDto);
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<?> deleteProductById(@PathVariable Long productId) {
+        try {
+            productService.deleteProductById(productId);
+            return ResponseEntity.ok().body(String.format("Product with id %s deleted", productId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         }
     }
