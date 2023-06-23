@@ -25,6 +25,7 @@ public class ProductController {
     public List<ProductDto> getAllCProducts() {
         return productService.getAllProducts().stream()
                 .map(product -> productConverter.convertModelToDto(product))
+
                 .collect(Collectors.toList());
     }
 
