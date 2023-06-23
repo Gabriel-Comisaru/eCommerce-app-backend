@@ -1,6 +1,6 @@
-package repository;
+package com.qual.store.repository;
 
-import model.Product;
+import com.qual.store.model.Product;
 
 public interface ProductRepository extends ShopRepository<Product,Long> {
 }

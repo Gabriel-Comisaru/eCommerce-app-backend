@@ -1,7 +1,7 @@
-package utils.converter;
+package com.qual.store.converter;
 
-import dto.ProductDto;
-import model.Product;
+import com.qual.store.dto.ProductDto;
+import com.qual.store.model.Product;
 import org.springframework.stereotype.Component;
 
 @Component

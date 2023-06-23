@@ -1,6 +1,5 @@
-package dto;
+package com.qual.store.dto;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.io.Serializable;

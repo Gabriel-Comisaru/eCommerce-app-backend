@@ -1,6 +1,6 @@
-package console.ui;
+package com.qual.store.console.ui;
 
-import model.Product;
+import com.qual.store.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

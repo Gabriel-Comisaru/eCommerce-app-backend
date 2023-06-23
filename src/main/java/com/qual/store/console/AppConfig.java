@@ -1,4 +1,4 @@
-package console;
+package com.qual.store.console;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

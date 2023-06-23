@@ -1,12 +1,12 @@
-package console;
+package com.qual.store.console;
 
-import console.ui.ProductConsole;
+import com.qual.store.console.ui.ProductConsole;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class ShopApp {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext("console");
+                new AnnotationConfigApplicationContext("com/qual/store/console");
 
         ProductConsole productConsole = context.getBean(ProductConsole.class);
         productConsole.runConsole();

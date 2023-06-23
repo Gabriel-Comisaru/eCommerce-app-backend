@@ -1,7 +1,7 @@
-package utils.converter;
+package com.qual.store.converter;
 
-import dto.BaseDto;
-import model.BaseEntity;
+import com.qual.store.dto.BaseDto;
+import com.qual.store.model.BaseEntity;
 
 public abstract class BaseConverter<Model extends BaseEntity<Long>, Dto extends BaseDto>
         implements Converter<Model, Dto> {

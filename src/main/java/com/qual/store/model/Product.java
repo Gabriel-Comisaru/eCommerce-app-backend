@@ -1,7 +1,7 @@
-package model;
+package com.qual.store.model;
 import lombok.*;
 import jakarta.persistence.*;
-import model.BaseEntity;
+
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
