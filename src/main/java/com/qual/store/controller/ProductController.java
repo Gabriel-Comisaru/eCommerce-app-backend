@@ -13,6 +13,7 @@ import com.qual.store.service.ProductService;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import com.github.javafaker.Faker;
 
 @RestController
 @RequestMapping(value = "/api/products")
@@ -69,6 +70,28 @@ public class ProductController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
+        }
+    }
+    @PostMapping("/populate")
+    public ResponseEntity<?> populateDatabase() {
+        try {
+            Faker faker = new Faker();
+            for (int i = 0; i < 100; i++) {
+                String name = faker.commerce().productName();
+                String description = faker.lorem().sentence();
+                double price = faker.number().randomDouble(2, 1, 1000);
+
+                Product product = new Product();
+                product.setName(name);
+                product.setDescription(description);
+                product.setPrice(price);
+
+                productService.saveProduct(product);
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
