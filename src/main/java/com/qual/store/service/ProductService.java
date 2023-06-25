@@ -1,5 +1,6 @@
 package com.qual.store.service;
 
+import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
 
 import java.util.List;
@@ -13,5 +14,4 @@ public interface ProductService {
     Optional<Product> findProductById(Long id);
 
     void deleteProductById(Long id);
-
 }

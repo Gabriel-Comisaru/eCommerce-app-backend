@@ -1,8 +1,11 @@
 package com.qual.store.model;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import jakarta.persistence.*;
 import jakarta.persistence.ManyToOne;
+
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
@@ -26,5 +29,18 @@ public class Product extends BaseEntity<Long> {
     @Column(nullable = false)
     private double price;
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "category=" + category.getId() +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                '}' + super.toString();
+    }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
