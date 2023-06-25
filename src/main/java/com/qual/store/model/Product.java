@@ -12,11 +12,11 @@ import jakarta.persistence.ManyToOne;
 @ToString(callSuper = true)
 @Builder
 public class Product extends BaseEntity<Long> {
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "category_id")
-//    @ToString.Exclude
-//    @JsonIgnore
-//    private Category category;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    @ToString.Exclude
+    @JsonIgnore
+    private Category category;
     @Column(nullable = false)
     private String name;
 
