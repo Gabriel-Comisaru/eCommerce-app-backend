@@ -3,7 +3,9 @@ package com.qual.store.controller;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.exceptions.ProductNotFoundException;
+import com.qual.store.model.Category;
 import com.qual.store.model.Product;
+import com.qual.store.service.CategoryService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,8 @@ public class ProductController {
     private ProductService productService;
     @Autowired
     private ProductConverter productConverter;
+    @Autowired
+    private CategoryService categoryService;
 
 
     @GetMapping()
@@ -32,11 +36,22 @@ public class ProductController {
                 .collect(Collectors.toList());
     }
 
+    @PostMapping("/category/{categoryId}")
+    public ResponseEntity<?> addProductCategory(@RequestBody Product product, @PathVariable Long categoryId) {
+        try {
+            Product savedProduct = productService.saveProductCategory(product, categoryId);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(productConverter.convertModelToDto(savedProduct));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> addProduct(@RequestBody Product product) {
         try {
-           Product savedProduct = productService.saveProduct(product)
-                    .orElseThrow(() -> new IllegalArgumentException("product not saved"));
+            Product savedProduct = productService.saveProduct(product);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productConverter.convertModelToDto(savedProduct));
         } catch (Exception e) {
@@ -72,26 +87,59 @@ public class ProductController {
                     .body(e.getMessage());
         }
     }
-    @PostMapping("/populate")
-    public ResponseEntity<?> populateDatabase() {
-        try {
-            Faker faker = new Faker();
-            for (int i = 0; i < 100; i++) {
-                String name = faker.commerce().productName();
-                String description = faker.lorem().sentence();
-                double price = faker.number().randomDouble(2, 1, 1000);
+//    @PostMapping("/populate")
+//    public ResponseEntity<?> populateDatabase() {
+//        try {
+//            Faker faker = new Faker();
+//            for (int i = 0; i < 100; i++) {
+//                String name = faker.commerce().productName();
+//                String description = faker.lorem().sentence();
+//                double price = faker.number().randomDouble(2, 1, 1000);
+//
+//                Product product = new Product();
+//                product.setName(name);
+//                product.setDescription(description);
+//                product.setPrice(price);
+//                //set also the category id for the product from the data base
+//
+//                productService.saveProduct(product);
+//            }
+//
+//            return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+//        }
+@PostMapping("/populate")
+public ResponseEntity<?> populateDatabase() {
+    try {
+        Faker faker = new Faker();
 
-                Product product = new Product();
-                product.setName(name);
-                product.setDescription(description);
-                product.setPrice(price);
+        // Retrieve all categories from the database
+        List<Category> categories = categoryService.getAllCategories();
 
-                productService.saveProduct(product);
-            }
+        for (int i = 0; i < 1; i++) {
+            String name = faker.commerce().productName();
+            String description = faker.lorem().sentence();
+            double price = faker.number().randomDouble(2, 1, 1000);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            Product product = new Product();
+            product.setName(name);
+            product.setDescription(description);
+            product.setPrice(price);
+
+            // Set a random category for the product
+            int randomIndex = faker.random().nextInt(categories.size());
+            Category randomCategory = categories.get(randomIndex);
+            product.setCategory(randomCategory);
+
+            productService.saveProduct(product);
         }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 }
+
+}
+

@@ -1,7 +1,9 @@
 package com.qual.store.service.impl;
 
 import com.qual.store.exceptions.ProductNotFoundException;
+import com.qual.store.model.Category;
 import com.qual.store.model.Product;
+import com.qual.store.repository.CategoryRepository;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +21,32 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private Validator<Product> validator;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Override
+    public Product saveProductCategory(Product product, Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ProductNotFoundException(
+                        String.format("No category found with id %s", categoryId)));
+
+        product.setCategory(category);
+        validator.validate(product);
+
+        return productRepository.save(product);
+    }
+
+
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
     @Override
-    public Optional<Product> saveProduct(Product product) {
+    public Product saveProduct(Product product) {
       validator.validate(product);
        Product savedproduct = productRepository.save(product);
-      return Optional.of(savedproduct);
+      return savedproduct;
 
     }
     @Transactional
@@ -48,8 +66,8 @@ public class ProductServiceImpl implements ProductService {
         return Optional.ofNullable(productRepository.getReferenceById(id));
     }
     @Override
-    public Optional<Product> findProductById(Long id) {
-        return productRepository.findById(id);
+    public Product findProductById(Long id) {
+        return productRepository.findById(id).get();
     }
     @Override
     public void deleteProductById(Long id) {
