@@ -17,15 +17,9 @@ public class OrderItem extends BaseEntity<Long>{
     @Column(nullable = false)
     private Integer quantity;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 
-    @Override
-    public String toString() {
-        return "OrderItem{" +
-                "quantity=" + quantity +
-                ", product=" + product.getId() +
-                '}' + super.toString();
-    }
 }

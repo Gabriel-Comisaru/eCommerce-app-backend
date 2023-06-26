@@ -40,28 +40,19 @@ public class OrderItemController {
         return orderItemConverter.convertModelToDto(savedOrderItem);
     }
 
-    @DeleteMapping(value = "/{productId}")
-    public ResponseEntity<?> deleteOrderItemById(@PathVariable("productId") Long id) {
-        Optional<Product> product = productService.findProductById(id);
-        if (product.isPresent()) {
-            Long orderId = orderItemService.getAllOrderItems().stream()
-                    .filter(orderItem -> orderItem.getProduct().getId().equals(id))
-                    .map(BaseEntity::getId)
-                    .findFirst()
-                    .orElse(null);
-            orderItemService.deleteOrderItemById(orderId);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("OrderItem deleted");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("OrderItem not found");
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<?> deleteOrderItemById(@PathVariable("id") Long id) {
+         orderItemService.findOrderItemById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
+         orderItemService.deleteOrderItemById(id);
+         return ResponseEntity.status(HttpStatus.OK)
+                 .body("OrderItem deleted");
     }
 
-    @PutMapping(value = "/{productId}")
-    public ResponseEntity<?> decreaseQuantity(@PathVariable("productId") Long id, @RequestBody OrderItem orderItem) {
+    @PutMapping(value = "/{id}-{quantity}")
+    public ResponseEntity<?> decreaseQuantity(@PathVariable("id") Long id, @PathVariable("quantity") Integer quantity) {
         Optional<Product> product = productService.findProductById(id);
         if (product.isPresent()) {
-            orderItemService.decreaseQuantity(id, orderItem);
+            orderItemService.decreaseQuantity(id, quantity);
             return ResponseEntity.status(HttpStatus.OK)
                     .body("Quantity decreased");
         }

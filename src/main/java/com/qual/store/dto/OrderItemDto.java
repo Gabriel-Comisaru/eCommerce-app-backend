@@ -5,10 +5,11 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 public class OrderItemDto extends BaseDto implements Serializable {
     private Integer quantity;

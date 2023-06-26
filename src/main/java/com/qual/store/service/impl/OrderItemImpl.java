@@ -8,6 +8,7 @@ import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.service.ProductService;
 import com.qual.store.utils.validators.Validator;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,18 +38,15 @@ public class OrderItemImpl implements OrderItemService {
     }
 
     @Override
-    public void decreaseQuantity(Long id, OrderItem orderItem) {
-        List<OrderItem> orderItems = orderItemRepository.findAll().stream()
-                .filter(item -> item.getProduct().getId().equals(id))
-                .toList();
-        if (orderItems.size() == 0) {
-            throw new ProductNotFoundException(String.format("No product found with id %s", id));
-        }
-        if (orderItems.get(0).getQuantity() > 1) {
-            orderItems.get(0).setQuantity(orderItems.get(0).getQuantity() - orderItem.getQuantity());
-            orderItemRepository.save(orderItems.get(0));
-        } else if (orderItems.get(0).getQuantity() == 1) {
-            orderItemRepository.delete(orderItems.get(0));
+    public void decreaseQuantity(Long idOrderItem, Integer quantity) {
+        OrderItem orderItem1 = orderItemRepository.findById(idOrderItem).
+                orElseThrow(() -> new ProductNotFoundException(String.format("No orderItem found with id %s", idOrderItem)));
+        int newQuantity = orderItem1.getQuantity() - quantity;
+        if (newQuantity >= 1) {
+            orderItem1.setQuantity(newQuantity);
+            orderItemRepository.save(orderItem1);
+        } else {
+            orderItemRepository.delete(orderItem1);
         }
     }
 
@@ -57,18 +55,11 @@ public class OrderItemImpl implements OrderItemService {
     public OrderItem addOrderItem(Long id, OrderItem orderItem) {
         validator.validate(orderItem);
         // verify if the item is already in the cart
-        List<OrderItem> orderItems = orderItemRepository.findAll().stream()
-                .filter(item -> item.getProduct().getId().equals(id))
-                .toList();
-        if (orderItems.size() > 0) {
-            orderItems.get(0).setQuantity(orderItems.get(0).getQuantity() + orderItem.getQuantity());
-            orderItemRepository.save(orderItems.get(0));
-            return orderItems.get(0);
-        }
         Product product = productRepository.findById(id).
                 orElseThrow(() -> new ProductNotFoundException(String.format("No product with is found:%s", id)));
         orderItem.setProduct(product);
-        orderItemRepository.save(orderItem);
+        product.addOrderItem(orderItem);
+        productRepository.save(product);
         return orderItem;
     }
 
