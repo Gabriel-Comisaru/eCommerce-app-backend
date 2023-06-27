@@ -1,6 +1,7 @@
 package com.qual.store.service.impl;
 
 import com.qual.store.exceptions.ProductNotFoundException;
+import com.qual.store.logger.Log;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
 import com.qual.store.repository.OrderItemRepository;
@@ -28,16 +29,19 @@ public class OrderItemImpl implements OrderItemService {
     private ProductRepository productRepository;
 
     @Override
+    @Log
     public List<OrderItem> getAllOrderItems() {
         return orderItemRepository.findAll();
     }
 
     @Override
+    @Log
     public void deleteOrderItemById(Long id) {
         orderItemRepository.deleteById(id);
     }
 
     @Override
+    @Log
     public void modifyQuantity(Long idOrderItem, Integer newQuantity) {
         OrderItem orderItem1 = orderItemRepository.findById(idOrderItem).
                 orElseThrow(() -> new ProductNotFoundException(String.format("No orderItem found with id %s", idOrderItem)));
@@ -51,6 +55,7 @@ public class OrderItemImpl implements OrderItemService {
 
     @Transactional
     @Override
+    @Log
     public OrderItem addOrderItem(Long id, OrderItem orderItem) {
         validator.validate(orderItem);
         // verify if the item is already in the cart
@@ -63,11 +68,13 @@ public class OrderItemImpl implements OrderItemService {
     }
 
     @Override
+    @Log
     public Optional<OrderItem> findOrderItemById(Long id) {
         return orderItemRepository.findById(id);
     }
 
     @Override
+    @Log
     public double priceOfOrderItem(Long id) {
         OrderItem orderItem = orderItemRepository.findById(id).
                 orElseThrow(() -> new ProductNotFoundException(String.format("No orderItem found with id %s", id)));

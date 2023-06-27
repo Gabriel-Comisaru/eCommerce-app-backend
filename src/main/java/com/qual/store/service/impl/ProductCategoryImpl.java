@@ -1,5 +1,6 @@
 package com.qual.store.service.impl;
 
+import com.qual.store.logger.Log;
 import com.qual.store.model.Category;
 import com.qual.store.repository.CategoryRepository;
 import com.qual.store.service.CategoryService;
@@ -18,11 +19,13 @@ public class ProductCategoryImpl implements CategoryService {
     private Validator<Category> validator;
 
     @Override
+    @Log
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
     @Override
+    @Log
     public Optional<Category> saveCategory(Category category) {
         validator.validate(category);
         Category savedCategory = categoryRepository.save(category);
@@ -31,6 +34,7 @@ public class ProductCategoryImpl implements CategoryService {
 
     @Transactional
     @Override
+    @Log
     public Optional<Category> updateCategory(Long id, Category category) {
         validator.validate(category);
         Optional<Category> optionalCategory = categoryRepository.findById(id);
@@ -42,11 +46,13 @@ public class ProductCategoryImpl implements CategoryService {
     }
 
     @Override
+    @Log
     public Category findCategoryById(Long id) {
         return categoryRepository.findById(id).get();
     }
 
     @Override
+    @Log
     public void deleteCategoryById(Long id) {
         categoryRepository.findById(id).orElseThrow(() -> new RuntimeException(String.format("No category with is found:%s",id)));
         categoryRepository.deleteById(id);

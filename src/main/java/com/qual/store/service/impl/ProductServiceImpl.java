@@ -1,6 +1,7 @@
 package com.qual.store.service.impl;
 
 import com.qual.store.exceptions.ProductNotFoundException;
+import com.qual.store.logger.Log;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
 import com.qual.store.repository.OrderItemRepository;
@@ -36,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
     private CategoryRepository categoryRepository;
 
     @Override
+    @Log
     public Product saveProductCategory(Product product, Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ProductNotFoundException(
@@ -49,11 +51,13 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    @Log
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
     @Override
+    @Log
     public Product saveProduct(Product product) {
       validator.validate(product);
        Product savedproduct = productRepository.save(product);
@@ -63,6 +67,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
+    @Log
     public Optional<Product> updateProduct(Long id, Product product) {
         validator.validate(product);
         Optional<Product> optionalProduct = productRepository.findById(id);
@@ -79,11 +84,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Log
     public Product findProductById(Long id) {
         return productRepository.findById(id).get();
     }
 
     @Override
+    @Log
     public void deleteProductById(Long id) {
         productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(String.format("No product with is found:%s", id)));
         productRepository.deleteById(id);
