@@ -2,14 +2,13 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
+import com.qual.store.logger.Log;
 import com.qual.store.model.Order;
-import com.qual.store.model.OrderItem;
 import com.qual.store.model.OrderStatus;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,4 +65,11 @@ public class OrderController {
                 .body("Order deleted");
     }
 
+    @PutMapping("/{orderId}")
+    @Log
+    public ResponseEntity<?> updateOrderStatus(@PathVariable("orderId") Long id,
+                                               @RequestParam("status") String status) {
+
+        return ResponseEntity.ok(orderConverter.convertModelToDto(orderService.updateOrderStatus(id, status)));
+    }
 }

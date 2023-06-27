@@ -1,5 +1,7 @@
 package com.qual.store.service.impl;
 
+import com.qual.store.exceptions.InvalidOrderStatusException;
+import com.qual.store.logger.Log;
 import com.qual.store.model.Order;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.OrderStatus;
@@ -11,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +28,7 @@ public class OrderImpl implements OrderService {
     private Validator<Order> validator;
     @Autowired
     private Validator<OrderItem> orderItemValidator;
+
     @Override
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
@@ -51,5 +55,33 @@ public class OrderImpl implements OrderService {
     @Override
     public Order findOrderById(Long id) {
         return orderRepository.findById(id).get();
+    }
+
+    @Override
+    @Transactional
+    @Log
+    public Order updateOrderStatus(Long id, String status){
+        Optional<Order> existingOrder = orderRepository.findById(id);
+
+        existingOrder.orElseThrow(() -> new RuntimeException("No order found with id:" + id));
+
+        existingOrder.ifPresent(updateOrder -> {
+            OrderStatus orderStatus = getOrderStatusFromString(status);
+            if (orderStatus != null) {
+                updateOrder.setStatus(orderStatus);
+            } else {
+                throw new InvalidOrderStatusException("Invalid status: " + status);
+            }
+        });
+
+        return existingOrder.get();
+    }
+
+    private OrderStatus getOrderStatusFromString(String status) {
+        try {
+            return OrderStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }
