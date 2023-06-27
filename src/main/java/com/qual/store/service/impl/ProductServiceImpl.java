@@ -85,10 +85,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     @Log
     public void deleteProductById(Long id) {
-        productRepository.findById(id)
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(String.format("No product with is found:%s", id)));
+
+        Category category = categoryRepository.findById(product.getCategory().getId())
+                .orElseThrow();
+
+        category.getProducts().remove(product);
+        categoryRepository.save(category);
 
         productRepository.deleteById(id);
     }
