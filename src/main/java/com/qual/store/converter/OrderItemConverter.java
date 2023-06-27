@@ -12,6 +12,7 @@ public class OrderItemConverter extends BaseConverter<OrderItem, OrderItemDto> {
 
     @Autowired
     private ProductService productService;
+
     @Autowired
     private OrderService orderService;
 
@@ -19,7 +20,6 @@ public class OrderItemConverter extends BaseConverter<OrderItem, OrderItemDto> {
     public OrderItem convertDtoToModel(OrderItemDto dto) {
         OrderItem orderItem = new OrderItem();
         orderItem.setQuantity(dto.getQuantity());
-        //productService.findProductById(dto.getProductId()).ifPresent(orderItem::setProduct);
         orderItem.setProduct(productService.findProductById(dto.getProductId()));
         orderItem.setOrder(orderService.findOrderById(dto.getOrderId()));
         orderItem.setId(dto.getId());
@@ -32,8 +32,11 @@ public class OrderItemConverter extends BaseConverter<OrderItem, OrderItemDto> {
                 .quantity(orderItem.getQuantity())
                 .productId(orderItem.getProduct().getId())
                 .build();
-        if (orderItem.getOrder() != null)
+
+        if (orderItem.getOrder() != null) {
             orderItemDto.setOrderId(orderItem.getOrder().getId());
+        }
+
         orderItemDto.setId(orderItem.getId());
         return orderItemDto;
     }

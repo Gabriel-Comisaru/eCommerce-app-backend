@@ -1,6 +1,5 @@
 package com.qual.store.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,10 +12,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 @Builder
 public class Order extends BaseEntity<Long> {
+
     @Column(nullable = false)
     private double deliveryPrice;
 
@@ -37,20 +35,8 @@ public class Order extends BaseEntity<Long> {
     @Column(nullable = false)
     private int userId;
 
-    public Set<OrderItem> getOrderItem() {
-        return orderItems;
-    }
-
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
-    }
-
-    public void addOrderItems(Set<OrderItem> orderItems) {
-        orderItems.forEach(this::addOrderItem);
-    }
-
-    public void removeOrderItem(OrderItem orderItem) {
-        orderItems.remove(orderItem);
     }
 
     @Override

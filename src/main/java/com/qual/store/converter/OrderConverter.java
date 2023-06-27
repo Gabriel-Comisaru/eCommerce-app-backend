@@ -4,13 +4,13 @@ import com.qual.store.dto.OrderDto;
 import com.qual.store.model.BaseEntity;
 import com.qual.store.model.Order;
 import com.qual.store.model.OrderStatus;
-import com.qual.store.model.Product;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
 public class OrderConverter extends BaseConverter<Order, OrderDto> {
+
     @Override
     public Order convertDtoToModel(OrderDto dto) {
         return Order.builder()

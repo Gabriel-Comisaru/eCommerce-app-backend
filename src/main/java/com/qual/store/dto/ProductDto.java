@@ -1,7 +1,5 @@
 package com.qual.store.dto;
 
-import com.qual.store.model.Category;
-import com.qual.store.model.OrderItem;
 import lombok.*;
 
 import java.io.Serializable;

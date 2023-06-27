@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 public class ProductConverter extends BaseConverter<Product, ProductDto> {
 
     @Autowired
-    private CategoryConverter categoryConverter;
-    @Autowired
     private CategoryRepository categoryRepository;
 
     @Override
@@ -29,14 +27,15 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
 
     @Override
     public ProductDto convertModelToDto(Product product) {
-       ProductDto productDto = ProductDto.builder()
+        ProductDto productDto = ProductDto.builder()
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
+                //todo: convert to orderItems to dto or return list of order items id
                 .orderItems(product.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .categoryId(product.getCategory().getId())
                 .build();
-       productDto.setId(product.getId());
+        productDto.setId(product.getId());
 
         return productDto;
     }

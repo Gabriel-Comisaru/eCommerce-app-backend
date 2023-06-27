@@ -8,8 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+
 @Component
-public class ProductValidator implements Validator<Product>{
+public class ProductValidator implements Validator<Product> {
 
     @Override
     public void validate(Product entity) throws ValidatorException {

@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor

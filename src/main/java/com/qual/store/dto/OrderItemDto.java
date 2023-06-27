@@ -1,6 +1,5 @@
 package com.qual.store.dto;
 
-import com.qual.store.model.Product;
 import lombok.*;
 
 import java.io.Serializable;
