@@ -43,6 +43,7 @@ public class OrderItemController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteOrderItemById(@PathVariable("id") Long id) {
          orderItemService.findOrderItemById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
+        System.out.println(orderItemService.findOrderItemById(id));
          orderItemService.deleteOrderItemById(id);
          return ResponseEntity.status(HttpStatus.OK)
                  .body("OrderItem deleted");
@@ -50,8 +51,8 @@ public class OrderItemController {
 
     @PutMapping(value = "/{id}-{quantity}")
     public ResponseEntity<?> decreaseQuantity(@PathVariable("id") Long id, @PathVariable("quantity") Integer quantity) {
-        Optional<Product> product = productService.findProductById(id);
-        if (product.isPresent()) {
+        OrderItem orderItem = orderItemService.findOrderItemById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
+        if (orderItem != null) {
             orderItemService.decreaseQuantity(id, quantity);
             return ResponseEntity.status(HttpStatus.OK)
                     .body("Quantity decreased");

@@ -23,7 +23,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .price(dto.getPrice())
-                .category(dto.getCategory())
+                .category(categoryRepository.findById(dto.getCategoryId()).orElse(null))
                 .build();
     }
 
@@ -34,7 +34,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .orderItems(product.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
-                .category(product.getCategory())
+                .categoryId(product.getCategory().getId())
                 .build();
        productDto.setId(product.getId());
 

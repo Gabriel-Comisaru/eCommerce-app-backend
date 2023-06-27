@@ -15,7 +15,8 @@ public class OrderItemConverter extends BaseConverter<OrderItem, OrderItemDto> {
     public OrderItem convertDtoToModel(OrderItemDto dto) {
         OrderItem orderItem = new OrderItem();
         orderItem.setQuantity(dto.getQuantity());
-        productService.findProductById(dto.getProductId()).ifPresent(orderItem::setProduct);
+        //productService.findProductById(dto.getProductId()).ifPresent(orderItem::setProduct);
+        orderItem.setProduct(productService.findProductById(dto.getProductId()));
         orderItem.setId(dto.getId());
         return orderItem;
     }
