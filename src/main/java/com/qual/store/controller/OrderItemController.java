@@ -2,6 +2,7 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.OrderItemConverter;
 import com.qual.store.dto.OrderItemDto;
+import com.qual.store.logger.Log;
 import com.qual.store.model.BaseEntity;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
@@ -27,6 +28,7 @@ public class OrderItemController {
     private ProductService productService;
 
     @GetMapping
+    @Log
     public List<OrderItemDto> getAllOrderItems() {
         return orderItemService.getAllOrderItems().stream()
                 .map(orderItem -> orderItemConverter.convertModelToDto(orderItem))
@@ -34,6 +36,7 @@ public class OrderItemController {
     }
 
     @PostMapping(value = "/{productId}")
+    @Log
     public OrderItemDto addOrderItem(@PathVariable("productId") Long productId, @RequestBody OrderItem orderItem) {
         OrderItem savedOrderItem = orderItemService.addOrderItem(productId, orderItem);
         System.out.println(savedOrderItem);
@@ -41,6 +44,7 @@ public class OrderItemController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @Log
     public ResponseEntity<?> deleteOrderItemById(@PathVariable("id") Long id) {
          orderItemService.findOrderItemById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
         System.out.println(orderItemService.findOrderItemById(id));
@@ -50,6 +54,7 @@ public class OrderItemController {
     }
 
     @PutMapping(value = "/{id}/quantity")
+    @Log
     public ResponseEntity<?> decreaseQuantity(@PathVariable("id") Long id, @RequestParam Integer quantity) {
         OrderItem orderItem = orderItemService.findOrderItemById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
         if (orderItem != null) {

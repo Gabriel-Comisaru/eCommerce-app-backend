@@ -5,6 +5,7 @@ import com.qual.store.converter.CategoryConverter;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.CategoryDto;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.logger.Log;
 import com.qual.store.model.Category;
 import com.qual.store.service.CategoryService;
 import com.qual.store.service.ProductService;
@@ -25,6 +26,7 @@ public class CategoryController {
     @Autowired
     private CategoryConverter categoryConverter;
     @GetMapping()
+    @Log
     public List<CategoryDto> getAllCategories() {
         return categoryService.getAllCategories().stream()
                 .map(category -> categoryConverter.convertModelToDto(category))
@@ -33,6 +35,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @Log
     public ResponseEntity<?> addCategory(@RequestBody Category category) {
         try {
            Category savedCategory = categoryService.saveCategory(category)
@@ -46,6 +49,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
+    @Log
     public ResponseEntity<?> updateCategory(@PathVariable Long categoryId, @RequestBody Category category) {
         try {
             Category categoryUpdated = categoryService.updateCategory(categoryId,category)
@@ -61,6 +65,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
+    @Log
     public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId) {
         try {
             categoryService.deleteCategoryById(categoryId);
@@ -73,6 +78,7 @@ public class CategoryController {
     }
 
     @PostMapping("/populate")
+    @Log
     public ResponseEntity<?> populateCategories() {
         try {
             Faker faker = new Faker();

@@ -27,6 +27,7 @@ public class OrderController {
     private OrderItemService orderItemService;
 
     @GetMapping
+    @Log
     public List<OrderDto> getAllOrders() {
         return orderService.getAllOrders().stream()
                 .map(order -> orderConverter.convertModelToDto(order))
@@ -34,30 +35,15 @@ public class OrderController {
     }
 
     @PostMapping(value = "/{orderItemId}")
+    @Log
     public OrderDto addToOrder(@PathVariable("orderItemId") Long orderItemId) {
-        OrderStatus orderStatus = OrderStatus.ACTIVE;
-        List<Order> orders = orderService.getAllOrders().stream()
-                .filter(ord -> ord.getStatus().equals(orderStatus)).toList();
-        if (orders.size() == 0) {
-            Order order = Order.builder()
-                    .deliveryPrice(orderItemService.priceOfOrderItem(orderItemId))
-                    .startDate(LocalDate.now())
-                    .deliveryDate(null)
-                    .status(orderStatus)
-                    .userId(1)
-                    .build();
-            Order savedOrder = orderService.addToOrder(orderItemId, order);
-            return orderConverter.convertModelToDto(savedOrder);
-        } else {
-            Order order = orders.get(0);
-            order.setDeliveryPrice(order.getDeliveryPrice() + orderItemService.priceOfOrderItem(orderItemId));
-            Order savedOrder = orderService.addToOrder(orderItemId, order);
-            System.out.println(savedOrder);
-            return orderConverter.convertModelToDto(savedOrder);
-        }
+        Order savedOrder = orderService.addToOrder(orderItemId);
+        System.out.println(savedOrder);
+        return orderConverter.convertModelToDto(savedOrder);
     }
 
     @DeleteMapping(value = "/{id}")
+    @Log
     public ResponseEntity<?> deleteOrderById(@PathVariable("id") Long id) {
         Order order = orderService.findOrderById(id);
         orderService.deleteOrderById(id);
