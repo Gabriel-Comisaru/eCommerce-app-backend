@@ -117,7 +117,7 @@ public ResponseEntity<?> populateDatabase() {
         // Retrieve all categories from the database
         List<Category> categories = categoryService.getAllCategories();
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 20; i++) {
             String name = faker.commerce().productName();
             String description = faker.lorem().sentence();
             double price = faker.number().randomDouble(2, 1, 1000);

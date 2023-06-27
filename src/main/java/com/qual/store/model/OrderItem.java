@@ -22,4 +22,7 @@ public class OrderItem extends BaseEntity<Long>{
     @JsonBackReference
     private Product product;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id")
+    private Order order;
 }
