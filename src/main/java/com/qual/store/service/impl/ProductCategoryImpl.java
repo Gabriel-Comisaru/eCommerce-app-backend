@@ -42,8 +42,8 @@ public class ProductCategoryImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Category> findCategoryById(Long id) {
-        return categoryRepository.findById(id);
+    public Category findCategoryById(Long id) {
+        return categoryRepository.findById(id).get();
     }
 
     @Override

@@ -5,6 +5,9 @@ import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
 import com.qual.store.repository.OrderItemRepository;
 import com.qual.store.service.OrderItemService;
+import com.qual.store.model.Category;
+import com.qual.store.model.Product;
+import com.qual.store.repository.CategoryRepository;
 import com.qual.store.utils.validators.Validator;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -29,16 +32,32 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Override
+    public Product saveProductCategory(Product product, Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ProductNotFoundException(
+                        String.format("No category found with id %s", categoryId)));
+
+        product.setCategory(category);
+        validator.validate(product);
+
+        return productRepository.save(product);
+    }
+
+
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
     @Override
-    public Optional<Product> saveProduct(Product product) {
-        validator.validate(product);
-        Product savedproduct = productRepository.save(product);
-        return Optional.of(savedproduct);
+    public Product saveProduct(Product product) {
+      validator.validate(product);
+       Product savedproduct = productRepository.save(product);
+      return savedproduct;
 
     }
 
@@ -60,8 +79,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> findProductById(Long id) {
-        return productRepository.findById(id);
+    public Product findProductById(Long id) {
+        return productRepository.findById(id).get();
     }
 
     @Override

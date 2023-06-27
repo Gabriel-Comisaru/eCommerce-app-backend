@@ -21,6 +21,6 @@ public class ProductDto extends BaseDto implements Serializable {
     private double price;
 
     private String category_name;
-
     private List<Long> orderItems;
+    private Category category;
 }
