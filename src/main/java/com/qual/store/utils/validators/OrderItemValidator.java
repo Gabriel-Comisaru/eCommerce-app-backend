@@ -1,9 +1,7 @@
 package com.qual.store.utils.validators;
 
 import com.qual.store.exceptions.ValidatorException;
-import com.qual.store.model.Category;
 import com.qual.store.model.OrderItem;
-import jakarta.persistence.Column;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -12,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 @Component
-public class OrderItemValidator implements Validator<OrderItem>{
+public class OrderItemValidator implements Validator<OrderItem> {
 
     @Override
     public void validate(OrderItem entity) throws ValidatorException {

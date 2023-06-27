@@ -1,7 +1,6 @@
 package com.qual.store.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +12,8 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
-public class OrderItem extends BaseEntity<Long>{
+public class OrderItem extends BaseEntity<Long> {
+
     @Column(nullable = false)
     private Integer quantity;
 

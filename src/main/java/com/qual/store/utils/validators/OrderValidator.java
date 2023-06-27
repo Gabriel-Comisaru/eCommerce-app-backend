@@ -9,8 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+
 @Component
 public class OrderValidator implements Validator<Order> {
+
     @Override
     public void validate(Order entity) throws ValidatorException {
         Map<Predicate<Order>, String> conditions = new HashMap<>();

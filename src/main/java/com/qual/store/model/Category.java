@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+
 @Entity
 @Table(name = "categories")
 @NoArgsConstructor
@@ -12,7 +13,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
-public class Category extends BaseEntity<Long>{
+public class Category extends BaseEntity<Long> {
+
     @Column(nullable = false)
     private String name;
 

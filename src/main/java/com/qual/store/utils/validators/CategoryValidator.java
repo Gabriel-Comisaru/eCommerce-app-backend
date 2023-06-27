@@ -10,7 +10,8 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 @Component
-public class CategoryValidator implements Validator<Category>{
+public class CategoryValidator implements Validator<Category> {
+
     @Override
     public void validate(Category entity) throws ValidatorException {
         Map<Predicate<Category>, String> conditions = new HashMap<>();
