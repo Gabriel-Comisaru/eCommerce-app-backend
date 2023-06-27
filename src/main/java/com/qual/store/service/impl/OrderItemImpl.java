@@ -67,4 +67,10 @@ public class OrderItemImpl implements OrderItemService {
         return orderItemRepository.findById(id);
     }
 
+    @Override
+    public double priceOfOrderItem(Long id) {
+        OrderItem orderItem = orderItemRepository.findById(id).
+                orElseThrow(() -> new ProductNotFoundException(String.format("No orderItem found with id %s", id)));
+        return orderItem.getQuantity() * orderItem.getProduct().getPrice();
+    }
 }

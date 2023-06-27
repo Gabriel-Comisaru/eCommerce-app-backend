@@ -11,4 +11,5 @@ public interface OrderItemService {
     void modifyQuantity(Long id, Integer quantity);
     void deleteOrderItemById(Long id);
     Optional<OrderItem> findOrderItemById(Long id);
+    double priceOfOrderItem(Long id);
 }

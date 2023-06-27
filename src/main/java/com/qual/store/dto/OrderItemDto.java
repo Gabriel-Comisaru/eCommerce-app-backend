@@ -14,4 +14,5 @@ import java.io.Serializable;
 public class OrderItemDto extends BaseDto implements Serializable {
     private Integer quantity;
     private Long productId;
+    private Long orderId;
 }
