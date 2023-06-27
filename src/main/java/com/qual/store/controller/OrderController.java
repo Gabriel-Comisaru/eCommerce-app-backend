@@ -70,7 +70,6 @@ public class OrderController {
     public ResponseEntity<?> updateOrderStatus(@PathVariable("orderId") Long id,
                                                @RequestParam("status") String status) {
 
-        orderService.updateOrderStatus(id, status);
-        return ResponseEntity.ok("status updated");
+        return ResponseEntity.ok(orderConverter.convertModelToDto(orderService.updateOrderStatus(id, status)));
     }
 }
