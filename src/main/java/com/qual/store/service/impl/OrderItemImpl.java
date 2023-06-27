@@ -38,10 +38,9 @@ public class OrderItemImpl implements OrderItemService {
     }
 
     @Override
-    public void decreaseQuantity(Long idOrderItem, Integer quantity) {
+    public void modifyQuantity(Long idOrderItem, Integer newQuantity) {
         OrderItem orderItem1 = orderItemRepository.findById(idOrderItem).
                 orElseThrow(() -> new ProductNotFoundException(String.format("No orderItem found with id %s", idOrderItem)));
-        int newQuantity = orderItem1.getQuantity() - quantity;
         if (newQuantity >= 1) {
             orderItem1.setQuantity(newQuantity);
             orderItemRepository.save(orderItem1);

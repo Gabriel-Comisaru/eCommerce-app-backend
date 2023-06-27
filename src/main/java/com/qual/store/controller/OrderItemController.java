@@ -49,13 +49,13 @@ public class OrderItemController {
                  .body("OrderItem deleted");
     }
 
-    @PutMapping(value = "/{id}-{quantity}")
-    public ResponseEntity<?> decreaseQuantity(@PathVariable("id") Long id, @PathVariable("quantity") Integer quantity) {
+    @PutMapping(value = "/{id}/quantity")
+    public ResponseEntity<?> decreaseQuantity(@PathVariable("id") Long id, @RequestParam Integer quantity) {
         OrderItem orderItem = orderItemService.findOrderItemById(id).orElseThrow(() -> new RuntimeException("OrderItem not found"));
         if (orderItem != null) {
-            orderItemService.decreaseQuantity(id, quantity);
+            orderItemService.modifyQuantity(id, quantity);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body("Quantity decreased");
+                    .body("Quantity modified");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("OrderItem not found");
