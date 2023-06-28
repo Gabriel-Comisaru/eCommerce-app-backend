@@ -36,7 +36,17 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     @Log
+    @Transactional
     public void deleteOrderItemById(Long id) {
+        OrderItem orderItem = orderItemRepository.findById(id)
+                .orElseThrow(() -> new OrderItemNotFoundException(String.format("No order item with id = %s found", id)));
+
+        Product product = productRepository.findById(orderItem.getProduct().getId())
+                .orElseThrow();
+
+        product.getOrderItems().remove(orderItem);
+        productRepository.save(product);
+
         orderItemRepository.deleteById(id);
     }
 
