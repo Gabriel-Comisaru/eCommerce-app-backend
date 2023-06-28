@@ -13,5 +13,5 @@ import java.util.List;
 @Builder
 public class CategoryDto extends BaseDto implements Serializable {
     private String name;
-    private List<Product> products;
+    private List<Long> productIds;
 }
