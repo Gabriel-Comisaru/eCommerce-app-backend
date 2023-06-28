@@ -9,6 +9,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "productWithCategory",
+                attributeNodes = {
+                        @NamedAttributeNode(value = "category")
+                }
+
+        )
+})
 @Table(name = "products")
 @NoArgsConstructor
 @AllArgsConstructor

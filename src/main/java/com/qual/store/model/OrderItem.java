@@ -5,6 +5,16 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@NamedEntityGraphs(
+        {
+                @NamedEntityGraph(
+                        name = "orderItemWithProduct",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "product")
+                        }
+                )
+        }
+)
 @Table(name = "order_items")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,12 +27,12 @@ public class OrderItem extends BaseEntity<Long> {
     @Column(nullable = false)
     private Integer quantity;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     private Order order;
 }

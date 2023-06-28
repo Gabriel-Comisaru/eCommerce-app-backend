@@ -22,12 +22,18 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private Validator<Category> validator;
 
+//    @Override
+//    @Log
+//    public List<Category> getAllCategories() {
+//        return categoryRepository.findAll();
+//    }
+
     @Override
     @Log
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+       List<Category> categories = categoryRepository.findAllWithProducts();
+         return categories;
     }
-
     @Override
     @Log
     public Optional<Category> saveCategory(Category category) {

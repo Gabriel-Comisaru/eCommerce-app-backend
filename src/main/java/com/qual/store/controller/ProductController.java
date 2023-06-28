@@ -5,6 +5,8 @@ import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
+import com.qual.store.lazyConverter.ProductLazyConverter;
+import com.qual.store.lazyDto.ProductDtoWithCategory;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Category;
 import com.qual.store.model.Product;
@@ -32,11 +34,21 @@ public class ProductController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private ProductLazyConverter productLazyConverter;
+
     @GetMapping()
     @Log
-    public List<ProductDto> getAllCProducts() {
+    public List<ProductDto> getAllProducts() {
         return productService.getAllProducts().stream()
                 .map(product -> productConverter.convertModelToDto(product))
+                .collect(Collectors.toList());
+    }
+    @GetMapping("/lazy")
+    @Log
+    public List<ProductDtoWithCategory> getAllProductsWithCategory() {
+        return productService.getAllProducts().stream()
+                .map(product -> productLazyConverter.convertModelToDto(product))
                 .collect(Collectors.toList());
     }
 

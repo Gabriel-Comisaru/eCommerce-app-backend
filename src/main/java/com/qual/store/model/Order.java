@@ -8,6 +8,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@NamedEntityGraphs(
+        {
+                @NamedEntityGraph(
+                        name = "orderWithOrderItems",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "orderItems")
+                        }
+                )
+        }
+)
 @Table(name = "orders")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,7 +37,7 @@ public class Order extends BaseEntity<Long> {
     @Column(nullable = false)
     private OrderStatus status;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "order")
     @Builder.Default
     private Set<OrderItem> orderItems = new HashSet<>();
 

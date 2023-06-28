@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface ProductService {
     List<Product> getAllProducts();
 
+
     Product saveProductCategory(Product product, Long categoryId);
 
     void saveProduct(Product product);

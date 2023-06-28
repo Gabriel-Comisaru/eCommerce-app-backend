@@ -28,10 +28,16 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Autowired
     private ProductRepository productRepository;
 
+//    @Override
+//    @Log
+//    public List<OrderItem> getAllOrderItems() {
+//        return orderItemRepository.findAll();
+//    }
     @Override
     @Log
     public List<OrderItem> getAllOrderItems() {
-        return orderItemRepository.findAll();
+        List<OrderItem> orderItems = orderItemRepository.findAllWithProduct();
+        return orderItems;
     }
 
     @Override
