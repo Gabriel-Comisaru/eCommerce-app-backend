@@ -1,10 +1,9 @@
 package com.qual.store.service.impl;
 
 import com.qual.store.exceptions.InvalidOrderStatusException;
+import com.qual.store.exceptions.OrderNotFoundException;
 import com.qual.store.logger.Log;
-import com.qual.store.model.Order;
-import com.qual.store.model.OrderItem;
-import com.qual.store.model.OrderStatus;
+import com.qual.store.model.*;
 import com.qual.store.repository.OrderItemRepository;
 import com.qual.store.repository.OrderRepository;
 import com.qual.store.service.OrderItemService;
@@ -75,10 +74,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Log
+    @Transactional
     public void deleteOrderById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException(String.format("order with id %s not found", id)));
+
+        List<OrderItem> orderItems = order.getOrderItems().stream().toList();
+        order.setOrderItems(null);
+        orderItems.forEach(orderItem -> orderItem.setOrder(null));
+
+        orderItemRepository.saveAll(orderItems);
+
         orderRepository.deleteById(id);
     }
-
 
     @Override
     @Log
