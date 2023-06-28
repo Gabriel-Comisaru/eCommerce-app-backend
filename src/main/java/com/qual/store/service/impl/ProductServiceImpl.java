@@ -1,5 +1,8 @@
 package com.qual.store.service.impl;
 
+import com.qual.store.converter.CategoryConverter;
+import com.qual.store.converter.ProductConverter;
+import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Category;
@@ -10,10 +13,15 @@ import com.qual.store.service.ProductService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -26,6 +34,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ProductConverter productConverter;
 
     @Override
     @Log
@@ -98,5 +109,20 @@ public class ProductServiceImpl implements ProductService {
         categoryRepository.save(category);
 
         productRepository.deleteById(id);
+    }
+
+    @Override
+    public PaginatedProductResponse getProducts(Integer pageNumber, Integer pageSize, String sortBy) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+
+        Page<Product> page = productRepository.findAll(pageable);
+
+        return PaginatedProductResponse.builder()
+                .products(page.getContent().stream()
+                        .map(product -> productConverter.convertModelToDto(product))
+                        .collect(Collectors.toList()))
+                .numberOfItems(page.getTotalElements())
+                .numberOfPages(page.getTotalPages())
+                .build();
     }
 }

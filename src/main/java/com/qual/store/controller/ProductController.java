@@ -3,6 +3,7 @@ package com.qual.store.controller;
 import com.github.javafaker.Faker;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Category;
@@ -10,6 +11,7 @@ import com.qual.store.model.Product;
 import com.qual.store.service.CategoryService;
 import com.qual.store.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -80,6 +82,15 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         }
+    }
+
+    @GetMapping("/display")
+    @Log
+    public ResponseEntity<PaginatedProductResponse> getProducts(@RequestParam(defaultValue = "0") Integer pageNumber,
+                                                                @RequestParam(defaultValue = "10") Integer pageSize,
+                                                                @RequestParam(defaultValue = "id") String sortBy) {
+
+        return ResponseEntity.ok(productService.getProducts(pageNumber, pageSize, sortBy));
     }
 
     @PostMapping("/populate")

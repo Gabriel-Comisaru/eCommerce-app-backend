@@ -1,5 +1,6 @@
 package com.qual.store.dto;
 
+import com.qual.store.dto.base.BaseDto;
 import lombok.*;
 
 import java.io.Serializable;

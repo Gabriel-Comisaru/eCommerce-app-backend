@@ -1,4 +1,4 @@
-package com.qual.store.dto;
+package com.qual.store.dto.base;
 
 import lombok.*;
 

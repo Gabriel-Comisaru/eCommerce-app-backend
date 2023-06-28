@@ -1,5 +1,6 @@
 package com.qual.store.dto;
 
+import com.qual.store.dto.base.BaseDto;
 import lombok.*;
 
 import java.io.Serializable;
@@ -19,5 +20,6 @@ public class ProductDto extends BaseDto implements Serializable {
     private double price;
 
     private List<Long> orderItems;
+
     private Long categoryId;
 }
