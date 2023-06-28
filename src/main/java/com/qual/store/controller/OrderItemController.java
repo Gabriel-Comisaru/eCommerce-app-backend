@@ -2,6 +2,8 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.OrderItemConverter;
 import com.qual.store.dto.OrderItemDto;
+import com.qual.store.converter.lazyConverter.OrderItemLazyConverter;
+import com.qual.store.dto.lazyDto.OrderItemWithProductDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.OrderItem;
 import com.qual.store.service.OrderItemService;
@@ -23,6 +25,9 @@ public class OrderItemController {
     @Autowired
     private OrderItemConverter orderItemConverter;
 
+    @Autowired
+    private OrderItemLazyConverter orderItemLazyConverter;
+
     @GetMapping
     @Log
     public List<OrderItemDto> getAllOrderItems() {
@@ -30,6 +35,15 @@ public class OrderItemController {
                 .map(orderItem -> orderItemConverter.convertModelToDto(orderItem))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/lazy")
+    @Log
+    public List<OrderItemWithProductDto> getAllOrderItemsWithProduct() {
+        return orderItemService.getAllOrderItems().stream()
+                .map(orderItem -> orderItemLazyConverter.convertModelToDto(orderItem))
+                .collect(Collectors.toList());
+    }
+
 
     @PostMapping(value = "/{productId}")
     @Log

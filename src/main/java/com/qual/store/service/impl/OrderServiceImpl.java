@@ -32,10 +32,16 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderItemService orderItemService;
 
+//    @Override
+//    @Log
+//    public List<Order> getAllOrders() {
+//        return orderRepository.findAll();
+//    }
     @Override
     @Log
     public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+        List<Order> orders = orderRepository.findAllWithOrderItems();
+        return orders;
     }
 
     @Transactional

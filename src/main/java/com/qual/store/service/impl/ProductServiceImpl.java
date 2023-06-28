@@ -52,10 +52,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+//    @Override
+//    @Log
+//    public List<Product> getAllProducts() {
+//        return productRepository.findAll();
+//    }
     @Override
     @Log
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        List<Product> products = productRepository.findAllWithCategory();
+        return products;
     }
 
     @Override

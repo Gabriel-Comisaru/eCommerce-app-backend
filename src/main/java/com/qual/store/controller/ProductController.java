@@ -5,13 +5,14 @@ import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
+import com.qual.store.converter.lazyConverter.ProductLazyConverter;
+import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Category;
 import com.qual.store.model.Product;
 import com.qual.store.service.CategoryService;
 import com.qual.store.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,11 +33,21 @@ public class ProductController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private ProductLazyConverter productLazyConverter;
+
     @GetMapping()
     @Log
-    public List<ProductDto> getAllCProducts() {
+    public List<ProductDto> getAllProducts() {
         return productService.getAllProducts().stream()
                 .map(product -> productConverter.convertModelToDto(product))
+                .collect(Collectors.toList());
+    }
+    @GetMapping("/lazy")
+    @Log
+    public List<ProductDtoWithCategory> getAllProductsWithCategory() {
+        return productService.getAllProducts().stream()
+                .map(product -> productLazyConverter.convertModelToDto(product))
                 .collect(Collectors.toList());
     }
 
