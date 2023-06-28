@@ -1,23 +1,21 @@
-package com.qual.store.converter;
+package com.qual.store.converter.lazyConverter;
+
 
 import com.qual.store.converter.base.BaseConverter;
-import com.qual.store.dto.ProductDto;
-import com.qual.store.model.BaseEntity;
+import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.model.Product;
 import com.qual.store.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
-public class ProductConverter extends BaseConverter<Product, ProductDto> {
+public class ProductLazyConverter extends BaseConverter<Product, ProductDtoWithCategory> {
 
     @Autowired
     private CategoryRepository categoryRepository;
 
     @Override
-    public Product convertDtoToModel(ProductDto dto) {
+    public Product convertDtoToModel(ProductDtoWithCategory dto) {
         return Product.builder()
                 .name(dto.getName())
                 .description(dto.getDescription())
@@ -27,17 +25,15 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
     }
 
     @Override
-    public ProductDto convertModelToDto(Product product) {
-        ProductDto productDto = ProductDto.builder()
+    public ProductDtoWithCategory convertModelToDto(Product product) {
+        ProductDtoWithCategory productDtoLazy = ProductDtoWithCategory.builder()
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
-                //todo: convert to orderItems to dto or return list of order items id
-                .orderItems(product.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .categoryId(product.getCategory().getId())
                 .build();
-        productDto.setId(product.getId());
+        productDtoLazy.setId(product.getId());
 
-        return productDto;
+        return productDtoLazy;
     }
 }

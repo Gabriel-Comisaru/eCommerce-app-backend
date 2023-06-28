@@ -1,5 +1,6 @@
 package com.qual.store.converter;
 
+import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.model.BaseEntity;
 import com.qual.store.model.Order;

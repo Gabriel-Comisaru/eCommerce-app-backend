@@ -2,8 +2,8 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.OrderItemConverter;
 import com.qual.store.dto.OrderItemDto;
-import com.qual.store.lazyConverter.OrderItemLazyConverter;
-import com.qual.store.lazyDto.OrderItemWithProductDto;
+import com.qual.store.converter.lazyConverter.OrderItemLazyConverter;
+import com.qual.store.dto.lazyDto.OrderItemWithProductDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.OrderItem;
 import com.qual.store.service.OrderItemService;
