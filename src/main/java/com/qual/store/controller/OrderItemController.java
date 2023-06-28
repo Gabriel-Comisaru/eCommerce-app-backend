@@ -42,9 +42,6 @@ public class OrderItemController {
     @DeleteMapping(value = "/{id}")
     @Log
     public ResponseEntity<?> deleteOrderItemById(@PathVariable("id") Long id) {
-        orderItemService.findOrderItemById(id)
-                .orElseThrow(() -> new RuntimeException("OrderItem not found"));
-
         orderItemService.deleteOrderItemById(id);
 
         return ResponseEntity.status(HttpStatus.OK)
