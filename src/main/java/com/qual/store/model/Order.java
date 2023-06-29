@@ -17,6 +17,12 @@ import java.util.Set;
                         attributeNodes = {
                                 @NamedAttributeNode(value = "orderItems")
                         }
+                ),
+                @NamedEntityGraph(
+                        name = "orderWithUser",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "user")
+                        }
                 )
         }
 )
@@ -24,7 +30,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Setter
 @Builder
+@ToString(callSuper = true)
 public class Order extends BaseEntity<Long> {
 
     @Column(nullable = false)
@@ -44,23 +52,14 @@ public class Order extends BaseEntity<Long> {
     private Set<OrderItem> orderItems = new HashSet<>();
 
     // TODO: User class + connection to Order DB
-    @Column(nullable = false)
-    private int userId;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "deliveryPrice=" + deliveryPrice +
-                ", startDate=" + startDate +
-                ", deliveryDate=" + deliveryDate +
-                ", status=" + status +
-                ", orderItems=" + orderItems +
-                '}' + super.toString();
-    }
 
     @Override
     public int hashCode() {

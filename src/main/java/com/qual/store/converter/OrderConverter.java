@@ -5,6 +5,8 @@ import com.qual.store.dto.OrderDto;
 import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Order;
 import com.qual.store.model.enums.OrderStatus;
+import com.qual.store.repository.AppUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -12,6 +14,8 @@ import java.util.stream.Collectors;
 @Component
 public class OrderConverter extends BaseConverter<Order, OrderDto> {
 
+    @Autowired
+    private AppUserRepository appUserRepository;
     @Override
     public Order convertDtoToModel(OrderDto dto) {
         return Order.builder()
@@ -19,7 +23,7 @@ public class OrderConverter extends BaseConverter<Order, OrderDto> {
                 .startDate(dto.getStartDate())
                 .deliveryDate(dto.getDeliveryDate())
                 .status(OrderStatus.valueOf(dto.getStatus()))
-                .userId(dto.getUserId())
+                .user(appUserRepository.findById(dto.getUserId()).orElse(null))
                 .build();
     }
 
@@ -30,7 +34,7 @@ public class OrderConverter extends BaseConverter<Order, OrderDto> {
                 .startDate(order.getStartDate())
                 .deliveryDate(order.getDeliveryDate())
                 .status(order.getStatus().name())
-                .userId(order.getUserId())
+                .userId(order.getUser().getId())
                 .orderItems(order.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .build();
         orderDto.setId(order.getId());

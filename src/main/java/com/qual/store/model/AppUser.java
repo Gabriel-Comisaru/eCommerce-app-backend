@@ -1,20 +1,34 @@
 package com.qual.store.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+
 
 @Entity
+@NamedEntityGraphs(
+        {
+                @NamedEntityGraph(
+                        name = "userWithOrders",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "orders")
+                        }
+                )
+        }
+)
 @Table(name = "app_users")
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
+@Builder
 public class AppUser extends BaseEntity<Long> {
 
     @Column(unique = true)
@@ -32,6 +46,18 @@ public class AppUser extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private RoleName role;
 
+    public AppUser() {
+        this.role = RoleName.USER;
+    }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Order> orders = new HashSet<>();
+
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -44,4 +70,5 @@ public class AppUser extends BaseEntity<Long> {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }
