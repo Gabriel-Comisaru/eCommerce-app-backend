@@ -2,6 +2,7 @@ package com.qual.store.service.impl;
 
 import com.qual.store.converter.CategoryConverter;
 import com.qual.store.converter.ProductConverter;
+import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
@@ -130,5 +131,14 @@ public class ProductServiceImpl implements ProductService {
                 .numberOfItems(page.getTotalElements())
                 .numberOfPages(page.getTotalPages())
                 .build();
+    }
+
+    @Override
+    public ProductDto getProductById(Long productId) {
+        Product product = productRepository.findAllWithCategory().stream().filter(p -> p.getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new ProductNotFoundException(String.format("No product with id %s is found", productId)));
+
+        return productConverter.convertModelToDto(product);
     }
 }

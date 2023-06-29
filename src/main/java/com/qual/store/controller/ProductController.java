@@ -2,11 +2,11 @@ package com.qual.store.controller;
 
 import com.github.javafaker.Faker;
 import com.qual.store.converter.ProductConverter;
+import com.qual.store.converter.lazyConverter.ProductLazyConverter;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
-import com.qual.store.converter.lazyConverter.ProductLazyConverter;
-import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Category;
 import com.qual.store.model.Product;
@@ -15,7 +15,6 @@ import com.qual.store.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +43,13 @@ public class ProductController {
                 .map(product -> productConverter.convertModelToDto(product))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/{productId}")
+    @Log
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.getProductById(productId));
+    }
+
     @GetMapping("/lazy")
     @Log
     public List<ProductDtoWithCategory> getAllProductsWithCategory() {
@@ -83,7 +89,8 @@ public class ProductController {
                     .body(e.getMessage());
         }
     }
-//    @PreAuthorize("hasAnyRole('ADMIN')")
+
+    //    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{productId}")
     @Log
     public ResponseEntity<?> deleteProductById(@PathVariable Long productId) {
@@ -104,7 +111,8 @@ public class ProductController {
 
         return ResponseEntity.ok(productService.getProducts(pageNumber, pageSize, sortBy));
     }
-//    @PreAuthorize("hasAnyRole('ADMIN')")
+
+    //    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/populate")
     @Log
     public ResponseEntity<?> populateDatabase() {
