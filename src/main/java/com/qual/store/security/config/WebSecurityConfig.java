@@ -55,6 +55,18 @@ public class WebSecurityConfig {
         return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
     }
 
+    // without security
+//    @Bean
+    public SecurityFilterChain filterChainWithoutSecurity(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        return httpSecurity.build();
+    }
+
+    // with security
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
