@@ -15,6 +15,7 @@ import com.qual.store.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,7 +83,7 @@ public class ProductController {
                     .body(e.getMessage());
         }
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{productId}")
     @Log
     public ResponseEntity<?> deleteProductById(@PathVariable Long productId) {
@@ -103,7 +104,7 @@ public class ProductController {
 
         return ResponseEntity.ok(productService.getProducts(pageNumber, pageSize, sortBy));
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/populate")
     @Log
     public ResponseEntity<?> populateDatabase() {
