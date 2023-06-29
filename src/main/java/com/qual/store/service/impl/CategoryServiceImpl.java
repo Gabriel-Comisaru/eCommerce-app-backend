@@ -46,22 +46,26 @@ public class CategoryServiceImpl implements CategoryService {
 
         return Optional.of(result);
     }
+    
+@Transactional
+@Override
+@Log
+public Optional<Category> updateCategory(Long id, Category category) {
+    validator.validate(category);
+    Optional<Category> optionalCategory = categoryRepository.findById(id);
 
-    @Transactional
-    @Override
-    @Log
-    public Optional<Category> updateCategory(Long id, Category category) {
-        validator.validate(category);
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
+    optionalCategory
+            .orElseThrow(() -> new CategoryNotFoundException(String.format("No category found with id %s", id)));
 
-        optionalCategory
-                .orElseThrow(() -> new CategoryNotFoundException(String.format("No category found with id %s", id)));
+    optionalCategory
+            .ifPresent(updateCategory -> updateCategory.setName(category.getName()));
 
-        optionalCategory
-                .ifPresent(updateCategory -> updateCategory.setName(category.getName()));
+    Category result = categoryRepository.findAllWithProducts().stream()
+            .filter(c -> c.getId().equals(optionalCategory.get().getId()))
+            .findFirst().orElseThrow();
 
-        return Optional.of(categoryRepository.getReferenceById(id));
-    }
+    return Optional.of(result);
+}
 
     @Override
     @Log

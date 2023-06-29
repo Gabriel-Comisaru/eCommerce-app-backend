@@ -86,7 +86,22 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
 
+                    auth.requestMatchers(HttpMethod.GET, "/api/**").permitAll();
+
+                    //order item can be created, deleted, updated by any authenticated user
+                    auth.requestMatchers(HttpMethod.POST, "/api/order-items/**").authenticated();
+                    auth.requestMatchers(HttpMethod.PUT, "/api/order-items/**").authenticated();
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/order-items/**").authenticated();
+
+                    //order can be created by user and updated, deleted by admin
+                    auth.requestMatchers(HttpMethod.POST, "/api/orders/**").authenticated();
+                    auth.requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
+
+
                     auth.anyRequest().authenticated();
+
+
                 })
                 .exceptionHandling(handler -> {
                     handler.authenticationEntryPoint((request, response, authException) -> {
