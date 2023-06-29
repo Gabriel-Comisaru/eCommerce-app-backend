@@ -1,7 +1,7 @@
 package com.qual.store.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qual.store.model.RoleName;
+import com.qual.store.model.enums.RoleName;
 import com.qual.store.security.util.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -98,10 +98,7 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
 
-
                     auth.anyRequest().authenticated();
-
-
                 })
                 .exceptionHandling(handler -> {
                     handler.authenticationEntryPoint((request, response, authException) -> {
@@ -119,7 +116,6 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
-
     }
 
     @Bean

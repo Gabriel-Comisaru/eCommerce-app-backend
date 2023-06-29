@@ -2,7 +2,7 @@ package com.qual.store.converter;
 
 import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.ProductDto;
-import com.qual.store.model.BaseEntity;
+import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Product;
 import com.qual.store.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;

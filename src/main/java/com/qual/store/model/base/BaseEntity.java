@@ -1,4 +1,4 @@
-package com.qual.store.model;
+package com.qual.store.model.base;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

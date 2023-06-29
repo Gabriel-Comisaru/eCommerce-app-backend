@@ -1,5 +1,7 @@
 package com.qual.store.model;
 
+import com.qual.store.model.base.BaseEntity;
+import com.qual.store.model.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

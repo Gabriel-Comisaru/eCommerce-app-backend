@@ -1,6 +1,6 @@
 package com.qual.store.repository;
 
-import com.qual.store.model.BaseEntity;
+import com.qual.store.model.base.BaseEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 

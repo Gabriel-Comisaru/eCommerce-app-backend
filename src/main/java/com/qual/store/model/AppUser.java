@@ -1,8 +1,11 @@
 package com.qual.store.model;
 
+import com.qual.store.model.base.BaseEntity;
+import com.qual.store.model.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
+
 import java.util.Objects;
 
 @Entity
@@ -14,13 +17,16 @@ import java.util.Objects;
 @ToString
 public class AppUser extends BaseEntity<Long> {
 
-
     @Column(unique = true)
     private String username;
+
     private String firstName;
+
     private String lastName;
+
     @Column(unique = true)
     private String email;
+
     private String password;
 
     @Enumerated(EnumType.STRING)

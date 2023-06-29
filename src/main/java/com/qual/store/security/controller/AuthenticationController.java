@@ -1,7 +1,7 @@
 package com.qual.store.security.controller;
 
 import com.qual.store.model.AppUser;
-import com.qual.store.model.RoleName;
+import com.qual.store.model.enums.RoleName;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.security.service.JwtUserDetailsService;
 import com.qual.store.security.util.JwtTokenUtil;

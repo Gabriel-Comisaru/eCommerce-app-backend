@@ -1,5 +1,6 @@
 package com.qual.store.model;
 
+import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

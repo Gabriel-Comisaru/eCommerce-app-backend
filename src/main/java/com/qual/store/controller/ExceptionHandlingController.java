@@ -1,6 +1,8 @@
 package com.qual.store.controller;
 
 import com.qual.store.exceptions.InvalidOrderStatusException;
+import com.qual.store.exceptions.OrderItemNotFoundException;
+import com.qual.store.exceptions.OrderNotFoundException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,24 @@ public class ExceptionHandlingController {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<Object> handlerProductNotFoundException(ProductNotFoundException exception) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("timestamp", LocalDateTime.now());
+        responseBody.put("error message", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<Object> handlerOrderNotFoundException(OrderNotFoundException exception) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("timestamp", LocalDateTime.now());
+        responseBody.put("error message", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(OrderItemNotFoundException.class)
+    public ResponseEntity<Object> handlerOrderItemNotFoundException(OrderItemNotFoundException exception) {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("timestamp", LocalDateTime.now());
         responseBody.put("error message", exception.getLocalizedMessage());

@@ -2,7 +2,7 @@ package com.qual.store.security.service;
 
 
 import com.qual.store.model.AppUser;
-import com.qual.store.model.RoleName;
+import com.qual.store.model.enums.RoleName;
 import com.qual.store.repository.AppUserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
