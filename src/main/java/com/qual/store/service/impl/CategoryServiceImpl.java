@@ -40,7 +40,11 @@ public class CategoryServiceImpl implements CategoryService {
         validator.validate(category);
         Category savedCategory = categoryRepository.save(category);
 
-        return Optional.of(savedCategory);
+        Category result = categoryRepository.findAllWithProducts().stream()
+                .filter(c -> c.getId().equals(savedCategory.getId()))
+                .findFirst().orElseThrow();
+
+        return Optional.of(result);
     }
 
     @Transactional

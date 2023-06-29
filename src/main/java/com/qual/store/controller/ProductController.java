@@ -83,7 +83,7 @@ public class ProductController {
                     .body(e.getMessage());
         }
     }
-    @PreAuthorize("hasAnyRole('ADMIN')")
+//    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{productId}")
     @Log
     public ResponseEntity<?> deleteProductById(@PathVariable Long productId) {
@@ -104,7 +104,7 @@ public class ProductController {
 
         return ResponseEntity.ok(productService.getProducts(pageNumber, pageSize, sortBy));
     }
-    @PreAuthorize("hasAnyRole('ADMIN')")
+//    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/populate")
     @Log
     public ResponseEntity<?> populateDatabase() {

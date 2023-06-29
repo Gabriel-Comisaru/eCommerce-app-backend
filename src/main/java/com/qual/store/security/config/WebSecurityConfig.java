@@ -61,9 +61,6 @@ public class WebSecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/public/**").permitAll();
-//                    auth.requestMatchers(HttpMethod.GET, "/api/books/sorted").authenticated();
-//                    auth.requestMatchers(HttpMethod.GET, "/api/books/**").permitAll();
                     auth.requestMatchers("/auth/*").permitAll();
                     auth.requestMatchers(
                             "/api/v1/auth/**",
@@ -78,18 +75,16 @@ public class WebSecurityConfig {
                             "/webjars/**",
                             "/swagger-ui.html"
                     ).permitAll();
-//                    auth.requestMatchers("/api/admin/**").hasRole(RoleName.ADMIN.name());
 
                     //only admin can create, update, delete categories
-//                    auth.requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole(RoleName.ADMIN.name());
-//                    auth.requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole(RoleName.ADMIN.name());
-//                    auth.requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole(RoleName.ADMIN.name());
-//
-//                    //only admin can create, update, delete products
-//                    auth.requestMatchers(HttpMethod.POST, "/api/products/**").hasRole(RoleName.ADMIN.name());
-//                    auth.requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole(RoleName.ADMIN.name());
-//                    auth.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole(RoleName.ADMIN.name());
-//
+                    auth.requestMatchers(HttpMethod.POST, "/api/categories/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAuthority(RoleName.ADMIN.name());
+
+                    //only admin can create, update, delete products
+                    auth.requestMatchers(HttpMethod.POST, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
 
                     auth.anyRequest().authenticated();
                 })
