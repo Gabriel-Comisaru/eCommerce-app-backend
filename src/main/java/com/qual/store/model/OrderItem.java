@@ -1,6 +1,7 @@
 package com.qual.store.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

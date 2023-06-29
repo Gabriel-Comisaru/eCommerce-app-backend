@@ -2,7 +2,7 @@ package com.qual.store.converter;
 
 import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.CategoryDto;
-import com.qual.store.model.BaseEntity;
+import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Category;
 import com.qual.store.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;

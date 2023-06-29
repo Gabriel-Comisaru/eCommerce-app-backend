@@ -2,9 +2,9 @@ package com.qual.store.converter;
 
 import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.OrderDto;
-import com.qual.store.model.BaseEntity;
+import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Order;
-import com.qual.store.model.OrderStatus;
+import com.qual.store.model.enums.OrderStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

@@ -4,6 +4,7 @@ import com.qual.store.exceptions.InvalidOrderStatusException;
 import com.qual.store.exceptions.OrderNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.*;
+import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.OrderItemRepository;
 import com.qual.store.repository.OrderRepository;
 import com.qual.store.service.OrderItemService;
@@ -105,9 +106,13 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Log
     public Order updateOrderStatus(Long id, String status) {
-        Optional<Order> existingOrder = orderRepository.findById(id);
+        Optional<Order> existingOrder = orderRepository.findAllWithOrderItems().stream()
+                .filter(o -> o.getId().equals(id))
+                .findFirst();
 
-        existingOrder.orElseThrow(() -> new RuntimeException("No order found with id %s = " + id));
+        existingOrder.orElseThrow(() -> new OrderNotFoundException(
+                String.format("No order found with id %s = ", id)
+        ));
 
         existingOrder.ifPresent(updateOrder -> {
             OrderStatus orderStatus = getOrderStatusFromString(status);

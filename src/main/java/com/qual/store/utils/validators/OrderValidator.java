@@ -2,7 +2,7 @@ package com.qual.store.utils.validators;
 
 import com.qual.store.exceptions.ValidatorException;
 import com.qual.store.model.Order;
-import com.qual.store.model.OrderStatus;
+import com.qual.store.model.enums.OrderStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
