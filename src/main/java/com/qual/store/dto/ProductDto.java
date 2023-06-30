@@ -22,4 +22,6 @@ public class ProductDto extends BaseDto implements Serializable {
     private List<Long> orderItems;
 
     private Long categoryId;
+
+    private Long userId;
 }

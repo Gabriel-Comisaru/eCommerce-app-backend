@@ -20,4 +20,5 @@ public class AppUserDto extends BaseDto implements Serializable {
     private String lastName;
     private String role;
     private List<Long> orders;
+    private List<Long> products;
 }

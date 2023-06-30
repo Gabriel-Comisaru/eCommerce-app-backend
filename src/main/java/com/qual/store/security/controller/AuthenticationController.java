@@ -92,7 +92,8 @@ public class AuthenticationController {
         user.setLastName(lastName);
         user.setEmail(email);
         user.setPassword(new BCryptPasswordEncoder().encode(password));
-        user.setRole(RoleName.USER);
+        //user.setRole(RoleName.USER);
+        user.setRole(RoleName.ADMIN);
         user.setUsername(userName);
         UserDetails userDetails = userDetailsService.createUserDetails(userName, user.getPassword());
         String token = jwtTokenUtil.generateToken(userDetails);
