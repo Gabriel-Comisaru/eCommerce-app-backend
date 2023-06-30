@@ -14,7 +14,6 @@ import java.util.List;
 @Builder
 public class AppUserDto extends BaseDto implements Serializable {
     private String username;
-    private String password;
     private String email;
     private String firstName;
     private String lastName;
