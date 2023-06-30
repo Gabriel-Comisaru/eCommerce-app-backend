@@ -1,10 +1,12 @@
 package com.qual.store.service.impl;
 
+import com.github.javafaker.App;
 import com.qual.store.exceptions.InvalidOrderStatusException;
 import com.qual.store.exceptions.OrderNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.*;
 import com.qual.store.model.enums.OrderStatus;
+import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
 import com.qual.store.repository.OrderRepository;
 import com.qual.store.service.OrderItemService;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -26,6 +30,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
+
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @Autowired
     private Validator<Order> validator;
@@ -49,8 +57,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Log
     public Order addToOrder(Long orderItemId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        System.out.println("currentUsername = " + currentUsername);
+        AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
         OrderStatus orderStatus = OrderStatus.ACTIVE;
         List<Order> orders = getAllOrders().stream()
+                .filter(order -> order.getUser().equals(appUser))
                 .filter(order -> order.getStatus().equals(orderStatus))
                 .toList();
         Order order;
@@ -60,13 +73,14 @@ public class OrderServiceImpl implements OrderService {
                     .startDate(LocalDate.now())
                     .deliveryDate(null)
                     .status(orderStatus)
-                    .userId(1)
+                    .user(appUser)
                     .build();
             validator.validate(order);
             OrderItem orderItem = orderItemRepository.findById(orderItemId)
                     .orElseThrow(() -> new RuntimeException("No order item found with id = " + orderItemId));
             orderItem.setOrder(order);
             order.addOrderItem(orderItem);
+            appUser.addOrder(order);
         } else {
             order = orders.get(0);
             order.setDeliveryPrice(order.getDeliveryPrice() + orderItemService.priceOfOrderItem(orderItemId));
@@ -74,6 +88,7 @@ public class OrderServiceImpl implements OrderService {
                     .orElseThrow(() -> new RuntimeException("No order item found with id = " + orderItemId));
             orderItem.setOrder(order);
             order.addOrderItem(orderItem);
+            appUser.addOrder(order);
         }
         orderRepository.save(order);
         return order;

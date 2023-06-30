@@ -3,14 +3,18 @@ package com.qual.store.service.impl;
 import com.qual.store.exceptions.OrderItemNotFoundException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
+import com.qual.store.model.AppUser;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
+import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
 import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +28,9 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Autowired
     private Validator<OrderItem> validator;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @Autowired
     private ProductRepository productRepository;

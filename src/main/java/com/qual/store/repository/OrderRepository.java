@@ -10,4 +10,8 @@ public interface OrderRepository extends ShopRepository<Order, Long> {
     @Query("select distinct o from Order o")
     @EntityGraph(value = "orderWithOrderItems", type = EntityGraph.EntityGraphType.LOAD)
     List<Order> findAllWithOrderItems();
+
+    @Query("select distinct o from Order o where o.user.id = ?1")
+    @EntityGraph(value = "orderWithOrderItems", type = EntityGraph.EntityGraphType.LOAD)
+    List<Order> findAllByAppUserId(Long id);
 }

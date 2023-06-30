@@ -17,6 +17,6 @@ public class OrderDto extends BaseDto implements Serializable {
     private LocalDate startDate;
     private LocalDate deliveryDate;
     private String status;
-    private int userId;
+    private Long userId;
     private List<Long> orderItems;
 }
