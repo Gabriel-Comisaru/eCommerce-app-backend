@@ -43,12 +43,8 @@ public class AppUserController {
     @PutMapping("/{username}")
     @Log
     public ResponseEntity<?> updateUserByUsername(@PathVariable("username") String username,
-                                                   @RequestBody AppUser user) {
-
-        return ResponseEntity.ok(
-                appUserConverter.convertModelToDto(
-                        appUserService.updateUserByUsername(username, user)
-                )
-        );
+                                                   @RequestParam String password) {
+        appUserService.updateUserByUsername(username, password);
+        return ResponseEntity.ok("User updated");
     }
 }

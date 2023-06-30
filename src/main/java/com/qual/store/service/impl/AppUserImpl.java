@@ -8,6 +8,7 @@ import com.qual.store.repository.OrderRepository;
 import com.qual.store.service.AppUserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,11 +52,9 @@ public class AppUserImpl implements AppUserService {
     @Override
     @Transactional
     @Log
-    public AppUser updateUserByUsername(String username, AppUser user) {
+    public AppUser updateUserByUsername(String username, String password) {
         AppUser userToUpdate = appUserRepository.findUserByUsername(username);
-        userToUpdate.setFirstName(user.getFirstName());
-        userToUpdate.setLastName(user.getLastName());
-        userToUpdate.setEmail(user.getEmail());
+        userToUpdate.setPassword(new BCryptPasswordEncoder().encode(password));
         return appUserRepository.save(userToUpdate);
     }
 }
