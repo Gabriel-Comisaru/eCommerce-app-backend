@@ -36,4 +36,11 @@ public class OrderItem extends BaseEntity<Long> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     private Order order;
+
+
+    //hashcode
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
