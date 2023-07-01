@@ -56,7 +56,7 @@ public class WebSecurityConfig {
     }
 
     // without security
-    @Bean
+//    @Bean
     public SecurityFilterChain filterChainWithoutSecurity(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .cors(AbstractHttpConfigurer::disable)
@@ -67,7 +67,7 @@ public class WebSecurityConfig {
     }
 
     // with security
-//    @Bean
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .cors(AbstractHttpConfigurer::disable)
@@ -110,7 +110,8 @@ public class WebSecurityConfig {
 
                     //order can be created by user and updated, deleted by admin
                     auth.requestMatchers(HttpMethod.POST, "/api/orders/**").authenticated();
-                    auth.requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
+//                    auth.requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.PUT, "/api/orders/**").authenticated();
                     auth.requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
 
                     //user can be created, updated, deleted, viewed by admin
