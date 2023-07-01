@@ -55,6 +55,7 @@ public class Product extends BaseEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
+
     private AppUser user;
 
     public void addOrderItem(OrderItem orderItem) {
