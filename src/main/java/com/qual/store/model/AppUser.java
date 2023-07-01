@@ -20,17 +20,9 @@ import java.util.Set;
                         attributeNodes = {
                                 @NamedAttributeNode(value = "orders")
                         }
-                ),
-                @NamedEntityGraph(
-                        name = "userWithProducts",
-                        attributeNodes = {
-                                @NamedAttributeNode(value = "products")
-                        }
                 )
         }
 )
-
-
 @Table(name = "app_users")
 @AllArgsConstructor
 @Getter
@@ -61,10 +53,6 @@ public class AppUser extends BaseEntity<Long> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private Set<Order> orders = new HashSet<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    @Builder.Default
-    private Set<Product> products = new HashSet<>();
 
     public void addOrder(Order order) {
         orders.add(order);
