@@ -8,10 +8,8 @@ import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
-import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
 import com.qual.store.model.Product;
-import com.qual.store.service.AppUserService;
 import com.qual.store.service.CategoryService;
 import com.qual.store.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +32,6 @@ public class ProductController {
 
     @Autowired
     private CategoryService categoryService;
-
-    @Autowired
-    private AppUserService appUserService;
 
     @Autowired
     private ProductLazyConverter productLazyConverter;
@@ -126,7 +121,6 @@ public class ProductController {
 
             // Retrieve all categories from the database
             List<Category> categories = categoryService.getAllCategories();
-            List<AppUser> users = appUserService.getAllUsers();
 
             for (int i = 0; i < 20; i++) {
                 String name = faker.commerce().productName();
@@ -140,11 +134,8 @@ public class ProductController {
 
                 // Set a random category for the product
                 int randomIndex = faker.random().nextInt(categories.size());
-                int randomUserId = faker.random().nextInt(users.size());
-                AppUser randomAppuser = users.get(randomUserId);
                 Category randomCategory = categories.get(randomIndex);
                 product.setCategory(randomCategory);
-                product.setUser(randomAppuser);
 
                 productService.saveProduct(product);
             }
