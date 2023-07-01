@@ -17,14 +17,7 @@ import java.util.Set;
                         @NamedAttributeNode(value = "category")
                 }
 
-        ),
-        @NamedEntityGraph(
-                name = "productWithUser",
-                attributeNodes = {
-                        @NamedAttributeNode(value = "user")
-                }
         )
-
 })
 @Table(name = "products")
 @NoArgsConstructor
@@ -52,10 +45,6 @@ public class Product extends BaseEntity<Long> {
     @Builder.Default
     @JsonManagedReference
     private Set<OrderItem> orderItems = new HashSet<>();
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
-    private AppUser user;
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
