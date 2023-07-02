@@ -4,6 +4,7 @@ import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Product;
+import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,9 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private AppUserRepository appUserRepository;
+
     @Override
     public Product convertDtoToModel(ProductDto dto) {
         return Product.builder()
@@ -23,6 +27,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .description(dto.getDescription())
                 .price(dto.getPrice())
                 .category(categoryRepository.findById(dto.getCategoryId()).orElse(null))
+                .user(appUserRepository.findById(dto.getUserId()).orElse(null))
                 .build();
     }
 
@@ -35,6 +40,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 //todo: convert to orderItems to dto or return list of order items id
                 .orderItems(product.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .categoryId(product.getCategory().getId())
+                .userId(product.getUser().getId())
                 .build();
         productDto.setId(product.getId());
 
