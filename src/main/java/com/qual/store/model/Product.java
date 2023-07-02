@@ -46,11 +46,6 @@ public class Product extends BaseEntity<Long> {
     @JsonManagedReference
     private Set<OrderItem> orderItems = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
-
-    private AppUser user;
-
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
     }
