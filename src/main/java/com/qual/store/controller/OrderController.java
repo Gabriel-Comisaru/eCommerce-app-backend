@@ -26,9 +26,6 @@ public class OrderController {
     @Autowired
     private OrderConverter orderConverter;
 
-    @Autowired
-    private AppUserService appUserService;
-
     @GetMapping
     @Log
     public List<OrderDto> getAllOrders() {

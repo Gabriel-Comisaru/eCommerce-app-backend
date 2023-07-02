@@ -171,13 +171,13 @@ public class OrderServiceImpl implements OrderService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
-        List<OrderDto> orders = getAllOrders().stream()
+        List<OrderDto> ordersDto = getAllOrders().stream()
                 .map(o -> orderConverter.convertModelToDto(o))
                 .toList();
-        List<Order> orderss = orders.stream()
+        List<Order> orders = ordersDto.stream()
                 .filter(o -> o.getUserId().equals(appUser.getId()))
                 .map(o -> orderConverter.convertDtoToModel(o))
                 .toList();
-        return orderss;
+        return orders;
     }
 }
