@@ -12,5 +12,5 @@ public interface AppUserService {
 
     void deleteUserByUsername(String username);
 
-    AppUser updateUserByUsername(String username, AppUser user);
+    AppUser updateUserByUsername(String username, String password);
 }

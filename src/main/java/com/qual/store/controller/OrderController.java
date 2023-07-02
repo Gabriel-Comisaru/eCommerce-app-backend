@@ -5,6 +5,7 @@ import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Order;
+import com.qual.store.service.AppUserService;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +55,19 @@ public class OrderController {
     public ResponseEntity<?> updateOrderStatus(@PathVariable("orderId") Long id,
                                                @RequestParam("status") String status) {
 
+        status = status.toUpperCase();
         return ResponseEntity.ok(
                 orderConverter.convertModelToDto(
                         orderService.updateOrderStatus(id, status)
                 )
         );
+    }
+
+    @GetMapping(value = "/me")
+    @Log
+    public List<OrderDto> getAllOrdersByUsername() {
+        return orderService.getAllOrdersByUser().stream()
+                .map(order -> orderConverter.convertModelToDto(order))
+                .collect(Collectors.toList());
     }
 }

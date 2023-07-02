@@ -17,14 +17,7 @@ import java.util.Set;
                         @NamedAttributeNode(value = "category")
                 }
 
-        ),
-        @NamedEntityGraph(
-                name = "productWithUser",
-                attributeNodes = {
-                        @NamedAttributeNode(value = "user")
-                }
         )
-
 })
 @Table(name = "products")
 @NoArgsConstructor
@@ -64,7 +57,6 @@ public class Product extends BaseEntity<Long> {
 
     @Override
     public String toString() {
-
         return "Product{" +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

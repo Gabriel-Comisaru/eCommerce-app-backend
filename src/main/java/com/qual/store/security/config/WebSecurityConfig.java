@@ -98,7 +98,10 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
 
-                    auth.requestMatchers(HttpMethod.GET, "/api/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/order-items/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/orders/**").permitAll();
 
                     //order item can be created, deleted, updated by any authenticated user
                     auth.requestMatchers(HttpMethod.POST, "/api/order-items/**").authenticated();
@@ -107,8 +110,15 @@ public class WebSecurityConfig {
 
                     //order can be created by user and updated, deleted by admin
                     auth.requestMatchers(HttpMethod.POST, "/api/orders/**").authenticated();
-                    auth.requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
+//                    auth.requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.PUT, "/api/orders/**").authenticated();
                     auth.requestMatchers(HttpMethod.DELETE, "/api/orders/**").hasAuthority(RoleName.ADMIN.name());
+
+                    //user can be created, updated, deleted, viewed by admin
+                    auth.requestMatchers(HttpMethod.POST, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
 
                     auth.anyRequest().authenticated();
                 })

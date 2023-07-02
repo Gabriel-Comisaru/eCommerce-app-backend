@@ -14,7 +14,6 @@ public class AppUserConverter extends BaseConverter<AppUser, AppUserDto> {
     public AppUser convertDtoToModel(AppUserDto dto) {
         return AppUser.builder()
                 .username(dto.getUsername())
-                .password(dto.getPassword())
                 .email(dto.getEmail())
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
@@ -26,7 +25,6 @@ public class AppUserConverter extends BaseConverter<AppUser, AppUserDto> {
     public AppUserDto convertModelToDto(AppUser appUser) {
         AppUserDto appUserDto = AppUserDto.builder()
                 .username(appUser.getUsername())
-                .password(appUser.getPassword())
                 .email(appUser.getEmail())
                 .firstName(appUser.getFirstName())
                 .lastName(appUser.getLastName())
