@@ -1,13 +1,14 @@
 package com.qual.store.service.impl;
 
-import com.qual.store.converter.CategoryConverter;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
+import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
 import com.qual.store.model.Product;
+import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
 import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.ProductService;
@@ -18,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,6 +42,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductConverter productConverter;
 
+    @Autowired
+    private AppUserRepository appUserRepository;
+
     @Override
     @Log
     public Product saveProductCategory(Product product, Long categoryId) {
@@ -49,20 +55,18 @@ public class ProductServiceImpl implements ProductService {
 
         product.setCategory(category);
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
+        product.setUser(appUser);
+
         return productRepository.save(product);
     }
 
-
-//    @Override
-//    @Log
-//    public List<Product> getAllProducts() {
-//        return productRepository.findAll();
-//    }
     @Override
     @Log
     public List<Product> getAllProducts() {
-        List<Product> products = productRepository.findAllWithCategory();
-        return products;
+        return productRepository.findAllWithCategory();
     }
 
     @Override

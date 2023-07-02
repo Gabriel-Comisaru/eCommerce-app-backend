@@ -1,7 +1,6 @@
 package com.qual.store.dto;
 
 import com.qual.store.dto.base.BaseDto;
-import com.qual.store.model.enums.RoleName;
 import lombok.*;
 
 import java.io.Serializable;
@@ -19,4 +18,5 @@ public class AppUserDto extends BaseDto implements Serializable {
     private String lastName;
     private String role;
     private List<Long> orders;
+    private List<Long> products;
 }
