@@ -6,6 +6,7 @@ import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Order;
 import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
+import com.qual.store.repository.OrderItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +17,20 @@ public class OrderConverter extends BaseConverter<Order, OrderDto> {
 
     @Autowired
     private AppUserRepository appUserRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
     @Override
     public Order convertDtoToModel(OrderDto dto) {
-        return Order.builder()
+        Order modle = Order.builder()
                 .deliveryPrice(dto.getDeliveryPrice())
                 .startDate(dto.getStartDate())
                 .deliveryDate(dto.getDeliveryDate())
                 .status(OrderStatus.valueOf(dto.getStatus()))
                 .user(appUserRepository.findById(dto.getUserId()).orElse(null))
+                .orderItems(dto.getOrderItems().stream().map(id -> orderItemRepository.findById(id).orElse(null)).collect(Collectors.toSet()))
                 .build();
+        modle.setId(dto.getId());
+        return modle;
     }
 
     @Override

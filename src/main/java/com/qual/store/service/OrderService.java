@@ -14,4 +14,6 @@ public interface OrderService {
     Order findOrderById(Long id);
 
     Order updateOrderStatus(Long id, String status);
+
+    List<Order> getAllOrdersByUser();
 }

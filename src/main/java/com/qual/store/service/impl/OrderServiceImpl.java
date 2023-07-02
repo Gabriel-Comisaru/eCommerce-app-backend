@@ -1,6 +1,8 @@
 package com.qual.store.service.impl;
 
 import com.github.javafaker.App;
+import com.qual.store.converter.OrderConverter;
+import com.qual.store.dto.OrderDto;
 import com.qual.store.exceptions.InvalidOrderStatusException;
 import com.qual.store.exceptions.OrderNotFoundException;
 import com.qual.store.logger.Log;
@@ -40,6 +42,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderItemService orderItemService;
+    @Autowired
+    private OrderConverter orderConverter;
 
 //    @Override
 //    @Log
@@ -159,5 +163,21 @@ public class OrderServiceImpl implements OrderService {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    @Override
+    @Log
+    public List<Order> getAllOrdersByUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
+        List<OrderDto> ordersDto = getAllOrders().stream()
+                .map(o -> orderConverter.convertModelToDto(o))
+                .toList();
+        List<Order> orders = ordersDto.stream()
+                .filter(o -> o.getUserId().equals(appUser.getId()))
+                .map(o -> orderConverter.convertDtoToModel(o))
+                .toList();
+        return orders;
     }
 }
