@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -14,7 +15,8 @@ import java.util.Set;
         @NamedEntityGraph(
                 name = "productWithCategory",
                 attributeNodes = {
-                        @NamedAttributeNode(value = "category")
+                        @NamedAttributeNode(value = "category"),
+                        @NamedAttributeNode(value = "reviews")
                 }
 
         ),
@@ -56,8 +58,15 @@ public class Product extends BaseEntity<Long> {
     @JoinColumn(name = "user_id")
     private AppUser user;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
+    private List<Review> reviews;
+
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
     }
 
     @Override

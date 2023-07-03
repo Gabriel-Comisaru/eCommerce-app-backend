@@ -1,9 +1,6 @@
 package com.qual.store.controller;
 
-import com.qual.store.exceptions.InvalidOrderStatusException;
-import com.qual.store.exceptions.OrderItemNotFoundException;
-import com.qual.store.exceptions.OrderNotFoundException;
-import com.qual.store.exceptions.ProductNotFoundException;
+import com.qual.store.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -45,6 +42,15 @@ public class ExceptionHandlingController {
 
     @ExceptionHandler(OrderItemNotFoundException.class)
     public ResponseEntity<Object> handlerOrderItemNotFoundException(OrderItemNotFoundException exception) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("timestamp", LocalDateTime.now());
+        responseBody.put("error message", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<Object> handlerReviewNotFoundException(ReviewNotFoundException exception) {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("timestamp", LocalDateTime.now());
         responseBody.put("error message", exception.getLocalizedMessage());
