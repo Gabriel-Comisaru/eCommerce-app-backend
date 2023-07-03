@@ -57,4 +57,13 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ValidatorException.class)
+    public ResponseEntity<Object> handlerValidatorException(ValidatorException exception) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("timestamp", LocalDateTime.now());
+        responseBody.put("error message", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+    }
 }
