@@ -6,8 +6,10 @@ import com.qual.store.dto.request.ReviewRequestDto;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.exceptions.ReviewNotFoundException;
 import com.qual.store.logger.Log;
+import com.qual.store.model.AppUser;
 import com.qual.store.model.Product;
 import com.qual.store.model.Review;
+import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.ProductRepository;
 import com.qual.store.repository.ReviewRepository;
 import com.qual.store.service.ReviewService;
@@ -15,6 +17,8 @@ import com.qual.store.utils.validators.ReviewValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +40,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Autowired
     private ReviewValidator validator;
 
+    @Autowired
+    private AppUserRepository appUserRepository;
+
     @Log
     @Override
     public List<ReviewDto> getAllReviews() {
@@ -55,6 +62,12 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new ProductNotFoundException(String.format("no product with id = %s", productId)));
 
         Review review = reviewConverter.convertRequestDtoToModel(reviewRequestDto);
+
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
+        review.setUser(appUser);
 
         review.setProduct(product);
         product.addReview(review);

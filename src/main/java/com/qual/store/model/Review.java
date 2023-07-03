@@ -31,4 +31,8 @@ public class Review extends BaseEntity<Long> {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 }

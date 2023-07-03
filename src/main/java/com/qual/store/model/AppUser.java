@@ -6,9 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -63,8 +61,15 @@ public class AppUser extends BaseEntity<Long> {
     @Builder.Default
     private Set<Product> products = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
     public void addOrder(Order order) {
         orders.add(order);
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
     }
 
     @Override

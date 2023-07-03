@@ -22,4 +22,6 @@ public class ReviewDto extends BaseDto {
     private LocalDateTime date;
 
     private Long productId;
+
+    private Long userId;
 }
