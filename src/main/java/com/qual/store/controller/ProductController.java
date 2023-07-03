@@ -8,13 +8,17 @@ import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
+import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
 import com.qual.store.model.Product;
+import com.qual.store.repository.AppUserRepository;
 import com.qual.store.service.CategoryService;
 import com.qual.store.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +39,9 @@ public class ProductController {
 
     @Autowired
     private ProductLazyConverter productLazyConverter;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @GetMapping()
     @Log
@@ -121,6 +128,9 @@ public class ProductController {
 
             // Retrieve all categories from the database
             List<Category> categories = categoryService.getAllCategories();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUsername = authentication.getName();
+            AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
 
             for (int i = 0; i < 20; i++) {
                 String name = faker.commerce().productName();
@@ -137,7 +147,11 @@ public class ProductController {
                 Category randomCategory = categories.get(randomIndex);
                 product.setCategory(randomCategory);
 
+                //set also the user that created the product
+                product.setUser(appUser);
+
                 productService.saveProduct(product);
+                
             }
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");
