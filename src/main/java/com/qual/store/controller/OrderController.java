@@ -1,12 +1,8 @@
 package com.qual.store.controller;
 
-import com.github.javafaker.App;
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.logger.Log;
-import com.qual.store.model.Order;
-import com.qual.store.service.AppUserService;
-import com.qual.store.service.OrderItemService;
 import com.qual.store.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +14,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/orders")
+@CrossOrigin(value = "*")
 public class OrderController {
 
     @Autowired

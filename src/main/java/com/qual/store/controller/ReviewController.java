@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/reviews")
 @RequiredArgsConstructor
+@CrossOrigin(value = "*")
 public class ReviewController {
 
     @Autowired
@@ -34,7 +35,7 @@ public class ReviewController {
     @Log
     @PostMapping("/save/{productId}")
     public ResponseEntity<ReviewDto> saveReview(@PathVariable("productId") Long productId,
-                                @RequestBody ReviewRequestDto reviewRequestDto) {
+                                                @RequestBody ReviewRequestDto reviewRequestDto) {
 
         return ResponseEntity.ok(reviewService.saveReview(productId, reviewRequestDto));
     }
@@ -42,7 +43,7 @@ public class ReviewController {
     @Log
     @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewDto> updateReview(@PathVariable("reviewId") Long reviewId,
-                                  @RequestBody ReviewRequestDto reviewRequestDto) {
+                                                  @RequestBody ReviewRequestDto reviewRequestDto) {
 
         return ResponseEntity.ok(reviewService.updateReview(reviewId, reviewRequestDto));
     }
