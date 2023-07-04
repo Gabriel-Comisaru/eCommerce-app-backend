@@ -120,6 +120,12 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
 
+                    //review can be created, updated, deleted, by logged-in user
+                    auth.requestMatchers(HttpMethod.POST, "/api/reviews/**").authenticated();
+                    auth.requestMatchers(HttpMethod.PUT, "/api/reviews/**").authenticated();
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/reviews/**").authenticated();
+                    auth.requestMatchers(HttpMethod.GET, "/api/reviews").permitAll();
+
                     auth.anyRequest().authenticated();
                 })
                 .exceptionHandling(handler -> {
