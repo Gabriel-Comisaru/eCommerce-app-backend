@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/users")
-@CrossOrigin(value = "*")
+@CrossOrigin("*")
 public class AppUserController {
 
     @Autowired

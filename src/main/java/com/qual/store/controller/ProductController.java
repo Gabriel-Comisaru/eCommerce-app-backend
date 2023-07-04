@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/products")
-@CrossOrigin(value = "*")
+@CrossOrigin("*")
 public class ProductController {
 
     @Autowired

@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/reviews")
 @RequiredArgsConstructor
-@CrossOrigin(value = "*")
+@CrossOrigin("*")
 public class ReviewController {
 
     @Autowired
