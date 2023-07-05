@@ -1,6 +1,7 @@
 package com.qual.store.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,7 +32,8 @@ public class Review extends BaseEntity<Long> {
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "product_id")
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnore
     private Product product;
 
     @ManyToOne(cascade = CascadeType.MERGE)

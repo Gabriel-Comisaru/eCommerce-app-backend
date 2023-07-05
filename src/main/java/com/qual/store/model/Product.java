@@ -53,7 +53,7 @@ public class Product extends BaseEntity<Long> {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "product")
     @Builder.Default
-    @JsonManagedReference
+//    @JsonManagedReference
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
@@ -61,11 +61,11 @@ public class Product extends BaseEntity<Long> {
     private AppUser user;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
-    @JsonManagedReference
+//    @JsonManagedReference
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    @JsonManagedReference
+//    @JsonManagedReference
     private Set<ImageModel> images;
 
     public void addOrderItem(OrderItem orderItem) {
