@@ -81,6 +81,14 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    public byte[] downloadImage(String fileName) {
+        ImageModel dbImageData = imageRepository.findByName(fileName)
+                .orElseThrow(() -> new ImageModelException(String.format("image with name = %s not found", fileName)));
+
+        return decompressBytes(dbImageData.getPicByte());
+    }
+
+    @Override
     public void deleteImageModelById(Long id) {
 
     }

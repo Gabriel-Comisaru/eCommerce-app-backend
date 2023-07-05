@@ -17,5 +17,7 @@ public interface ImageService {
 
     ImageModel findImageModelByName(String name);
 
+    byte[] downloadImage(String fileName);
+
     void deleteImageModelById(Long id);
 }
