@@ -6,6 +6,7 @@ import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,10 +14,11 @@ import java.util.Set;
 @Entity
 @NamedEntityGraphs({
         @NamedEntityGraph(
-                name = "productWithCategory",
+                name = "productWithCategoryAndReviewsAndImages",
                 attributeNodes = {
                         @NamedAttributeNode(value = "category"),
-                        @NamedAttributeNode(value = "reviews")
+                        @NamedAttributeNode(value = "reviews"),
+                        @NamedAttributeNode(value = "images")
                 }
 
         ),
@@ -59,11 +61,12 @@ public class Product extends BaseEntity<Long> {
     private AppUser user;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
+    @JsonManagedReference
     private List<Review> reviews;
 
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "image_id")
-    private ImageModel image;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<ImageModel> images;
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
@@ -71,6 +74,10 @@ public class Product extends BaseEntity<Long> {
 
     public void addReview(Review review) {
         reviews.add(review);
+    }
+
+    public void addImageModel(ImageModel imageModel) {
+        images.add(imageModel);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.qual.store.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,8 @@ public class ImageModel extends BaseEntity<Long> {
     @Column(name = "pic_byte", length = 1000)
     private byte[] picByte;
 
-    @OneToOne(mappedBy = "image")
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 }

@@ -2,13 +2,14 @@ package com.qual.store.converter;
 
 import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.model.ImageModel;
 import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Product;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
+import com.qual.store.repository.ImageRepository;
 import com.qual.store.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
     private final CategoryRepository categoryRepository;
     private final AppUserRepository appUserRepository;
     private final ReviewRepository reviewRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     public Product convertDtoToModel(ProductDto dto) {
@@ -29,7 +31,12 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .price(dto.getPrice())
                 .category(categoryRepository.findById(dto.getCategoryId()).orElse(null))
                 .user(appUserRepository.findById(dto.getUserId()).orElse(null))
-                .reviews(dto.getReviewsId().stream().map(revId -> reviewRepository.findById(revId).orElseThrow()).collect(Collectors.toList()))
+                .reviews(dto.getReviewsId().stream()
+                        .map(revId -> reviewRepository.findById(revId).orElseThrow())
+                        .collect(Collectors.toList()))
+                .images(dto.getImagesName().stream()
+                        .map(name -> imageRepository.findByName(name).orElse(null))
+                        .collect(Collectors.toSet()))
                 .build();
     }
 
@@ -43,7 +50,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .categoryId(product.getCategory().getId())
                 .userId(product.getUser().getId())
                 .reviewsId(product.getReviews().stream().map(BaseEntity::getId).collect(Collectors.toList()))
-                .imageName(product.getImage().getName())
+                .imagesName(product.getImages().stream().map(ImageModel::getName).toList())
                 .build();
 
         productDto.setId(product.getId());

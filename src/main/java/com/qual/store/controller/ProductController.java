@@ -22,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,12 +77,7 @@ public class ProductController {
                                                 @RequestParam MultipartFile file,
                                                 @PathVariable Long categoryId) {
         try {
-            Product savedProduct = productService.saveProductCategory(Product.builder()
-                    .name(name)
-                    .description(description)
-                    .price(price)
-                    .reviews(List.of())
-                    .build(), file, categoryId);
+            Product savedProduct = productService.saveProductCategory(name, description, price, file, categoryId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productConverter.convertModelToDto(savedProduct));
         } catch (Exception e) {
@@ -162,7 +159,7 @@ public class ProductController {
                 product.setUser(appUser);
 
                 productService.saveProduct(product);
-                
+
             }
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");

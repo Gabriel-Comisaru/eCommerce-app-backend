@@ -14,7 +14,6 @@ import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
 import com.qual.store.repository.ImageRepository;
 import com.qual.store.repository.ProductRepository;
-import com.qual.store.service.ImageService;
 import com.qual.store.service.ProductService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
@@ -29,6 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,7 +59,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Log
-    public Product saveProductCategory(Product product, MultipartFile file, Long categoryId) {
+    public Product saveProductCategory(String name, String description, double price,
+                                       MultipartFile file, Long categoryId) {
+        Product product = Product.builder()
+                .name(name)
+                .description(description)
+                .price(price)
+                .images(new HashSet<>())
+                .reviews(new ArrayList<>())
+                .orderItems(new HashSet<>())
+                .build();
         validator.validate(product);
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ProductNotFoundException(
@@ -78,10 +88,13 @@ public class ProductServiceImpl implements ProductService {
             throw new ImageModelException(e.getMessage());
         }
 
-        ImageModel savedImage = imageRepository.save(imageModel);
+        product.addImageModel(imageModel);
 
-        product.setImage(savedImage);
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+        imageModel.setProduct(savedProduct);
+
+        imageRepository.save(imageModel);
+        return savedProduct;
     }
 
     private ImageModel getImageModelFromMultipartFile(MultipartFile file) throws IOException {
@@ -95,7 +108,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Log
     public List<Product> getAllProducts() {
-        return productRepository.findAllWithCategory();
+        return productRepository.findAllWithCategoryAndReviewsAndImages();
     }
 
     @Override
@@ -168,7 +181,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getProductById(Long productId) {
-        Product product = productRepository.findAllWithCategory().stream().filter(p -> p.getId().equals(productId))
+        Product product = productRepository.findAllWithCategoryAndReviewsAndImages().stream().filter(p -> p.getId().equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new ProductNotFoundException(String.format("No product with id %s is found", productId)));
 

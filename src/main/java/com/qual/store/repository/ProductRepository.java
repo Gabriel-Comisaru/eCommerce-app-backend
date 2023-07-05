@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface ProductRepository extends ShopRepository<Product, Long> {
     @Query("select distinct p from Product p")
-    @EntityGraph(value = "productWithCategory", type = EntityGraph.EntityGraphType.LOAD)
-    List<Product> findAllWithCategory();
+    @EntityGraph(value = "productWithCategoryAndReviewsAndImages", type = EntityGraph.EntityGraphType.LOAD)
+    List<Product> findAllWithCategoryAndReviewsAndImages();
 
     @Query("select distinct o from Order o where o.user.id = ?1")
     @EntityGraph(value = "productWithUser", type = EntityGraph.EntityGraphType.LOAD)

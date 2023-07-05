@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ProductService {
     List<Product> getAllProducts();
 
-    Product saveProductCategory(Product product, MultipartFile file, Long categoryId);
+    Product saveProductCategory(String name, String description, double price, MultipartFile file, Long categoryId);
 
     void saveProduct(Product product);
 
