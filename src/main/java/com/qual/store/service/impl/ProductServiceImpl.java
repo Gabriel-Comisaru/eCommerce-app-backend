@@ -135,7 +135,6 @@ public class ProductServiceImpl implements ProductService {
                     updateProduct.setName(product.getName());
                     updateProduct.setPrice(product.getPrice());
                     updateProduct.setDescription(product.getDescription());
-
                 });
 
         return Optional.of(productRepository.getReferenceById(id));
