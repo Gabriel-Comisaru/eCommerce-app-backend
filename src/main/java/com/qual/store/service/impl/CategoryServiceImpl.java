@@ -70,7 +70,7 @@ public Optional<Category> updateCategory(Long id, Category category) {
     @Override
     @Log
     public Category findCategoryById(Long id) {
-        return categoryRepository.findById(id)
+        return categoryRepository.findCategoryWithProducts(id)
                 .orElseThrow(() -> new CategoryNotFoundException(String.format("No category found with id %s", id)));
     }
 

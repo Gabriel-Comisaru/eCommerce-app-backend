@@ -33,6 +33,14 @@ public class CategoryController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/{categoryId}")
+    @Log
+    public CategoryDto getCategoryById(@PathVariable("categoryId") Long categoryId) {
+        return categoryConverter.convertModelToDto(
+                categoryService.findCategoryById(categoryId)
+        );
+    }
+
     @PostMapping
     @Log
     public ResponseEntity<?> addCategory(@RequestBody Category category) {
