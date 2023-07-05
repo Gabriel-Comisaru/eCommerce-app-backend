@@ -3,6 +3,7 @@ package com.qual.store.service;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.model.Product;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,7 @@ import java.util.Optional;
 public interface ProductService {
     List<Product> getAllProducts();
 
-    Product saveProductCategory(Product product, Long categoryId);
+    Product saveProductCategory(Product product, MultipartFile file, Long categoryId);
 
     void saveProduct(Product product);
 

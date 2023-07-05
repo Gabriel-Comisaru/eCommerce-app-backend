@@ -15,5 +15,7 @@ public interface ImageService {
 
     ImageModel findImageModelById(Long id);
 
+    ImageModel findImageModelByName(String name);
+
     void deleteImageModelById(Long id);
 }

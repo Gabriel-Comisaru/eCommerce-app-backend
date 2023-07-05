@@ -26,4 +26,6 @@ public class ProductDto extends BaseDto implements Serializable {
     private Long userId;
 
     private List<Long> reviewsId;
+
+    private String imageName;
 }

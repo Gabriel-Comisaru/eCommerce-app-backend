@@ -7,22 +7,19 @@ import com.qual.store.model.Product;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
 import com.qual.store.repository.ReviewRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class ProductConverter extends BaseConverter<Product, ProductDto> {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private AppUserRepository appUserRepository;
-
-    @Autowired
-    private ReviewRepository reviewRepository;
+    private final CategoryRepository categoryRepository;
+    private final AppUserRepository appUserRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     public Product convertDtoToModel(ProductDto dto) {
@@ -46,7 +43,9 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .categoryId(product.getCategory().getId())
                 .userId(product.getUser().getId())
                 .reviewsId(product.getReviews().stream().map(BaseEntity::getId).collect(Collectors.toList()))
+                .imageName(product.getImage().getName())
                 .build();
+
         productDto.setId(product.getId());
 
         return productDto;

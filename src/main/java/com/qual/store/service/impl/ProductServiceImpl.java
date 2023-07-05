@@ -3,14 +3,18 @@ package com.qual.store.service.impl;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
+import com.qual.store.exceptions.ImageModelException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
+import com.qual.store.model.ImageModel;
 import com.qual.store.model.Product;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
+import com.qual.store.repository.ImageRepository;
 import com.qual.store.repository.ProductRepository;
+import com.qual.store.service.ImageService;
 import com.qual.store.service.ProductService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
@@ -22,10 +26,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.qual.store.utils.images.ImageUtils.compressBytes;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -45,9 +53,12 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private AppUserRepository appUserRepository;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
     @Override
     @Log
-    public Product saveProductCategory(Product product, Long categoryId) {
+    public Product saveProductCategory(Product product, MultipartFile file, Long categoryId) {
         validator.validate(product);
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ProductNotFoundException(
@@ -60,7 +71,25 @@ public class ProductServiceImpl implements ProductService {
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
         product.setUser(appUser);
 
+        ImageModel imageModel;
+        try {
+            imageModel = getImageModelFromMultipartFile(file);
+        } catch (IOException e) {
+            throw new ImageModelException(e.getMessage());
+        }
+
+        ImageModel savedImage = imageRepository.save(imageModel);
+
+        product.setImage(savedImage);
         return productRepository.save(product);
+    }
+
+    private ImageModel getImageModelFromMultipartFile(MultipartFile file) throws IOException {
+        return ImageModel.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .picByte(compressBytes(file.getBytes()))
+                .build();
     }
 
     @Override

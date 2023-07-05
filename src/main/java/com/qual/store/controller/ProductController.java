@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,9 +69,18 @@ public class ProductController {
 
     @PostMapping("/category/{categoryId}")
     @Log
-    public ResponseEntity<?> addProductCategory(@RequestBody Product product, @PathVariable Long categoryId) {
+    public ResponseEntity<?> addProductCategory(@RequestParam String name,
+                                                @RequestParam String description,
+                                                @RequestParam double price,
+                                                @RequestParam MultipartFile file,
+                                                @PathVariable Long categoryId) {
         try {
-            Product savedProduct = productService.saveProductCategory(product, categoryId);
+            Product savedProduct = productService.saveProductCategory(Product.builder()
+                    .name(name)
+                    .description(description)
+                    .price(price)
+                    .reviews(List.of())
+                    .build(), file, categoryId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productConverter.convertModelToDto(savedProduct));
         } catch (Exception e) {
