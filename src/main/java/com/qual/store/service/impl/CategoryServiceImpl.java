@@ -36,7 +36,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
     @Override
     @Log
-    public Optional<Category> saveCategory(Category category) {
+    public Optional<Category> saveCategory(String categoryName) {
+        Category category = Category.builder()
+                .name(categoryName)
+                .build();
         validator.validate(category);
         Category savedCategory = categoryRepository.save(category);
 

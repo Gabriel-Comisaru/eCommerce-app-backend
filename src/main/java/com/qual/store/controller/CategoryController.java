@@ -43,9 +43,9 @@ public class CategoryController {
 
     @PostMapping
     @Log
-    public ResponseEntity<?> addCategory(@RequestBody Category category) {
+    public ResponseEntity<?> addCategory(@RequestParam("categoryName") String categoryName) {
         try {
-            Category savedCategory = categoryService.saveCategory(category)
+            Category savedCategory = categoryService.saveCategory(categoryName)
                     .orElseThrow(() -> new IllegalArgumentException("category not saved"));
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(categoryConverter.convertModelToDto(savedCategory));
@@ -90,9 +90,7 @@ public class CategoryController {
         try {
             Faker faker = new Faker();
             for (int i = 0; i < 10; i++) {
-                Category category = new Category();
-                category.setName(faker.commerce().department());
-                categoryService.saveCategory(category);
+                categoryService.saveCategory(faker.commerce().department());
             }
 
             return ResponseEntity.status(HttpStatus.OK)
