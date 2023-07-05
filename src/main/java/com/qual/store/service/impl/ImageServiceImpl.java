@@ -74,7 +74,7 @@ public class ImageServiceImpl implements ImageService {
                 .orElseThrow(() -> new ImageModelException(String.format("No image with name = %s", name)));
 
         ImageModel result = new ImageModel(imageModel.getName(), imageModel.getType(),
-                decompressBytes(imageModel.getPicByte()), null);
+                decompressBytes(imageModel.getPicByte()), imageModel.getProduct());
         result.setId(imageModel.getId());
 
         return result;
