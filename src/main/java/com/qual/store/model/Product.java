@@ -61,6 +61,8 @@ public class Product extends BaseEntity<Long> {
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
     private List<Review> reviews;
 
+//    private ImageModel image;
+
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
     }
