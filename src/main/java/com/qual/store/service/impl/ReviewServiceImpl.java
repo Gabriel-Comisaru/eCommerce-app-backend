@@ -54,6 +54,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Log
     @Override
+    public List<ReviewDto> getReviewsByProductId(Long productId) {
+        return reviewRepository.findAll()
+                .stream().filter(review -> review.getProduct().getId().equals(productId))
+                .map(reviewConverter::convertModelToDto)
+                .toList();
+    }
+
+    @Log
+    @Override
     @Transactional
     public ReviewDto saveReview(Long productId, ReviewRequestDto reviewRequestDto) {
         validator.validate(reviewRequestDto);
