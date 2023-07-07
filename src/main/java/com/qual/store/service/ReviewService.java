@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ReviewService {
     List<ReviewDto> getAllReviews();
+    public List<ReviewDto> getReviewsByProductId(Long productId);
 
     ReviewDto saveReview(Long productId, ReviewRequestDto reviewRequestDto);
 

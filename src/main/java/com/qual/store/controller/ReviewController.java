@@ -27,6 +27,12 @@ public class ReviewController {
     }
 
     @Log
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<List<ReviewDto>> getReviewsByProductId(@PathVariable("productId") Long productId) {
+        return ResponseEntity.ok(reviewService.getReviewsByProductId(productId));
+    }
+
+    @Log
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewDto> getReviewById(@PathVariable("reviewId") Long reviewId) {
         return ResponseEntity.ok(reviewService.findReviewById(reviewId));
