@@ -6,6 +6,7 @@ import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +60,7 @@ public class Product extends BaseEntity<Long> {
     private AppUser user;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
