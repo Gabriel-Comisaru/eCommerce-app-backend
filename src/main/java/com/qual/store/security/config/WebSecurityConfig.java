@@ -57,7 +57,7 @@ public class WebSecurityConfig {
     }
 
     // without security
-//    @Bean
+    @Bean
     public SecurityFilterChain filterChainWithoutSecurity(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .cors(AbstractHttpConfigurer::disable)
@@ -68,7 +68,7 @@ public class WebSecurityConfig {
     }
 
     // with security
-    @Bean
+//    @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .cors(Customizer.withDefaults()) 
