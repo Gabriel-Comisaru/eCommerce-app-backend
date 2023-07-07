@@ -83,7 +83,10 @@ public class ProductServiceImpl implements ProductService {
     public Optional<Product> updateProduct(Long id, Product product) {
         validator.validate(product);
 
-        Optional<Product> optionalProduct = productRepository.findById(id);
+        Optional<Product> optionalProduct = productRepository.findAllWithCategory()
+                .stream().filter(pro -> pro.getId().equals(id)).findFirst();
+
+//        Optional<Product> optionalProduct = productRepository.findById(id);
 
         optionalProduct
                 .orElseThrow(() -> new ProductNotFoundException(String.format("No product found with id %s", id)));
@@ -96,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
 
                 });
 
-        return Optional.of(productRepository.getReferenceById(id));
+        return productRepository.findById(id);
     }
 
     @Override
