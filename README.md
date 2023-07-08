@@ -1,3 +1,23 @@
+## How to run
+### Start the containers
+Run `docker compose up` in the project root (so in the same directory with *compose.yaml*):
+```
+$ docker compose up
+```
+### Stop the containers
+Run `docker-compose down` to stop and remove containers created by `up`:
+```
+$ docker-compose down
+```
+### Stop and remove **all** containers
+To stop and remove **all** containers, run the follwong commands: 
+```
+$ docker stop $(docker ps -a -q)
+$ docker rm $(docker ps -a -q)
+```
+
+
+
 # API Documentation
 
 ## Introduction
