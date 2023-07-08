@@ -4,17 +4,27 @@ Run `docker compose up` in the project root (so in the same directory with *comp
 ```
 $ docker compose up
 ```
+
 ### Start the containers and rebuild images 
 Run `docker compose up --build` to start the containers and rebuild images. 
 Use this command during *development*, i.e., if there are *code changes*.
 ```
 $ docker compose up --build
 ```
-### Stop and remove the containers
+
+### Stop and remove containers
 Run `docker-compose down` to stop and remove containers created by `up`:
 ```
 $ docker-compose down
 ```
+
+### Stop and remove containers including volumes
+Run `docker compose down --volumes` to stop and remove containers including volumes (e.g. database) 
+created by `up`:
+```
+$ docker compose down --volumes
+```
+
 ### Stop and remove **all** containers
 To stop and remove **all** containers, run the following commands: 
 ```
