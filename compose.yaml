@@ -3,7 +3,7 @@ services:
     build:
       context: .
     image: 'store-app'
-    restart: always
+    restart: unless-stopped
     ports:
       - 8081:8080
     depends_on:
@@ -14,7 +14,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=admin
   postgres:
     image: 'postgres:latest'
-    restart: always
+    restart: unless-stopped
     environment:
       - 'POSTGRES_DB=shop'
       - 'POSTGRES_PASSWORD=admin'
