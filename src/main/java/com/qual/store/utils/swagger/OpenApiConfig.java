@@ -23,6 +23,10 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 @Server(
                         description = "Local ENV",
                         url = "http://localhost:8080"
+                ),
+                @Server(
+                        description = "Docker ENV",
+                        url = "http://localhost:8081"
                 )
         },
         security = {
