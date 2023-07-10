@@ -136,23 +136,34 @@ public class OrderServiceImpl implements OrderService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
-        if (!status.equals("CHECKOUT")) {
-            throw new RuntimeException("Invalid status: " + status);
-        }
-        if (appUser.getRole().name().equals("USER") && !existingOrder.get().getStatus().name().equals("ACTIVE")) {
-            throw new RuntimeException("You are not allowed to change the status of this order");
-        }
-
-        existingOrder.ifPresent(updateOrder -> {
-            OrderStatus orderStatus = getOrderStatusFromString(status);
-            if (!updateOrder.getUser().equals(appUser)) {
-                throw new RuntimeException("You are not allowed to change the status of another user's order");
-            } else if (orderStatus != null) {
-                updateOrder.setStatus(orderStatus);
-            } else {
-                throw new InvalidOrderStatusException("Invalid status: " + status);
+        if (appUser.getRole().name().equals("USER")) {
+            if (!status.equals("CHECKOUT")) {
+                throw new RuntimeException("Invalid status: " + status);
             }
-        });
+            if (!existingOrder.get().getStatus().name().equals("ACTIVE")) {
+                throw new RuntimeException("You are not allowed to change the status of this order");
+            }
+
+            existingOrder.ifPresent(updateOrder -> {
+                OrderStatus orderStatus = getOrderStatusFromString(status);
+                if (!updateOrder.getUser().equals(appUser)) {
+                    throw new RuntimeException("You are not allowed to change the status of another user's order");
+                } else if (orderStatus != null) {
+                    updateOrder.setStatus(orderStatus);
+                } else {
+                    throw new InvalidOrderStatusException("Invalid status: " + status);
+                }
+            });
+        } else {
+            existingOrder.ifPresent(updateOrder -> {
+                OrderStatus orderStatus = getOrderStatusFromString(status);
+                if (orderStatus != null) {
+                    updateOrder.setStatus(orderStatus);
+                } else {
+                    throw new InvalidOrderStatusException("Invalid status: " + status);
+                }
+            });
+        }
 
         return existingOrder.get();
     }
