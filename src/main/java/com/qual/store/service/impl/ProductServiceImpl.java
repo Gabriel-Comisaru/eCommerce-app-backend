@@ -6,14 +6,8 @@ import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.ImageModelException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
-import com.qual.store.model.AppUser;
-import com.qual.store.model.Category;
-import com.qual.store.model.ImageModel;
-import com.qual.store.model.Product;
-import com.qual.store.repository.AppUserRepository;
-import com.qual.store.repository.CategoryRepository;
-import com.qual.store.repository.ImageRepository;
-import com.qual.store.repository.ProductRepository;
+import com.qual.store.model.*;
+import com.qual.store.repository.*;
 import com.qual.store.service.ProductService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
@@ -28,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.qual.store.utils.images.ImageUtils.compressBytes;
@@ -56,6 +47,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ImageRepository imageRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @Override
     @Log
@@ -166,6 +160,15 @@ public class ProductServiceImpl implements ProductService {
 
         category.getProducts().remove(product);
         categoryRepository.save(category);
+
+        // Delete the reviews associated with the product
+        List<Review> reviews = product.getReviews();
+        reviewRepository.deleteAll(reviews);
+
+        // Delete the image models associated with the product
+        Set<ImageModel> imageModels = product.getImages();
+        imageRepository.deleteAll(imageModels);
+
 
         productRepository.deleteById(id);
     }
