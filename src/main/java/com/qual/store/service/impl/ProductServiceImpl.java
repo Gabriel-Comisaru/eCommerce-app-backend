@@ -3,6 +3,7 @@ package com.qual.store.service.impl;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
+import com.qual.store.exceptions.DeleteProductException;
 import com.qual.store.exceptions.ImageModelException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
@@ -145,7 +146,7 @@ public class ProductServiceImpl implements ProductService {
     @Log
     public Product findProductById(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(String.format("No product with is found:%s", id)));
+                .orElseThrow(() -> new ProductNotFoundException(String.format("No product found with id %s", id)));
     }
 
     @Override
@@ -153,7 +154,7 @@ public class ProductServiceImpl implements ProductService {
     @Log
     public void deleteProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(String.format("No product with is found:%s", id)));
+                .orElseThrow(() -> new ProductNotFoundException(String.format("No product found with id %s", id)));
 
         Category category = categoryRepository.findById(product.getCategory().getId())
                 .orElseThrow();
@@ -161,11 +162,15 @@ public class ProductServiceImpl implements ProductService {
         category.getProducts().remove(product);
         categoryRepository.save(category);
 
-        // Delete the reviews associated with the product
+        product.getOrderItems().stream()
+                .findFirst()
+                .ifPresent((element) -> {
+                    throw new DeleteProductException("Cannot delete the product because it appears on order items.");
+                });
+
         List<Review> reviews = product.getReviews();
         reviewRepository.deleteAll(reviews);
 
-        // Delete the image models associated with the product
         Set<ImageModel> imageModels = product.getImages();
         imageRepository.deleteAll(imageModels);
 
@@ -190,9 +195,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getProductById(Long productId) {
-        Product product = productRepository.findAllWithCategoryAndReviewsAndImages().stream().filter(p -> p.getId().equals(productId))
+        Product product = productRepository.findAllWithCategoryAndReviewsAndImages()
+                .stream()
+                .filter(p -> p.getId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new ProductNotFoundException(String.format("No product with id %s is found", productId)));
+                .orElseThrow(
+                        () -> new ProductNotFoundException(String.format("No product found with id %s", productId))
+                );
 
         return productConverter.convertModelToDto(product);
     }

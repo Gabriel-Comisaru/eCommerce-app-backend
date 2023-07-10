@@ -87,6 +87,16 @@ public class ExceptionHandlingController {
         }
     }
 
+    @ExceptionHandler(DeleteProductException.class)
+    public ResponseEntity<String> handleDeleteProductException(DeleteProductException ex) {
+        if (ex.getMessage().contains("duplicate key value violates unique constraint")) {
+            String message = "Duplicate key violation occurred: " + ex.getMessage();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(message);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+        }
+    }
+
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Object> handlerNullPointerException(NullPointerException exception) {
         Map<String, Object> responseBody = new HashMap<>();
