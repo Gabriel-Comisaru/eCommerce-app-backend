@@ -60,15 +60,19 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Log
     public Product saveProductCategory(String name, String description, double price,
+                                       long unitsInStock, double discountPercentage,
                                        MultipartFile file, Long categoryId) {
         Product product = Product.builder()
                 .name(name)
                 .description(description)
                 .price(price)
+                .unitsInStock(unitsInStock)
+                .discountPercentage(discountPercentage)
                 .images(new HashSet<>())
                 .reviews(new ArrayList<>())
                 .orderItems(new HashSet<>())
                 .build();
+
         validator.validate(product);
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ProductNotFoundException(

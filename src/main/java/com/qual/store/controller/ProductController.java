@@ -22,8 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,10 +72,13 @@ public class ProductController {
     public ResponseEntity<?> addProductCategory(@RequestParam String name,
                                                 @RequestParam String description,
                                                 @RequestParam double price,
-                                                @RequestParam MultipartFile file,
+                                                @RequestParam long unitsInStock,
+                                                @RequestParam double discountPercentage,
+                                                @RequestParam MultipartFile image,
                                                 @PathVariable Long categoryId) {
         try {
-            Product savedProduct = productService.saveProductCategory(name, description, price, file, categoryId);
+            Product savedProduct = productService.saveProductCategory(name, description, price,
+                    unitsInStock, discountPercentage, image, categoryId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productConverter.convertModelToDto(savedProduct));
         } catch (Exception e) {

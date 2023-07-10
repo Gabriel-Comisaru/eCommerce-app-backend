@@ -45,6 +45,12 @@ public class Product extends BaseEntity<Long> {
     @Column(nullable = false)
     private double price;
 
+    @Column
+    private long unitsInStock;
+
+    @Column
+    private double discountPercentage;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     @ToString.Exclude
@@ -80,17 +86,4 @@ public class Product extends BaseEntity<Long> {
         images.add(imageModel);
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                '}' + super.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }
