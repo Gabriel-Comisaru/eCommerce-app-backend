@@ -86,4 +86,19 @@ public class Product extends BaseEntity<Long> {
         images.add(imageModel);
     }
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", units in stock=" + unitsInStock +
+                ", discount percentage=" + discountPercentage +
+                '}' + super.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
