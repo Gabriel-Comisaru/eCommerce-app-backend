@@ -58,6 +58,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                 .orElseThrow();
 
         product.getOrderItems().remove(orderItem);
+        orderItem.setProduct(null);
         productRepository.save(product);
 
         orderItemRepository.deleteById(id);
