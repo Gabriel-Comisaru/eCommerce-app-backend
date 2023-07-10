@@ -466,18 +466,26 @@ The Product Controller is responsible for handling HTTP requests related to prod
         "name": "Product 1",
         "description": "Description of product 1",
         "price": 19.99,
+        "unitsInStock": 10,
+        "discountPercentage": 0.0,
+        "orderItems": [1, 2],
         "categoryId": 2,
         "userId": 1,
-        "reviewsId": [1, 2]
+        "reviewsId": [1, 2],
+        "imagesName": ["image1.jpg", "image2.jpg"]
     },
     {
         "id": 2,
         "name": "Product 2",
         "description": "Description of product 2",
         "price": 29.99,
+        "unitsInStock": 15,
+        "discountPercentage": 0.1,
+        "orderItems": [3],
         "categoryId": 1,
         "userId": 2,
-        "reviewsId": [3]
+        "reviewsId": [3],
+        "imagesName": ["image3.jpg"]
     }
 ]
 ```
@@ -497,9 +505,13 @@ The Product Controller is responsible for handling HTTP requests related to prod
     "name": "Product 1",
     "description": "Description of product 1",
     "price": 19.99,
+    "unitsInStock": 10,
+    "discountPercentage": 0.0,
+    "orderItems": [1, 2],
     "categoryId": 2,
     "userId": 1,
-    "reviewsId": [1, 2]
+    "reviewsId": [1, 2],
+    "imagesName": ["image1.jpg", "image2.jpg"]
 }
 ```
 
@@ -517,6 +529,8 @@ The Product Controller is responsible for handling HTTP requests related to prod
         "name": "Product 1",
         "description": "Description of product 1",
         "price": 19.99,
+        "unitsInStock": 10,
+        "discountPercentage": 0.0,
         "categoryId": 2
     },
     {
@@ -524,12 +538,14 @@ The Product Controller is responsible for handling HTTP requests related to prod
         "name": "Product 2",
         "description": "Description of product 2",
         "price": 29.99,
+        "unitsInStock": 15,
+        "discountPercentage": 0.1,
         "categoryId": 1
     }
 ]
 ```
 
-### Add Product with Category
+### Add Product
 
 - URL: `/api/products/category/{categoryId}`
 - Method: POST
@@ -543,7 +559,9 @@ The Product Controller is responsible for handling HTTP requests related to prod
 {
     "name": "Product 3",
     "description": "Description of product 3",
-    "price": 39.99
+    "price": 39.99,
+    "unitsInStock": 5,
+    "discountPercentage": 0.2
 }
 ```
 - Example Response:
@@ -553,9 +571,12 @@ The Product Controller is responsible for handling HTTP requests related to prod
     "name": "Product 3",
     "description": "Description of product 3",
     "price": 39.99,
+    "unitsInStock": 5,
+    "discountPercentage": 0.2,
     "categoryId": 2,
     "userId": 1,
-    "reviewsId": []
+    "reviewsId": [],
+    "imagesName": []
 }
 ```
 
@@ -573,7 +594,9 @@ The Product Controller is responsible for handling HTTP requests related to prod
 {
     "name": "Updated Product",
     "description": "Updated description",
-    "price": 49.99
+    "price": 49.99,
+    "unitsInStock": 8,
+    "discountPercentage": 0.15
 }
 ```
 - Example Response:
@@ -583,9 +606,12 @@ The Product Controller is responsible for handling HTTP requests related to prod
     "name": "Updated Product",
     "description": "Updated description",
     "price": 49.99,
+    "unitsInStock": 8,
+    "discountPercentage": 0.15,
     "categoryId": 2,
     "userId": 1,
-    "reviewsId": [1, 2]
+    "reviewsId": [1, 2],
+    "imagesName": ["image1.jpg", "image2.jpg"]
 }
 ```
 
@@ -621,18 +647,28 @@ Product with id 1 deleted
             "name": "Product 1",
             "description": "Description of product 1",
             "price": 19.99,
+            "unitsInStock": 10,
+            "discountPercentage": 0.0,
+            "orderItems": [1, 2],
             "categoryId": 2,
             "userId": 1,
-            "reviewsId": [1, 2]
+            "reviewsId": [1, 2],
+            "imagesName": ["image1.jpg", "image2.jpg"]
         },
         {
             "id": 2,
             "name": "Product 2",
             "description": "Description of product 2",
             "price": 29.99,
+            "unitsInStock": 15,
+            "discountPercentage": 0.1,
+            "orderItems":
+
+[3],
             "categoryId": 1,
             "userId": 2,
-            "reviewsId": [3]
+            "reviewsId": [3],
+            "imagesName": ["image3.jpg"]
         }
     ],
     "numberOfItems": 2,
@@ -647,8 +683,6 @@ Product with id 1 deleted
 - Description: Populates the database with fake product data for testing purposes.
 - Response: Returns a success message indicating the successful population of the database.
 - Example Response:
-
-
 ```text
 Database populated with fake data
 ```
@@ -669,6 +703,7 @@ The Product Controller allows cross-origin requests through the `@CrossOrigin("*
 The Product Controller relies on the following dependencies:
 - Spring Framework: Provides the necessary infrastructure for building the web application.
 - Faker: Used to generate fake product data for testing purposes.
+- Lombok: Simplifies the creation of DTOs and entities with automatic generation of getters, setters, and other boilerplate code.
 
 ##
 ##
@@ -1160,3 +1195,92 @@ The AppUser Controller relies on the following dependencies:
 - Spring Framework: Provides the necessary infrastructure for building the web application.
 
 ## 
+## 
+
+# Image Controller Documentation
+
+The Image Controller is responsible for handling HTTP requests related to images in the online store application. It provides endpoints to upload, download, and retrieve images. This documentation provides an overview of the Image Controller and its available endpoints.
+
+## Endpoints
+
+### Upload Image
+
+- URL: `/api/images/upload/{productId}`
+- Method: POST
+- Description: Uploads an image for a product with the specified product ID.
+- Path Variable:
+  - `productId`: The ID of the product associated with the image.
+- Request Parameter:
+  - `imageFile`: The image file to be uploaded.
+- Response: Returns a ResponseEntity containing the updated ProductDto object representing the product with the uploaded image.
+- Example Response:
+```json
+{
+    "id": 1,
+    "name": "Product 1",
+    "description": "Description of product 1",
+    "price": 19.99,
+    "unitsInStock": 10,
+    "discountPercentage": 0.0,
+    "orderItems": [1, 2],
+    "categoryId": 2,
+    "userId": 1,
+    "reviewsId": [1, 2],
+    "imagesName": ["image1.jpg", "image2.jpg"]
+}
+```
+
+### Download Image by Name
+
+- URL: `/api/images/download`
+- Method: GET
+- Description: Downloads an image by its name.
+- Request Parameter:
+  - `name`: The name of the image to download.
+- Response: Returns the image file with the specified name.
+- Example Response: Returns the image file.
+
+### Get Image by ID
+
+- URL: `/api/images/getById`
+- Method: GET
+- Description: Retrieves an image by its ID.
+- Request Parameter:
+  - `id`: The ID of the image to retrieve.
+- Response: Returns an ImageModelDto object representing the image.
+- Example Response:
+```json
+{
+    "id": 1,
+    "name": "image1.jpg",
+    "type": "image/jpeg",
+    "picByte": "..."
+}
+```
+
+### Get Image by Name
+
+- URL: `/api/images/getByName`
+- Method: GET
+- Description: Retrieves an image by its name.
+- Request Parameter:
+  - `name`: The name of the image to retrieve.
+- Response: Returns an ImageModelDto object representing the image.
+- Example Response:
+```json
+{
+    "id": 1,
+    "name": "image1.jpg",
+    "type": "image/jpeg",
+    "picByte": "..."
+}
+```
+
+## Dependencies
+
+The Image Controller relies on the following dependencies:
+- Spring Framework: Provides the necessary infrastructure for building the web application.
+- Lombok: Simplifies the creation of DTOs and entities with automatic generation of getters, setters, and other boilerplate code.
+- ImageConverter: Converts between ImageModel and ImageModelDto objects.
+- ProductConverter: Converts between Product and ProductDto objects.
+- ImageService: Provides the business logic for handling images.

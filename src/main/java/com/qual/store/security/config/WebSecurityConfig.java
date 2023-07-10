@@ -3,6 +3,7 @@ package com.qual.store.security.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qual.store.model.enums.RoleName;
 import com.qual.store.security.util.JwtRequestFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,15 +32,10 @@ import java.util.Map;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
-    @Autowired
     private final UserDetailsService jwtUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
-
-    public WebSecurityConfig(UserDetailsService jwtUserDetailsService, JwtRequestFilter jwtRequestFilter) {
-        this.jwtUserDetailsService = jwtUserDetailsService;
-        this.jwtRequestFilter = jwtRequestFilter;
-    }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

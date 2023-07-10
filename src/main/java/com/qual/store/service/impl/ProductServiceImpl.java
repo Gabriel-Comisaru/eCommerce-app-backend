@@ -129,7 +129,7 @@ public class ProductServiceImpl implements ProductService {
     public Optional<Product> updateProduct(Long id, Product product) {
         validator.validate(product);
 
-        Optional<Product> optionalProduct = productRepository.findAllWithCategory()
+        Optional<Product> optionalProduct = productRepository.findAllWithCategoryAndReviewsAndImages()
                 .stream().filter(pro -> pro.getId().equals(id)).findFirst();
 
 //        Optional<Product> optionalProduct = productRepository.findById(id);
