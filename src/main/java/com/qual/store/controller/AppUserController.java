@@ -8,9 +8,14 @@ import com.qual.store.service.AppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,6 +28,19 @@ public class AppUserController {
 
     @Autowired
     private AppUserConverter appUserConverter;
+
+    @GetMapping("/loggedInUser")
+    public Map<String, Object> getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        System.out.println("********** authorities: " + userDetails.getAuthorities());
+
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("username", authentication.getName());
+        userMap.put("error", false);
+        return userMap;
+    }
 
     @GetMapping
     @Log

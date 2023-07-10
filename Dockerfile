@@ -11,7 +11,7 @@ RUN sed -i -e 's/\r$//' ./gradlew
 # Build desirable JAR
 RUN ./gradlew clean build -x test
 
-FROM openjdk:17-oracle
+FROM openjdk:17-oracle 
 WORKDIR /root/
 COPY --from=BUILD_IMAGE '/root/dev/main-project-backend/build/libs/main-project-backend-0.0.1-SNAPSHOT.jar' '/app/store.jar'
 
