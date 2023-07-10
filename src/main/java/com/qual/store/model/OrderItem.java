@@ -1,6 +1,7 @@
 package com.qual.store.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,7 +31,8 @@ public class OrderItem extends BaseEntity<Long> {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
-    @JsonBackReference
+//    @JsonBackReference
+    @JsonIgnore
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

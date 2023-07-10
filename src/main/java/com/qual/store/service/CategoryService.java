@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface CategoryService {
     List<Category> getAllCategories();
 
-    Optional<Category> saveCategory(Category category);
+    Optional<Category> saveCategory(String categoryName);
 
     Optional<Category> updateCategory(Long id, Category category);
 

@@ -14,10 +14,11 @@ import java.util.Set;
 @Entity
 @NamedEntityGraphs({
         @NamedEntityGraph(
-                name = "productWithCategory",
+                name = "productWithCategoryAndReviewsAndImages",
                 attributeNodes = {
                         @NamedAttributeNode(value = "category"),
-                        @NamedAttributeNode(value = "reviews")
+                        @NamedAttributeNode(value = "reviews"),
+                        @NamedAttributeNode(value = "images")
                 }
 
         ),
@@ -44,6 +45,12 @@ public class Product extends BaseEntity<Long> {
     @Column(nullable = false)
     private double price;
 
+    @Column
+    private long unitsInStock;
+
+    @Column
+    private double discountPercentage;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     @ToString.Exclude
@@ -52,7 +59,7 @@ public class Product extends BaseEntity<Long> {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "product")
     @Builder.Default
-    @JsonManagedReference
+//    @JsonManagedReference
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
@@ -60,7 +67,12 @@ public class Product extends BaseEntity<Long> {
     private AppUser user;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
-    private List<Review> reviews = new ArrayList<>();
+//    @JsonManagedReference
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+//    @JsonManagedReference
+    private Set<ImageModel> images;
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
@@ -70,12 +82,18 @@ public class Product extends BaseEntity<Long> {
         reviews.add(review);
     }
 
+    public void addImageModel(ImageModel imageModel) {
+        images.add(imageModel);
+    }
+
     @Override
     public String toString() {
         return "Product{" +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
+                ", units in stock=" + unitsInStock +
+                ", discount percentage=" + discountPercentage +
                 '}' + super.toString();
     }
 

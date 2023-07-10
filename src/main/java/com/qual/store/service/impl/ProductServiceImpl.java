@@ -3,13 +3,16 @@ package com.qual.store.service.impl;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
+import com.qual.store.exceptions.ImageModelException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
+import com.qual.store.model.ImageModel;
 import com.qual.store.model.Product;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
+import com.qual.store.repository.ImageRepository;
 import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.ProductService;
 import com.qual.store.utils.validators.Validator;
@@ -22,10 +25,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.qual.store.utils.images.ImageUtils.compressBytes;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -45,9 +54,25 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private AppUserRepository appUserRepository;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
     @Override
     @Log
-    public Product saveProductCategory(Product product, Long categoryId) {
+    public Product saveProductCategory(String name, String description, double price,
+                                       long unitsInStock, double discountPercentage,
+                                       MultipartFile file, Long categoryId) {
+        Product product = Product.builder()
+                .name(name)
+                .description(description)
+                .price(price)
+                .unitsInStock(unitsInStock)
+                .discountPercentage(discountPercentage)
+                .images(new HashSet<>())
+                .reviews(new ArrayList<>())
+                .orderItems(new HashSet<>())
+                .build();
+
         validator.validate(product);
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ProductNotFoundException(
@@ -60,13 +85,34 @@ public class ProductServiceImpl implements ProductService {
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
         product.setUser(appUser);
 
-        return productRepository.save(product);
+        ImageModel imageModel;
+        try {
+            imageModel = getImageModelFromMultipartFile(file);
+        } catch (IOException e) {
+            throw new ImageModelException(e.getMessage());
+        }
+
+        product.addImageModel(imageModel);
+
+        Product savedProduct = productRepository.save(product);
+        imageModel.setProduct(savedProduct);
+
+        imageRepository.save(imageModel);
+        return savedProduct;
+    }
+
+    private ImageModel getImageModelFromMultipartFile(MultipartFile file) throws IOException {
+        return ImageModel.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .picByte(compressBytes(file.getBytes()))
+                .build();
     }
 
     @Override
     @Log
     public List<Product> getAllProducts() {
-        return productRepository.findAllWithCategory();
+        return productRepository.findAllWithCategoryAndReviewsAndImages();
     }
 
     @Override
@@ -96,7 +142,6 @@ public class ProductServiceImpl implements ProductService {
                     updateProduct.setName(product.getName());
                     updateProduct.setPrice(product.getPrice());
                     updateProduct.setDescription(product.getDescription());
-
                 });
 
         return productRepository.findById(id);
@@ -142,7 +187,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDto getProductById(Long productId) {
-        Product product = productRepository.findAllWithCategory().stream().filter(p -> p.getId().equals(productId))
+        Product product = productRepository.findAllWithCategoryAndReviewsAndImages().stream().filter(p -> p.getId().equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new ProductNotFoundException(String.format("No product with id %s is found", productId)));
 

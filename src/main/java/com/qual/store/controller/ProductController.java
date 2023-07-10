@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,9 +69,16 @@ public class ProductController {
 
     @PostMapping("/category/{categoryId}")
     @Log
-    public ResponseEntity<?> addProductCategory(@RequestBody Product product, @PathVariable Long categoryId) {
+    public ResponseEntity<?> addProductCategory(@RequestParam String name,
+                                                @RequestParam String description,
+                                                @RequestParam double price,
+                                                @RequestParam long unitsInStock,
+                                                @RequestParam double discountPercentage,
+                                                @RequestParam MultipartFile image,
+                                                @PathVariable Long categoryId) {
         try {
-            Product savedProduct = productService.saveProductCategory(product, categoryId);
+            Product savedProduct = productService.saveProductCategory(name, description, price,
+                    unitsInStock, discountPercentage, image, categoryId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productConverter.convertModelToDto(savedProduct));
         } catch (Exception e) {
@@ -152,7 +160,7 @@ public class ProductController {
                 product.setUser(appUser);
 
                 productService.saveProduct(product);
-                
+
             }
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");

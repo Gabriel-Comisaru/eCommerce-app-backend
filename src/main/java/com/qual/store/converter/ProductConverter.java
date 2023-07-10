@@ -2,27 +2,26 @@ package com.qual.store.converter;
 
 import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.model.ImageModel;
 import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Product;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
+import com.qual.store.repository.ImageRepository;
 import com.qual.store.repository.ReviewRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class ProductConverter extends BaseConverter<Product, ProductDto> {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private AppUserRepository appUserRepository;
-
-    @Autowired
-    private ReviewRepository reviewRepository;
+    private final CategoryRepository categoryRepository;
+    private final AppUserRepository appUserRepository;
+    private final ReviewRepository reviewRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     public Product convertDtoToModel(ProductDto dto) {
@@ -30,9 +29,16 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .price(dto.getPrice())
+                .unitsInStock(dto.getUnitsInStock())
+                .discountPercentage(dto.getDiscountPercentage())
                 .category(categoryRepository.findById(dto.getCategoryId()).orElse(null))
                 .user(appUserRepository.findById(dto.getUserId()).orElse(null))
-                .reviews(dto.getReviewsId().stream().map(revId -> reviewRepository.findById(revId).orElseThrow()).collect(Collectors.toList()))
+                .reviews(dto.getReviewsId().stream()
+                        .map(revId -> reviewRepository.findById(revId).orElseThrow())
+                        .collect(Collectors.toList()))
+                .images(dto.getImagesName().stream()
+                        .map(name -> imageRepository.findByName(name).orElse(null))
+                        .collect(Collectors.toSet()))
                 .build();
     }
 
@@ -42,11 +48,15 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
+                .unitsInStock(product.getUnitsInStock())
+                .discountPercentage(product.getDiscountPercentage())
                 .orderItems(product.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .categoryId(product.getCategory().getId())
                 .userId(product.getUser().getId())
                 .reviewsId(product.getReviews().stream().map(BaseEntity::getId).collect(Collectors.toList()))
+                .imagesName(product.getImages().stream().map(ImageModel::getName).toList())
                 .build();
+
         productDto.setId(product.getId());
 
         return productDto;
