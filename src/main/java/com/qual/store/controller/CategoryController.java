@@ -6,7 +6,7 @@ import com.qual.store.dto.CategoryDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Category;
 import com.qual.store.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,72 +16,56 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/categories")
+@RequiredArgsConstructor
 @CrossOrigin("*")
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private CategoryConverter categoryConverter;
+    private final CategoryService categoryService;
+    private final CategoryConverter categoryConverter;
 
     @GetMapping()
     @Log
     public List<CategoryDto> getAllCategories() {
         return categoryService.getAllCategories().stream()
-                .map(category -> categoryConverter.convertModelToDto(category))
+                .map(categoryConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{categoryId}")
     @Log
-    public CategoryDto getCategoryById(@PathVariable("categoryId") Long categoryId) {
-        return categoryConverter.convertModelToDto(
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable("categoryId") Long categoryId) {
+        return ResponseEntity.ok(categoryConverter.convertModelToDto(
                 categoryService.findCategoryById(categoryId)
-        );
+        ));
     }
 
     @PostMapping
     @Log
-    public ResponseEntity<?> addCategory(@RequestParam("categoryName") String categoryName) {
-        try {
-            Category savedCategory = categoryService.saveCategory(categoryName)
-                    .orElseThrow(() -> new IllegalArgumentException("category not saved"));
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(categoryConverter.convertModelToDto(savedCategory));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
-        }
+    public ResponseEntity<CategoryDto> addCategory(@RequestParam("categoryName") String categoryName) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(categoryConverter.convertModelToDto(
+                                categoryService.saveCategory(categoryName)
+                        )
+                );
     }
 
     @PutMapping("/{categoryId}")
     @Log
-    public ResponseEntity<?> updateCategory(@PathVariable Long categoryId, @RequestBody Category category) {
-        try {
-            Category categoryUpdated = categoryService.updateCategory(categoryId, category)
-                    .orElseThrow(() -> new IllegalArgumentException("category not saved"));
-
-            CategoryDto responseCategoryDto = categoryConverter.convertModelToDto(categoryUpdated);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(responseCategoryDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
+    public ResponseEntity<CategoryDto> updateCategory(@PathVariable Long categoryId, @RequestBody Category category) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(categoryConverter.convertModelToDto(
+                                categoryService.updateCategory(categoryId, category)
+                        )
+                );
     }
 
     @DeleteMapping("/{categoryId}")
     @Log
-    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId) {
-        try {
-            categoryService.deleteCategoryById(categoryId);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("category deleted");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
+    public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId) {
+        categoryService.deleteCategoryById(categoryId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(String.format("category with id %s deleted", categoryId));
     }
 
     @PostMapping("/populate")

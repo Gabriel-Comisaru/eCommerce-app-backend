@@ -7,6 +7,7 @@ import com.qual.store.repository.CategoryRepository;
 import com.qual.store.service.CategoryService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,61 +15,52 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private Validator<Category> validator;
-
-//    @Override
-//    @Log
-//    public List<Category> getAllCategories() {
-//        return categoryRepository.findAll();
-//    }
+    private final CategoryRepository categoryRepository;
+    private final Validator<Category> validator;
 
     @Override
     @Log
     public List<Category> getAllCategories() {
-       List<Category> categories = categoryRepository.findAllWithProducts();
-         return categories;
+        return categoryRepository.findAllWithProducts();
     }
+
     @Override
     @Log
-    public Optional<Category> saveCategory(String categoryName) {
+    public Category saveCategory(String categoryName) {
         Category category = Category.builder()
                 .name(categoryName)
                 .build();
+
         validator.validate(category);
         Category savedCategory = categoryRepository.save(category);
 
-        Category result = categoryRepository.findAllWithProducts().stream()
+        return categoryRepository.findAllWithProducts().stream()
                 .filter(c -> c.getId().equals(savedCategory.getId()))
-                .findFirst().orElseThrow();
-
-        return Optional.of(result);
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("category not saved"));
     }
-    
-@Transactional
-@Override
-@Log
-public Optional<Category> updateCategory(Long id, Category category) {
-    validator.validate(category);
-    Optional<Category> optionalCategory = categoryRepository.findById(id);
 
-    optionalCategory
-            .orElseThrow(() -> new CategoryNotFoundException(String.format("No category found with id %s", id)));
+    @Transactional
+    @Override
+    @Log
+    public Category updateCategory(Long id, Category category) {
+        validator.validate(category);
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
 
-    optionalCategory
-            .ifPresent(updateCategory -> updateCategory.setName(category.getName()));
+        optionalCategory
+                .orElseThrow(() -> new CategoryNotFoundException(String.format("No category found with id %s", id)));
 
-    Category result = categoryRepository.findAllWithProducts().stream()
-            .filter(c -> c.getId().equals(optionalCategory.get().getId()))
-            .findFirst().orElseThrow();
+        optionalCategory
+                .ifPresent(updateCategory -> updateCategory.setName(category.getName()));
 
-    return Optional.of(result);
-}
+        return categoryRepository.findAllWithProducts().stream()
+                .filter(c -> c.getId().equals(optionalCategory.get().getId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("category not saved"));
+    }
 
     @Override
     @Log
