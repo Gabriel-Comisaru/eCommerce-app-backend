@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Builder
 public class OrderItemDto extends BaseDto implements Serializable {
     private Integer quantity;
+    private Long categoryId;
     private Long productId;
     private Long orderId;
 }
