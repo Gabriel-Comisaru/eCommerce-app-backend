@@ -57,6 +57,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .updateTime(product.getUpdateTime())
                 .orderItems(product.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .categoryId(product.getCategory().getId())
+                .categoryName(product.getCategory().getName())
                 .userId(product.getUser().getId())
                 .reviewsId(product.getReviews().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .imagesName(product.getImages().stream().map(ImageModel::getName).toList())

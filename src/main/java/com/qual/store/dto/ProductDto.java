@@ -23,6 +23,7 @@ public class ProductDto extends BaseDto implements Serializable {
     private Date updateTime;
     private List<Long> orderItems;
     private Long categoryId;
+    private String categoryName;
     private Long userId;
     private List<Long> reviewsId;
     private List<String> imagesName;
