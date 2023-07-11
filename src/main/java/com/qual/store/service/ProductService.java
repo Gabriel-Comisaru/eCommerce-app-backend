@@ -2,6 +2,7 @@ package com.qual.store.service;
 
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
+import com.qual.store.dto.request.ProductRequestDto;
 import com.qual.store.model.Product;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,13 +12,11 @@ import java.util.Optional;
 public interface ProductService {
     List<Product> getAllProducts();
 
-    Product saveProductCategory(String name, String description, double price,
-                                long unitsInStock, double discountPercentage,
-                                MultipartFile file, Long categoryId);
+    Product saveProductCategory(ProductRequestDto productRequestDto, Long categoryId);
 
     void saveProduct(Product product);
 
-    Optional<Product> updateProduct(Long id, Product product);
+    Optional<Product> updateProduct(Long id, ProductRequestDto productRequestDto);
 
     Product findProductById(Long id);
 

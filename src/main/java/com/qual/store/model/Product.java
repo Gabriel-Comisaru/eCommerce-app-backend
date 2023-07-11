@@ -5,11 +5,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @NamedEntityGraphs({
@@ -50,6 +49,12 @@ public class Product extends BaseEntity<Long> {
 
     @Column
     private double discountPercentage;
+
+    @CreationTimestamp
+    private Date createTime;
+
+    @UpdateTimestamp
+    private Date updateTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")

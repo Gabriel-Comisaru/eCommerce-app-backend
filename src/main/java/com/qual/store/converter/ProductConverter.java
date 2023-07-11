@@ -2,6 +2,7 @@ package com.qual.store.converter;
 
 import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.dto.request.ProductRequestDto;
 import com.qual.store.model.ImageModel;
 import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Product;
@@ -12,6 +13,8 @@ import com.qual.store.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Component
@@ -50,6 +53,8 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .price(product.getPrice())
                 .unitsInStock(product.getUnitsInStock())
                 .discountPercentage(product.getDiscountPercentage())
+                .createTime(product.getCreateTime())
+                .updateTime(product.getUpdateTime())
                 .orderItems(product.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .categoryId(product.getCategory().getId())
                 .userId(product.getUser().getId())
@@ -60,5 +65,18 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
         productDto.setId(product.getId());
 
         return productDto;
+    }
+
+    public Product convertRequestToModel(ProductRequestDto productRequestDto) {
+        return Product.builder()
+                .name(productRequestDto.getName())
+                .description(productRequestDto.getDescription())
+                .price(productRequestDto.getPrice())
+                .unitsInStock(productRequestDto.getUnitsInStock())
+                .discountPercentage(productRequestDto.getDiscountPercentage())
+                .images(new HashSet<>())
+                .reviews(new ArrayList<>())
+                .orderItems(new HashSet<>())
+                .build();
     }
 }

@@ -6,6 +6,7 @@ import com.qual.store.converter.lazyConverter.ProductLazyConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
+import com.qual.store.dto.request.ProductRequestDto;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
@@ -14,8 +15,10 @@ import com.qual.store.model.Product;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.service.CategoryService;
 import com.qual.store.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,29 +30,21 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/products")
+@RequiredArgsConstructor
 @CrossOrigin("*")
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ProductConverter productConverter;
-
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private ProductLazyConverter productLazyConverter;
-
-    @Autowired
-    private AppUserRepository appUserRepository;
+    private final ProductService productService;
+    private final ProductConverter productConverter;
+    private final CategoryService categoryService;
+    private final ProductLazyConverter productLazyConverter;
+    private final AppUserRepository appUserRepository;
 
     @GetMapping()
     @Log
     public List<ProductDto> getAllProducts() {
         return productService.getAllProducts().stream()
-                .map(product -> productConverter.convertModelToDto(product))
+                .map(productConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 
@@ -63,22 +58,19 @@ public class ProductController {
     @Log
     public List<ProductDtoWithCategory> getAllProductsWithCategory() {
         return productService.getAllProducts().stream()
-                .map(product -> productLazyConverter.convertModelToDto(product))
+                .map(productLazyConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/category/{categoryId}")
+    @PostMapping(path = "/category/{categoryId}",
+            consumes = {"multipart/form-data"}
+    )
     @Log
-    public ResponseEntity<?> addProductCategory(@RequestParam String name,
-                                                @RequestParam String description,
-                                                @RequestParam double price,
-                                                @RequestParam long unitsInStock,
-                                                @RequestParam double discountPercentage,
-                                                @RequestParam MultipartFile image,
+    public ResponseEntity<?> addProductCategory(@ModelAttribute @Valid ProductRequestDto productRequestDto,
                                                 @PathVariable Long categoryId) {
+
         try {
-            Product savedProduct = productService.saveProductCategory(name, description, price,
-                    unitsInStock, discountPercentage, image, categoryId);
+            Product savedProduct = productService.saveProductCategory(productRequestDto, categoryId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productConverter.convertModelToDto(savedProduct));
         } catch (Exception e) {
@@ -89,9 +81,10 @@ public class ProductController {
 
     @PutMapping("/{productId}")
     @Log
-    public ResponseEntity<?> updateProduct(@PathVariable Long productId, @RequestBody Product product) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long productId,
+                                           @RequestBody @Valid ProductRequestDto productRequestDto) {
         try {
-            Product productUpdated = productService.updateProduct(productId, product)
+            Product productUpdated = productService.updateProduct(productId, productRequestDto)
                     .orElseThrow(() -> new IllegalArgumentException("product not saved"));
 
             ProductDto responseProductDto = productConverter.convertModelToDto(productUpdated);
@@ -106,7 +99,6 @@ public class ProductController {
         }
     }
 
-    //    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{productId}")
     @Log
     public ResponseEntity<?> deleteProductById(@PathVariable Long productId) {
@@ -137,7 +129,8 @@ public class ProductController {
                 .collect(Collectors.toList());
     }
     //    @PreAuthorize("hasAnyRole('ADMIN')")
-    @PostMapping("/populate")
+
+  @PostMapping("/populate")
     @Log
     public ResponseEntity<?> populateDatabase() {
         try {
@@ -170,7 +163,6 @@ public class ProductController {
                 productService.saveProduct(product);
 
             }
-
             return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
