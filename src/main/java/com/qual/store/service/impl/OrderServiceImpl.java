@@ -107,6 +107,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderItem> orderItems = order.getOrderItems().stream().toList();
         order.setOrderItems(null);
+        order.setUser(null);
         orderItems.forEach(orderItem -> orderItem.setOrder(null));
 
         orderItemRepository.saveAll(orderItems);
