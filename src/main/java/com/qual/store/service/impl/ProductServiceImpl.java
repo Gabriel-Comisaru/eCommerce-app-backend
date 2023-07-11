@@ -3,6 +3,7 @@ package com.qual.store.service.impl;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
+import com.qual.store.exceptions.CategoryNotFoundException;
 import com.qual.store.exceptions.DeleteProductException;
 import com.qual.store.exceptions.ImageModelException;
 import com.qual.store.exceptions.ProductNotFoundException;
@@ -205,4 +206,15 @@ public class ProductServiceImpl implements ProductService {
 
         return productConverter.convertModelToDto(product);
     }
+    //find products by category
+    @Override
+    @Log
+    public List<Product> findProductsByCategory(Long categoryId) {
+        return productRepository.findAllWithCategoryAndReviewsAndImages()
+                .stream()
+                .filter(product -> product.getCategory().getId().equals(categoryId))
+                .collect(Collectors.toList());
+    }
+
+
 }

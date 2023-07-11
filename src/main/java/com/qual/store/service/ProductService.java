@@ -26,4 +26,6 @@ public interface ProductService {
     PaginatedProductResponse getProducts(Integer pageNumber, Integer pageSize, String sortBy);
 
     ProductDto getProductById(Long productId);
+
+    List<Product> findProductsByCategory(Long categoryId);
 }

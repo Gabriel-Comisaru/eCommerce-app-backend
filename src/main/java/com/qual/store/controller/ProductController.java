@@ -128,6 +128,14 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProducts(pageNumber, pageSize, sortBy));
     }
 
+    //find products by category
+    @GetMapping("/category")
+    @Log
+    public List<ProductDto> getProductsByCategory(@RequestParam Long categoryId) {
+        return productService.findProductsByCategory(categoryId).stream()
+                .map(product -> productConverter.convertModelToDto(product))
+                .collect(Collectors.toList());
+    }
     //    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/populate")
     @Log

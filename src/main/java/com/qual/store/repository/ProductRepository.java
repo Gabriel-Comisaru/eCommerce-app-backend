@@ -1,5 +1,6 @@
 package com.qual.store.repository;
 
+import com.qual.store.model.Category;
 import com.qual.store.model.Order;
 import com.qual.store.model.Product;
 import org.springframework.data.jpa.repository.EntityGraph;
