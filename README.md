@@ -448,7 +448,7 @@ The Category Controller relies on the following dependencies:
 
 # Product Controller Documentation
 
-The Product Controller is responsible for handling HTTP requests related to products in the online store application. It provides endpoints to perform CRUD (Create, Read, Update, Delete) operations on products, retrieve product information, and manage product categories. This documentation provides an overview of the Product Controller and its available endpoints.
+The Product Controller is responsible for handling HTTP requests related to products in the online store application. It provides endpoints to perform CRUD (Create, Read, Update, Delete) operations on products, retrieve product information, manage product categories, and populate the database with fake data. This documentation provides an overview of the Product Controller and its available endpoints.
 
 ## Endpoints
 
@@ -468,8 +468,11 @@ The Product Controller is responsible for handling HTTP requests related to prod
         "price": 19.99,
         "unitsInStock": 10,
         "discountPercentage": 0.0,
+        "createTime": "2023-07-11T10:30:00Z",
+        "updateTime": "2023-07-11T11:15:00Z",
         "orderItems": [1, 2],
         "categoryId": 2,
+        "categoryName": "Category 2",
         "userId": 1,
         "reviewsId": [1, 2],
         "imagesName": ["image1.jpg", "image2.jpg"]
@@ -481,8 +484,11 @@ The Product Controller is responsible for handling HTTP requests related to prod
         "price": 29.99,
         "unitsInStock": 15,
         "discountPercentage": 0.1,
+        "createTime": "2023-07-10T09:45:00Z",
+        "updateTime": "2023-07-11T08:20:00Z",
         "orderItems": [3],
         "categoryId": 1,
+        "categoryName": "Category 1",
         "userId": 2,
         "reviewsId": [3],
         "imagesName": ["image3.jpg"]
@@ -507,8 +513,11 @@ The Product Controller is responsible for handling HTTP requests related to prod
     "price": 19.99,
     "unitsInStock": 10,
     "discountPercentage": 0.0,
+    "createTime": "2023-07-11T10:30:00Z",
+    "updateTime": "2023-07-11T11:15:00Z",
     "orderItems": [1, 2],
     "categoryId": 2,
+    "categoryName": "Category 2",
     "userId": 1,
     "reviewsId": [1, 2],
     "imagesName": ["image1.jpg", "image2.jpg"]
@@ -531,7 +540,8 @@ The Product Controller is responsible for handling HTTP requests related to prod
         "price": 19.99,
         "unitsInStock": 10,
         "discountPercentage": 0.0,
-        "categoryId": 2
+        "categoryId": 2,
+        "categoryName": "Category 2"
     },
     {
         "id": 2,
@@ -540,7 +550,8 @@ The Product Controller is responsible for handling HTTP requests related to prod
         "price": 29.99,
         "unitsInStock": 15,
         "discountPercentage": 0.1,
-        "categoryId": 1
+        "categoryId": 1,
+        "categoryName": "Category 1"
     }
 ]
 ```
@@ -552,7 +563,7 @@ The Product Controller is responsible for handling HTTP requests related to prod
 - Description: Adds a new product with the specified category.
 - Path Variable:
   - `categoryId`: The ID of the category associated with the product.
-- Request Body: Product object representing the product to be added.
+- Request Body: ProductRequestDto object representing the product to be added, including an optional image file.
 - Response: Returns the created ProductDto object representing the added product.
 - Example Request Body:
 ```json
@@ -561,7 +572,8 @@ The Product Controller is responsible for handling HTTP requests related to prod
     "description": "Description of product 3",
     "price": 39.99,
     "unitsInStock": 5,
-    "discountPercentage": 0.2
+    "discountPercentage": 0.2,
+    "image": "<image file>"
 }
 ```
 - Example Response:
@@ -573,10 +585,14 @@ The Product Controller is responsible for handling HTTP requests related to prod
     "price": 39.99,
     "unitsInStock": 5,
     "discountPercentage": 0.2,
+    "createTime": "2023-07-11T14:45:00Z",
+    "updateTime": "2023-07-11T14:45:00Z",
+    "orderItems": [],
     "categoryId": 2,
+    "categoryName": "Category 2",
     "userId": 1,
     "reviewsId": [],
-    "imagesName": []
+    "imagesName": ["image3.jpg"]
 }
 ```
 
@@ -587,7 +603,7 @@ The Product Controller is responsible for handling HTTP requests related to prod
 - Description: Updates an existing product.
 - Path Variable:
   - `productId`: The ID of the product to update.
-- Request Body: Product object representing the updated product.
+- Request Body: ProductRequestDto object representing the updated product.
 - Response: Returns the updated ProductDto object representing the updated product.
 - Example Request Body:
 ```json
@@ -608,7 +624,11 @@ The Product Controller is responsible for handling HTTP requests related to prod
     "price": 49.99,
     "unitsInStock": 8,
     "discountPercentage": 0.15,
+    "createTime": "2023-07-11T10:30:00Z",
+    "updateTime": "2023-07-11T15:20:00Z",
+    "orderItems": [1, 2],
     "categoryId": 2,
+    "categoryName": "Category 2",
     "userId": 1,
     "reviewsId": [1, 2],
     "imagesName": ["image1.jpg", "image2.jpg"]
@@ -622,7 +642,9 @@ The Product Controller is responsible for handling HTTP requests related to prod
 - Description: Deletes a product by its ID.
 - Path Variable:
   - `productId`: The ID of the product to delete.
-- Response: Returns a success message indicating the deletion.
+- Response: Returns a success message indicating the
+
+deletion.
 - Example Response:
 ```text
 Product with id 1 deleted
@@ -649,8 +671,11 @@ Product with id 1 deleted
             "price": 19.99,
             "unitsInStock": 10,
             "discountPercentage": 0.0,
+            "createTime": "2023-07-11T10:30:00Z",
+            "updateTime": "2023-07-11T11:15:00Z",
             "orderItems": [1, 2],
             "categoryId": 2,
+            "categoryName": "Category 2",
             "userId": 1,
             "reviewsId": [1, 2],
             "imagesName": ["image1.jpg", "image2.jpg"]
@@ -662,10 +687,11 @@ Product with id 1 deleted
             "price": 29.99,
             "unitsInStock": 15,
             "discountPercentage": 0.1,
-            "orderItems":
-
-[3],
+            "createTime": "2023-07-10T09:45:00Z",
+            "updateTime": "2023-07-11T08:20:00Z",
+            "orderItems": [3],
             "categoryId": 1,
+            "categoryName": "Category 1",
             "userId": 2,
             "reviewsId": [3],
             "imagesName": ["image3.jpg"]
@@ -687,6 +713,52 @@ Product with id 1 deleted
 Database populated with fake data
 ```
 
+### Get Products by Category
+
+- URL: `/api/products/category`
+- Method: GET
+- Description: Retrieves products belonging to a specific category.
+- Request Parameters:
+  - `categoryId`: The ID of the category to filter products.
+- Response: Returns a list of ProductDto objects representing the products in the specified category.
+- Example Response:
+```json
+[
+    {
+        "id": 1,
+        "name": "Product 1",
+        "description": "Description of product 1",
+        "price": 19.99,
+        "unitsInStock": 10,
+        "discountPercentage": 0.0,
+        "createTime": "2023-07-11T10:30:00Z",
+        "updateTime": "2023-07-11T11:15:00Z",
+        "orderItems": [1, 2],
+        "categoryId": 2,
+        "categoryName": "Category 2",
+        "userId": 1,
+        "reviewsId": [1, 2],
+        "imagesName": ["image1.jpg", "image2.jpg"]
+    },
+    {
+        "id": 3,
+        "name": "Product 3",
+        "description": "Description of product 3",
+        "price": 29.99,
+        "unitsInStock": 15,
+        "discountPercentage": 0.1,
+        "createTime": "2023-07-10T09:45:00Z",
+        "updateTime": "2023-07-11T08:20:00Z",
+        "orderItems": [3],
+        "categoryId": 2,
+        "categoryName": "Category 2",
+        "userId": 2,
+        "reviewsId": [3],
+        "imagesName": ["image3.jpg"]
+    }
+]
+```
+
 ## Error Handling
 
 The Product Controller handles several exceptions and provides appropriate error responses. The following exceptions are handled:
@@ -702,8 +774,10 @@ The Product Controller allows cross-origin requests through the `@CrossOrigin("*
 
 The Product Controller relies on the following dependencies:
 - Spring Framework: Provides the necessary infrastructure for building the web application.
-- Faker: Used to generate fake product data for testing purposes.
 - Lombok: Simplifies the creation of DTOs and entities with automatic generation of getters, setters, and other boilerplate code.
+- Jakarta Validation API: Provides validation constraints for request DTOs.
+- Faker: Used to generate fake product data for testing purposes.
+- Hibernate Annotations: Provides annotations for defining JPA entities and relationships.
 
 ##
 ##
