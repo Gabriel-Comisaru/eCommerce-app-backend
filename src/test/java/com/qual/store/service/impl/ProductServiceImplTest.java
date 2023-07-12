@@ -139,7 +139,6 @@ class ProductServiceImplTest {
         // then
         List<Product> result = productService.getAllProducts();
 
-        // Verify the result
         assertEquals(2, result.size());
         verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
     }
