@@ -16,7 +16,7 @@ public interface ProductService {
 
     void saveProduct(Product product);
 
-    Optional<Product> updateProduct(Long id, ProductRequestDto productRequestDto);
+    Product updateProduct(Long id, ProductRequestDto productRequestDto);
 
     Product findProductById(Long id);
 

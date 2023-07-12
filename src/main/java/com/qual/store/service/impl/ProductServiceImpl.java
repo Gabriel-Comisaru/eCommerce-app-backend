@@ -114,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     @Log
-    public Optional<Product> updateProduct(Long id, ProductRequestDto productRequestDto) {
+    public Product updateProduct(Long id, ProductRequestDto productRequestDto) {
         Product product = productConverter.convertRequestToModel(productRequestDto);
         validator.validate(product);
 
@@ -133,7 +133,8 @@ public class ProductServiceImpl implements ProductService {
                     updateProduct.setDiscountPercentage(product.getDiscountPercentage());
                 });
 
-        return productRepository.findById(id);
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(String.format("No product found with id %s", id)));
     }
 
     @Override

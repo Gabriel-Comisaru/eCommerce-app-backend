@@ -7,7 +7,6 @@ import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.dto.request.ProductRequestDto;
-import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
@@ -18,12 +17,10 @@ import com.qual.store.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,53 +59,39 @@ public class ProductController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping(path = "/category/{categoryId}",
+    @PostMapping(
+            path = "/category/{categoryId}",
             consumes = {"multipart/form-data"}
     )
     @Log
     public ResponseEntity<?> addProductCategory(@ModelAttribute @Valid ProductRequestDto productRequestDto,
                                                 @PathVariable Long categoryId) {
 
-        try {
-            Product savedProduct = productService.saveProductCategory(productRequestDto, categoryId);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(productConverter.convertModelToDto(savedProduct));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productConverter.convertModelToDto(
+                                productService.saveProductCategory(productRequestDto, categoryId)
+                        )
+                );
     }
 
-    @PutMapping("/{productId}")
+    @PutMapping(
+            path = "/{productId}",
+            consumes = {"multipart/form-data"}
+    )
     @Log
     public ResponseEntity<?> updateProduct(@PathVariable Long productId,
-                                           @RequestBody @Valid ProductRequestDto productRequestDto) {
-        try {
-            Product productUpdated = productService.updateProduct(productId, productRequestDto)
-                    .orElseThrow(() -> new IllegalArgumentException("product not saved"));
-
-            ProductDto responseProductDto = productConverter.convertModelToDto(productUpdated);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(responseProductDto);
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(e.getMessage());
-        }
+                                           @ModelAttribute @Valid ProductRequestDto productRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(productConverter.convertModelToDto(
+                        productService.updateProduct(productId, productRequestDto)
+                ));
     }
 
     @DeleteMapping("/{productId}")
     @Log
     public ResponseEntity<?> deleteProductById(@PathVariable Long productId) {
-        try {
-            productService.deleteProductById(productId);
-            return ResponseEntity.ok().body(String.format("Product with id %s deleted", productId));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        productService.deleteProductById(productId);
+        return ResponseEntity.ok().body(String.format("Product with id %s deleted", productId));
     }
 
     @GetMapping("/display")
@@ -120,17 +103,15 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProducts(pageNumber, pageSize, sortBy));
     }
 
-    //find products by category
     @GetMapping("/category")
     @Log
     public List<ProductDto> getProductsByCategory(@RequestParam Long categoryId) {
         return productService.findProductsByCategory(categoryId).stream()
-                .map(product -> productConverter.convertModelToDto(product))
+                .map(productConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
-    //    @PreAuthorize("hasAnyRole('ADMIN')")
 
-  @PostMapping("/populate")
+    @PostMapping("/populate")
     @Log
     public ResponseEntity<?> populateDatabase() {
         try {
