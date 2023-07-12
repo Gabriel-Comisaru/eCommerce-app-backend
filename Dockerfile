@@ -6,8 +6,11 @@ WORKDIR $APP_HOME
 # Copy all the files
 COPY ./build.gradle ./gradlew ./gradlew.bat $APP_HOME
 COPY gradle $APP_HOME/gradle
-COPY ./src $APP_HOME/src/
+
 RUN sed -i -e 's/\r$//' ./gradlew
+RUN ./gradlew --version
+
+COPY ./src $APP_HOME/src/
 # Build desirable JAR
 RUN ./gradlew clean build -x test
 
