@@ -4,7 +4,6 @@ import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.dto.request.ProductRequestDto;
-import com.qual.store.exceptions.CategoryNotFoundException;
 import com.qual.store.exceptions.DeleteProductException;
 import com.qual.store.exceptions.ImageModelException;
 import com.qual.store.exceptions.ProductNotFoundException;
@@ -107,7 +106,6 @@ public class ProductServiceImpl implements ProductService {
     @Log
     public void saveProduct(Product product) {
         validator.validate(product);
-
         productRepository.save(product);
     }
 
@@ -199,7 +197,7 @@ public class ProductServiceImpl implements ProductService {
 
         return productConverter.convertModelToDto(product);
     }
-    //find products by category
+
     @Override
     @Log
     public List<Product> findProductsByCategory(Long categoryId) {
@@ -208,6 +206,4 @@ public class ProductServiceImpl implements ProductService {
                 .filter(product -> product.getCategory().getId().equals(categoryId))
                 .collect(Collectors.toList());
     }
-
-
 }
