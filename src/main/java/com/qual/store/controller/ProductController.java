@@ -17,6 +17,7 @@ import com.qual.store.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -76,11 +77,11 @@ public class ProductController {
 
     @PutMapping(
             path = "/{productId}",
-            consumes = {"multipart/form-data"}
+            consumes =  {"*/*"}
     )
     @Log
     public ResponseEntity<?> updateProduct(@PathVariable Long productId,
-                                           @ModelAttribute @Valid ProductRequestDto productRequestDto) {
+                                           @RequestBody  @Valid ProductRequestDto productRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productConverter.convertModelToDto(
                         productService.updateProduct(productId, productRequestDto)
