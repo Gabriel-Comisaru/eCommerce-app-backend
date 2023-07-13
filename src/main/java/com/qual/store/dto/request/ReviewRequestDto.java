@@ -1,11 +1,12 @@
 package com.qual.store.dto.request;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ReviewRequestDto implements Serializable {
 

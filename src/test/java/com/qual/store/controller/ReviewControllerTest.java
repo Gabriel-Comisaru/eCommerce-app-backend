@@ -143,7 +143,6 @@ class ReviewControllerTest {
     }
 
     @Test
-    @Disabled
     public void saveReviewTest() throws Exception {
         // given
         Long productId = 1L;
@@ -182,7 +181,6 @@ class ReviewControllerTest {
     }
 
     @Test
-    @Disabled
     public void updateReviewTest() throws Exception {
         // given
         Long reviewId = 1L;

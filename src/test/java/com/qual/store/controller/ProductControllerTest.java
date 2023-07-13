@@ -1,6 +1,7 @@
 package com.qual.store.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.converter.lazyConverter.ProductLazyConverter;
 import com.qual.store.dto.ProductDto;
@@ -164,17 +165,16 @@ class ProductControllerTest {
         updatedProductDto.setName("Updated Product");
 
         // when
-        when(productService.updateProduct(eq(productId), eq(productRequestDto))).thenReturn(updatedProduct);
-        when(productConverter.convertModelToDto(updatedProduct)).thenReturn(updatedProductDto);
+        when(productService.updateProduct(anyLong(), any(ProductRequestDto.class))).thenReturn(updatedProduct);
+        when(productConverter.convertModelToDto(any(Product.class))).thenReturn(updatedProductDto);
 
         // then
+        String jsonString = asJsonString(productRequestDto);
+        System.out.println("jsonString: " + jsonString);
+
         mockMvc.perform(put("/api/products/{productId}", productId)
-                        .contentType(MediaType.MULTIPART_FORM_DATA)
-                        .param("name", productRequestDto.getName())
-                        .param("description", productRequestDto.getDescription())
-                        .param("price", String.valueOf(productRequestDto.getPrice()))
-                        .param("unitsInStock", String.valueOf(productRequestDto.getUnitsInStock()))
-                        .param("discountPercentage", String.valueOf(productRequestDto.getDiscountPercentage())))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(jsonString))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(productId))
                 .andExpect(jsonPath("$.name").value("Updated Product"));
@@ -264,5 +264,15 @@ class ProductControllerTest {
     @AfterEach
     public void closeService() throws Exception {
         closeable.close();
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            return mapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
