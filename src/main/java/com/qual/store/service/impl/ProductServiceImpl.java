@@ -104,6 +104,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Log
+    public List<Product> getAllProductsByPriceRange(Double minPrice, Double maxPrice) {
+        return productRepository.findAllWithCategoryAndReviewsAndImages()
+                .stream()
+                .filter(product -> product.getPrice() >= minPrice && product.getPrice() <= maxPrice)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Log
     public void saveProduct(Product product) {
         validator.validate(product);
         productRepository.save(product);

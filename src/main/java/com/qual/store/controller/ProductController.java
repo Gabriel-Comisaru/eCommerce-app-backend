@@ -53,6 +53,19 @@ public class ProductController {
                 .filter(discount -> discount.getDiscountPercentage() > 0)
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/price")
+    @Log
+    public List<ProductDto> getAllProductsByPriceRange(@RequestParam Double minPrice, @RequestParam Double maxPrice) {
+        return productService.getAllProductsByPriceRange(minPrice, maxPrice).stream()
+                .map(productConverter::convertModelToDto)
+                .collect(Collectors.toList());
+//        return productService.getAllProducts().stream()
+//                .map(productConverter::convertModelToDto)
+//                .filter(price -> price.getPrice() >= minPrice && price.getPrice() <= maxPrice)
+//                .collect(Collectors.toList());
+    }
+
     @GetMapping("/{productId}")
     @Log
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
