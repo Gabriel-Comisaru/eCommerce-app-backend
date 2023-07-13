@@ -958,6 +958,23 @@ The Order Item Controller handles HTTP requests related to order items in the on
     }
 ]
 ```
+### Get Order Item by ID
+
+- URL: `/api/orderItems/{orderItemId}`
+- Method: GET
+- Description: Retrieves an order item by its ID.
+- Path Variable:
+  - `orderItemId`: The ID of the order item to retrieve.
+- Response: Returns an OrderItemDto object representing the order item.
+- Example Response:
+```json
+{
+    "id": 1,
+    "quantity": 2,
+    "productId": 1,
+    "orderId": 1
+}
+```
 
 ### Get All Order Items with Product
 
@@ -988,14 +1005,9 @@ The Order Item Controller handles HTTP requests related to order items in the on
 - Description: Adds an order item for the specified product.
 - Path Variable:
   - `productId`: The ID of the product for which the order item is being added.
-- Request Body: OrderItem object representing the order item to be added.
+- Request Parameters:
+  - `quantity`: The quantity of the order item.
 - Response: Returns the created OrderItemDto object representing the added order item.
-- Example Request Body:
-```json
-{
-    "quantity": 2
-}
-```
 - Example Response:
 ```json
 {
