@@ -7,31 +7,28 @@ import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderRepository;
 import com.qual.store.service.AppUserService;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AppUserImpl implements AppUserService {
-    @Autowired
-    private OrderRepository orderRepository;
-
-    @Autowired
-    private AppUserRepository appUserRepository;
+    private final OrderRepository orderRepository;
+    private final AppUserRepository appUserRepository;
 
     @Override
     @Log
     public List<AppUser> getAllUsers() {
-        List<AppUser> users = appUserRepository.findAllWithOrders();
-        return users;
+        return appUserRepository.findAllWithOrders();
     }
 
     @Override
     @Log
     public AppUser findUserByUsername(String username) {
-       return appUserRepository.findUserByUsername(username);
+        return appUserRepository.findUserByUsername(username);
     }
 
     @Override
@@ -42,7 +39,7 @@ public class AppUserImpl implements AppUserService {
 
         List<Order> orders = user.getOrders().stream().toList();
         user.setOrders(null);
-        orders.forEach(order ->  order.setUser(null));
+        orders.forEach(order -> order.setUser(null));
 
         orderRepository.saveAll(orders);
 

@@ -5,6 +5,7 @@ import com.qual.store.model.enums.RoleName;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.security.service.JwtUserDetailsService;
 import com.qual.store.security.util.JwtTokenUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.ResponseEntity;
@@ -22,23 +23,16 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 @CrossOrigin("*")
 public class AuthenticationController {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    final AppUserRepository userRepository;
-    final AuthenticationManager authenticationManager;
-    final JwtUserDetailsService userDetailsService;
-    final JwtTokenUtil jwtTokenUtil;
-
-    public AuthenticationController(AppUserRepository userRepository, AuthenticationManager authenticationManager,
-                                    JwtUserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
-        this.userRepository = userRepository;
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.jwtTokenUtil = jwtTokenUtil;
-    }
+    private final AppUserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUserDetailsService userDetailsService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestParam("username") String username,

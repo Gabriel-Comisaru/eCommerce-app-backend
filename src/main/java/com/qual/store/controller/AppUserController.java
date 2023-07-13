@@ -5,6 +5,7 @@ import com.qual.store.dto.AppUserDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.service.AppUserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +21,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/users")
+@RequiredArgsConstructor
 @CrossOrigin("*")
 public class AppUserController {
 
-    @Autowired
-    private AppUserService appUserService;
-
-    @Autowired
-    private AppUserConverter appUserConverter;
+    private final AppUserService appUserService;
+    private final AppUserConverter appUserConverter;
 
     @GetMapping("/loggedInUser")
     public Map<String, Object> getLoggedInUser() {
@@ -46,7 +45,7 @@ public class AppUserController {
     @Log
     public List<AppUserDto> getAllUsers() {
         return appUserService.getAllUsers().stream()
-                .map(user -> appUserConverter.convertModelToDto(user))
+                .map(appUserConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 
