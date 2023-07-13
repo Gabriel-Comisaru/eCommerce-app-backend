@@ -4,31 +4,24 @@ import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.dto.request.ProductRequestDto;
-import com.qual.store.exceptions.CategoryNotFoundException;
 import com.qual.store.exceptions.DeleteProductException;
-import com.qual.store.exceptions.ImageModelException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.model.*;
 import com.qual.store.repository.*;
 import com.qual.store.utils.validators.Validator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.*;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -61,40 +54,40 @@ class ProductServiceImplTest {
 
     @Test
     public void saveProductCategoryTest() {
-            //given
-            ProductRequestDto productRequestDto = ProductRequestDto.builder()
-                    .name("Test Product")
-                    .description("Test Description")
-                    .price(10.0)
-                    .unitsInStock(5L)
-                    .discountPercentage(0.0)
-                    .build();
-            Long categoryId = 1L;
+        //given
+        ProductRequestDto productRequestDto = ProductRequestDto.builder()
+                .name("Test Product")
+                .description("Test Description")
+                .price(10.0)
+                .unitsInStock(5L)
+                .discountPercentage(0.0)
+                .build();
+        Long categoryId = 1L;
 
-            Category category = Category.builder().build();
-            category.setId(categoryId);
+        Category category = Category.builder().build();
+        category.setId(categoryId);
 
-            Product product = Product.builder()
-                    .name(productRequestDto.getName())
-                    .description(productRequestDto.getDescription())
-                    .price(productRequestDto.getPrice())
-                    .unitsInStock(productRequestDto.getUnitsInStock())
-                    .discountPercentage(productRequestDto.getDiscountPercentage())
-                    .category(category)
-                    .build();
+        Product product = Product.builder()
+                .name(productRequestDto.getName())
+                .description(productRequestDto.getDescription())
+                .price(productRequestDto.getPrice())
+                .unitsInStock(productRequestDto.getUnitsInStock())
+                .discountPercentage(productRequestDto.getDiscountPercentage())
+                .category(category)
+                .build();
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(new AppUser(), new Object());
-            SecurityContext securityContext = mock(SecurityContext.class);
-            when(securityContext.getAuthentication()).thenReturn(authentication);
-            SecurityContextHolder.setContext(securityContext);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(new AppUser(), new Object());
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
-            // when
-            when(productConverter.convertRequestToModel(productRequestDto)).thenReturn(product);
-            when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
-            when(appUserRepository.findUserByUsername(anyString())).thenReturn(new AppUser());
-            when(imageRepository.save(any(ImageModel.class))).thenReturn(new ImageModel());
+        // when
+        when(productConverter.convertRequestToModel(productRequestDto)).thenReturn(product);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+        when(appUserRepository.findUserByUsername(anyString())).thenReturn(new AppUser());
+        when(imageRepository.save(any(ImageModel.class))).thenReturn(new ImageModel());
 
-            Product savedProduct = productService.saveProductCategory(productRequestDto, categoryId);
+        Product savedProduct = productService.saveProductCategory(productRequestDto, categoryId);
 
         // then
         verify(validator, times(1)).validate(product);

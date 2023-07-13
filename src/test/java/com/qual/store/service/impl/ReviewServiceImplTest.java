@@ -13,11 +13,14 @@ import com.qual.store.repository.ReviewRepository;
 import com.qual.store.utils.validators.ReviewValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,19 +120,29 @@ class ReviewServiceImplTest {
 
 
     @Test
-    @Disabled
     public void testSaveReview() {
         // given
         Long productId = 1L;
         ReviewRequestDto reviewRequestDto = ReviewRequestDto.builder().build();
-        Product product = new Product();
+        Product product = Product.builder()
+                .reviews(new ArrayList<>()).build();
         product.setId(productId);
-        Review review = new Review();
+        Review review = Review.builder()
+                .title("Title")
+                .product(product)
+                .build();
         ReviewDto savedReviewDto = ReviewDto.builder().build();
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(new AppUser(), new Object());
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
 
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(reviewConverter.convertRequestDtoToModel(reviewRequestDto)).thenReturn(review);
         when(appUserRepository.findUserByUsername(anyString())).thenReturn(new AppUser());
+        when(productRepository.save(any(Product.class))).thenReturn(product);
+        when(reviewRepository.findByTitle(anyString())).thenReturn(Optional.of(review));
         when(reviewConverter.convertModelToDto(review)).thenReturn(savedReviewDto);
 
         // when
@@ -139,8 +152,8 @@ class ReviewServiceImplTest {
         assertNotNull(result);
         verify(reviewValidator, times(1)).validate(reviewRequestDto);
         verify(reviewRepository, times(1)).findByTitle(review.getTitle());
+        verify(productRepository, times(1)).findById(productId);
         verify(productRepository, times(1)).save(product);
-        verify(reviewRepository, times(1)).save(review);
         verifyNoMoreInteractions(reviewRepository);
         verifyNoMoreInteractions(productRepository);
     }

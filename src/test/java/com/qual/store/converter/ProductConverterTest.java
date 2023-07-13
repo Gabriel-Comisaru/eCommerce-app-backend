@@ -22,7 +22,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class ProductConverterTests {
+class ProductConverterTest {
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -159,10 +159,6 @@ class ProductConverterTests {
 
         // when
         ProductDto actualProductDto = productConverter.convertModelToDto(product);
-
-        // debugging
-        System.out.println("Expected: " + expectedProductDto);
-        System.out.println("Actual: " + actualProductDto);
 
         // then
         assertEquals(expectedProductDto.getName(), actualProductDto.getName());
