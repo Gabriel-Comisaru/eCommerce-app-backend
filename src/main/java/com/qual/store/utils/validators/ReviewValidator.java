@@ -19,9 +19,9 @@ public class ReviewValidator implements Validator<ReviewRequestDto> {
                 "review title cannot be null");
         conditions.put(rev -> rev != null && rev.getTitle() != null && rev.getTitle().trim().isEmpty(),
                 "review title cannot be empty");
-        conditions.put(cl -> cl != null && cl.getTitle() != null && cl.getComment().trim().isEmpty(),
+        conditions.put(rev -> rev != null && rev.getTitle() != null && rev.getComment().trim().isEmpty(),
                 "review comment cannot be empty");
-        conditions.put(cl -> cl != null && cl.getTitle() != null && cl.getComment().trim().isEmpty() && cl.getRating() < 0,
+        conditions.put(rev -> rev != null && rev.getTitle() != null && !rev.getComment().trim().isEmpty() && rev.getRating() < 0,
                 "review rating cannot be negative");
 
         conditions.keySet().stream()

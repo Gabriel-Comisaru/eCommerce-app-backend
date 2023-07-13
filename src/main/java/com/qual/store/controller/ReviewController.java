@@ -5,7 +5,6 @@ import com.qual.store.dto.request.ReviewRequestDto;
 import com.qual.store.logger.Log;
 import com.qual.store.service.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +16,6 @@ import java.util.List;
 @CrossOrigin("*")
 public class ReviewController {
 
-    @Autowired
     private final ReviewService reviewService;
 
     @Log

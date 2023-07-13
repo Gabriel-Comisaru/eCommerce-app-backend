@@ -7,9 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "reviews")
@@ -18,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Builder
-public class Review extends BaseEntity<Long> {
+public class Review extends BaseEntity<Long> implements Serializable {
 
     private double rating;
 

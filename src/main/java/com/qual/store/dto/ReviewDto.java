@@ -5,13 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-public class ReviewDto extends BaseDto {
+public class ReviewDto extends BaseDto implements Serializable {
 
     private double rating;
 

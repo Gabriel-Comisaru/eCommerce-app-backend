@@ -6,19 +6,18 @@ import com.qual.store.dto.request.ReviewRequestDto;
 import com.qual.store.model.Review;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
+@RequiredArgsConstructor
 public class ReviewConverter extends BaseConverter<Review, ReviewDto> {
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private AppUserRepository appUserRepository;
+    private final ProductRepository productRepository;
+    private final AppUserRepository appUserRepository;
 
     @Override
     public Review convertDtoToModel(ReviewDto dto) {

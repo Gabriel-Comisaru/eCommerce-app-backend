@@ -28,20 +28,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
-    @Autowired
     private final ReviewRepository reviewRepository;
-
-    @Autowired
     private final ProductRepository productRepository;
-
-    @Autowired
     private final ReviewConverter reviewConverter;
-
-    @Autowired
-    private ReviewValidator validator;
-
-    @Autowired
-    private AppUserRepository appUserRepository;
+    private final ReviewValidator validator;
+    private final AppUserRepository appUserRepository;
 
     @Log
     @Override
@@ -98,7 +89,7 @@ public class ReviewServiceImpl implements ReviewService {
         Optional<Review> reviewOptional = reviewRepository.findById(id);
 
         reviewOptional
-                .orElseThrow(() -> new ProductNotFoundException(String.format("no review with id = %s", id)));
+                .orElseThrow(() -> new ReviewNotFoundException(String.format("no review with id = %s", id)));
 
         reviewOptional.ifPresent(review -> {
             review.setTitle(reviewRequestDto.getTitle());
