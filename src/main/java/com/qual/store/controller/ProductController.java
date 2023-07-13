@@ -45,7 +45,14 @@ public class ProductController {
                 .map(productConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
-
+    @GetMapping("/discount")
+    @Log
+    public List<ProductDto> getAllProductsbyDiscount() {
+        return productService.getAllProducts().stream()
+                .map(productConverter::convertModelToDto)
+                .filter(discount -> discount.getDiscountPercentage() > 0)
+                .collect(Collectors.toList());
+    }
     @GetMapping("/{productId}")
     @Log
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
