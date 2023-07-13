@@ -1,5 +1,7 @@
 package com.qual.store.service.impl;
 
+import com.qual.store.converter.OrderItemConverter;
+import com.qual.store.dto.OrderItemDto;
 import com.qual.store.exceptions.OrderItemNotFoundException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
@@ -12,6 +14,7 @@ import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,19 +24,18 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OrderItemServiceImpl implements OrderItemService {
 
-    @Autowired
-    private OrderItemRepository orderItemRepository;
+    private final OrderItemRepository orderItemRepository;
 
-    @Autowired
-    private Validator<OrderItem> validator;
+    private final OrderItemConverter orderItemConverter;
 
-    @Autowired
-    private AppUserRepository appUserRepository;
+    private final Validator<OrderItem> validator;
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final AppUserRepository appUserRepository;
+
+    private final ProductRepository productRepository;
 
 //    @Override
 //    @Log
@@ -45,6 +47,19 @@ public class OrderItemServiceImpl implements OrderItemService {
     public List<OrderItem> getAllOrderItems() {
         List<OrderItem> orderItems = orderItemRepository.findAllWithProduct();
         return orderItems;
+    }
+
+    @Override
+    @Log
+    public OrderItemDto getOrderItemById(Long orderItemId) {
+        OrderItem orderItem = orderItemRepository.findAllWithProduct()
+                .stream()
+                .filter(p -> p.getId().equals(orderItemId))
+                .findFirst()
+                .orElseThrow(
+                        () -> new OrderItemNotFoundException(String.format("No orderItem found with id %s", orderItemId))
+                );
+        return orderItemConverter.convertModelToDto(orderItem);
     }
 
     @Override
@@ -81,7 +96,9 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Transactional
     @Override
     @Log
-    public OrderItem addOrderItem(Long id, OrderItem orderItem) {
+    public OrderItem addOrderItem(Long id, Integer quantity) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setQuantity(quantity);
         validator.validate(orderItem);
         // verify if the item is already in the cart
         Product product = productRepository.findById(id).
@@ -94,8 +111,9 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     @Log
-    public Optional<OrderItem> findOrderItemById(Long id) {
-        return orderItemRepository.findById(id);
+    public OrderItem findOrderItemById(Long id) {
+        return orderItemRepository.findById(id)
+                .orElseThrow(() -> new OrderItemNotFoundException(String.format("No order item with id = %s found", id)));
     }
 
     @Override

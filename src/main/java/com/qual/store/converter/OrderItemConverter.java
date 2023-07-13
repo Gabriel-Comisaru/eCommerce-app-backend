@@ -3,26 +3,28 @@ package com.qual.store.converter;
 import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.OrderItemDto;
 import com.qual.store.model.OrderItem;
+import com.qual.store.repository.OrderRepository;
+import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.OrderService;
 import com.qual.store.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class OrderItemConverter extends BaseConverter<OrderItem, OrderItemDto> {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderRepository orderRepository;
 
     @Override
     public OrderItem convertDtoToModel(OrderItemDto dto) {
         OrderItem orderItem = new OrderItem();
         orderItem.setQuantity(dto.getQuantity());
-        orderItem.setProduct(productService.findProductById(dto.getProductId()));
-        orderItem.setOrder(orderService.findOrderById(dto.getOrderId()));
+        orderItem.setProduct(productRepository.findById(dto.getProductId()).orElse(null));
+        orderItem.setOrder(orderRepository.findById(dto.getOrderId()).orElse(null));
         orderItem.setId(dto.getId());
         return orderItem;
     }

@@ -18,6 +18,10 @@ public class OrderItemValidator implements Validator<OrderItem> {
         conditions.put(Objects::isNull, "orderItem cannot cannot be null");
         conditions.put(cl -> cl != null && cl.getQuantity() == null,
                 "orderItem quantity cannot be null");
+        conditions.put(cl -> cl != null && cl.getQuantity() != null && cl.getQuantity() <= 0,
+                "orderItem quantity cannot be negative");
+        conditions.put(cl -> cl != null && cl.getQuantity() != null && cl.getQuantity() > 0 && cl.getProduct() == null,
+                "orderItem product cannot be null");
 
         conditions.keySet().stream()
                 .filter(s -> s.test(entity))

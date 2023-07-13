@@ -7,6 +7,7 @@ import com.qual.store.dto.lazyDto.OrderItemWithProductDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.OrderItem;
 import com.qual.store.service.OrderItemService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,40 +19,46 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/api/orderItems")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class OrderItemController {
 
-    @Autowired
-    private OrderItemService orderItemService;
+    private final OrderItemService orderItemService;
 
-    @Autowired
-    private OrderItemConverter orderItemConverter;
+    private final OrderItemConverter orderItemConverter;
 
-    @Autowired
-    private OrderItemLazyConverter orderItemLazyConverter;
+    private final OrderItemLazyConverter orderItemLazyConverter;
 
     @GetMapping
     @Log
     public List<OrderItemDto> getAllOrderItems() {
         return orderItemService.getAllOrderItems().stream()
-                .map(orderItem -> orderItemConverter.convertModelToDto(orderItem))
+                .map(orderItemConverter::convertModelToDto)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{orderItemId}")
+    @Log
+    public ResponseEntity<OrderItemDto> getOrderItemById(@PathVariable Long orderItemId) {
+        return ResponseEntity.ok(orderItemService.getOrderItemById(orderItemId));
     }
 
     @GetMapping("/lazy")
     @Log
     public List<OrderItemWithProductDto> getAllOrderItemsWithProduct() {
         return orderItemService.getAllOrderItems().stream()
-                .map(orderItem -> orderItemLazyConverter.convertModelToDto(orderItem))
+                .map(orderItemLazyConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 
 
     @PostMapping(value = "/{productId}")
     @Log
-    public OrderItemDto addOrderItem(@PathVariable("productId") Long productId, @RequestBody OrderItem orderItem) {
-        return orderItemConverter.convertModelToDto(
-                orderItemService.addOrderItem(productId, orderItem)
-        );
+    public ResponseEntity<?> addOrderItem(@PathVariable("productId") Long productId, @RequestParam Integer quantity) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(orderItemConverter.convertModelToDto(
+                                orderItemService.addOrderItem(productId, quantity)
+                        )
+                );
     }
 
     @DeleteMapping(value = "/{id}")
@@ -66,9 +73,6 @@ public class OrderItemController {
     @PutMapping(value = "/{id}/quantity")
     @Log
     public ResponseEntity<?> decreaseQuantity(@PathVariable("id") Long id, @RequestParam Integer quantity) {
-        orderItemService.findOrderItemById(id)
-                .orElseThrow(() -> new RuntimeException("OrderItem not found"));
-
         orderItemService.modifyQuantity(id, quantity);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Quantity modified");
