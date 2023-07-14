@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -191,5 +193,26 @@ public class OrderServiceImpl implements OrderService {
                 .map(o -> orderConverter.convertDtoToModel(o))
                 .toList();
         return orders;
+    }
+    //for all orders with status placed, create a map with product name and quantity
+    @Override
+    @Log
+    public Map<Long, Integer> getProductsQuantity() {
+        List<Order> orders = getAllOrders().stream()
+                .filter(o -> o.getStatus().equals(OrderStatus.PLACED))
+                .toList();
+        Map<Long, Integer> productsQuantity = new HashMap<>();
+        for (Order order : orders) {
+            for (OrderItem orderItem : order.getOrderItems()) {
+                if (productsQuantity.containsKey(orderItem.getProduct().getId())) {
+                    productsQuantity.put(orderItem.getProduct().getId(),
+                            productsQuantity.get(orderItem.getProduct().getId()) + orderItem.getQuantity());
+                } else {
+                    productsQuantity.put(orderItem.getProduct().getId(), orderItem.getQuantity());
+                }
+            }
+        }
+        System.out.println("productsQuantity = " + productsQuantity);
+        return productsQuantity;
     }
 }

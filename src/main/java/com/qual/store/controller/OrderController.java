@@ -2,7 +2,10 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
+import com.qual.store.dto.ProductDto;
 import com.qual.store.logger.Log;
+import com.qual.store.model.Product;
+import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -67,4 +71,16 @@ public class OrderController {
                 .map(order -> orderConverter.convertModelToDto(order))
                 .collect(Collectors.toList());
     }
+
+
+    @GetMapping(value = "/products")
+    @Log
+    public Map<Long, Integer> getProductsQuantity() {
+        Map<Long, Integer> productsQuantity = orderService.getProductsQuantity();
+        productsQuantity.forEach((k, v) -> System.out.println("product = " + k + " quantity = " + v));
+        return productsQuantity;
+    }
+
+
+
 }

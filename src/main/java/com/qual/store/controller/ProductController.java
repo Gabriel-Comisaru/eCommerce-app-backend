@@ -1,6 +1,9 @@
 package com.qual.store.controller;
 
 import com.github.javafaker.Faker;
+
+import java.util.*;
+
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.converter.lazyConverter.ProductLazyConverter;
 import com.qual.store.dto.ProductDto;
@@ -11,8 +14,10 @@ import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
 import com.qual.store.model.Product;
+import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.service.CategoryService;
+import com.qual.store.service.OrderService;
 import com.qual.store.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +28,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,6 +37,8 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     private final ProductService productService;
+
+    private final OrderService orderService;
     private final ProductConverter productConverter;
     private final CategoryService categoryService;
     private final ProductLazyConverter productLazyConverter;
@@ -170,4 +176,23 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @GetMapping("/placed")
+    @Log
+    public List<ProductDto> getProductsByOrderStatusPlaced() {
+        Map<Long, Integer> productsQuantity = orderService.getProductsQuantity();
+
+        List<ProductDto> allProducts = productService.getAllProducts().stream()
+                .map(productConverter::convertModelToDto)
+                .collect(Collectors.toList());
+
+        // Sort the products based on the number of times they were sold
+        allProducts.sort(Comparator.comparingInt(product -> productsQuantity.getOrDefault(product.getId(), 0)));
+
+        // Reverse the list to get descending order
+        Collections.reverse(allProducts);
+
+        return allProducts;
+    }
+
 }
