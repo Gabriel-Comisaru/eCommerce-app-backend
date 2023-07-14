@@ -73,6 +73,15 @@ public class ExceptionHandlingController {
         return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<Object> handlerCategoryNotFoundException(CategoryNotFoundException exception) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("timestamp", LocalDateTime.now());
+        responseBody.put("error message", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ImageModelException.class)
     public ResponseEntity<Object> handlerImageModelException(ImageModelException exception) {
         Map<String, Object> responseBody = new HashMap<>();
