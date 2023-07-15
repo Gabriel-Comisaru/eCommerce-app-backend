@@ -7,21 +7,22 @@ import com.qual.store.model.Order;
 import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class OrderConverter extends BaseConverter<Order, OrderDto> {
 
-    @Autowired
-    private AppUserRepository appUserRepository;
-    @Autowired
-    private OrderItemRepository orderItemRepository;
+    private final AppUserRepository appUserRepository;
+
+    private final OrderItemRepository orderItemRepository;
     @Override
     public Order convertDtoToModel(OrderDto dto) {
-        Order modle = Order.builder()
+        Order model = Order.builder()
                 .deliveryPrice(dto.getDeliveryPrice())
                 .startDate(dto.getStartDate())
                 .deliveryDate(dto.getDeliveryDate())
@@ -29,8 +30,8 @@ public class OrderConverter extends BaseConverter<Order, OrderDto> {
                 .user(appUserRepository.findById(dto.getUserId()).orElse(null))
                 .orderItems(dto.getOrderItems().stream().map(id -> orderItemRepository.findById(id).orElse(null)).collect(Collectors.toSet()))
                 .build();
-        modle.setId(dto.getId());
-        return modle;
+        model.setId(dto.getId());
+        return model;
     }
 
     @Override

@@ -20,8 +20,16 @@ public class OrderValidator implements Validator<Order> {
         // condition that the state of the order is part of the enum
         conditions.put(cl -> cl != null && cl.getStatus() == null,
                 "order status cannot be null");
-        conditions.put(cl -> cl != null && !isOrderStatus(cl.getStatus().name()),
-                "order status must be one of the following: ACTIVE, CHECKOUT, PLACED, SHIPPED, DELIVERED, CANCELLED");
+        conditions.put(cl -> cl != null && cl.getStatus() != null
+                        && cl.getDeliveryPrice() < 0,
+                "order delivery price cannot be negative");
+
+        conditions.keySet().stream()
+                .filter(s -> s.test(entity))
+                .findFirst()
+                .ifPresent(key -> {
+                    throw new ValidatorException(conditions.get(key));
+                });
     }
 
     private boolean isOrderStatus(String status) {

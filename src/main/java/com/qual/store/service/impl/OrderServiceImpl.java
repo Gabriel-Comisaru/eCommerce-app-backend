@@ -1,12 +1,15 @@
 package com.qual.store.service.impl;
 
-import com.github.javafaker.App;
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.exceptions.InvalidOrderStatusException;
+import com.qual.store.exceptions.OrderItemNotFoundException;
 import com.qual.store.exceptions.OrderNotFoundException;
+import com.qual.store.exceptions.UpdateOrderStatusException;
 import com.qual.store.logger.Log;
-import com.qual.store.model.*;
+import com.qual.store.model.AppUser;
+import com.qual.store.model.Order;
+import com.qual.store.model.OrderItem;
 import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
@@ -15,7 +18,10 @@ import com.qual.store.service.OrderItemService;
 import com.qual.store.service.OrderService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,40 +29,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final AppUserRepository appUserRepository;
+    private final Validator<Order> validator;
+    private final OrderItemService orderItemService;
+    private final OrderConverter orderConverter;
 
-    @Autowired
-    private OrderItemRepository orderItemRepository;
-
-
-    @Autowired
-    private AppUserRepository appUserRepository;
-
-    @Autowired
-    private Validator<Order> validator;
-
-    @Autowired
-    private OrderItemService orderItemService;
-    @Autowired
-    private OrderConverter orderConverter;
-
-//    @Override
-//    @Log
-//    public List<Order> getAllOrders() {
-//        return orderRepository.findAll();
-//    }
     @Override
     @Log
     public List<Order> getAllOrders() {
-        List<Order> orders = orderRepository.findAllWithOrderItems();
-        return orders;
+        return orderRepository.findAllWithOrderItems();
     }
 
     @Transactional
@@ -65,7 +53,6 @@ public class OrderServiceImpl implements OrderService {
     public Order addToOrder(Long orderItemId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
-        System.out.println("currentUsername = " + currentUsername);
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
         OrderStatus orderStatus = OrderStatus.ACTIVE;
         List<Order> orders = getAllOrders().stream()
@@ -83,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
                     .build();
             validator.validate(order);
             OrderItem orderItem = orderItemRepository.findById(orderItemId)
-                    .orElseThrow(() -> new RuntimeException("No order item found with id = " + orderItemId));
+                    .orElseThrow(() -> new OrderItemNotFoundException("No order item found with id = " + orderItemId));
             orderItem.setOrder(order);
             order.addOrderItem(orderItem);
             appUser.addOrder(order);
@@ -91,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
             order = orders.get(0);
             order.setDeliveryPrice(order.getDeliveryPrice() + orderItemService.priceOfOrderItem(orderItemId));
             OrderItem orderItem = orderItemRepository.findById(orderItemId)
-                    .orElseThrow(() -> new RuntimeException("No order item found with id = " + orderItemId));
+                    .orElseThrow(() -> new OrderItemNotFoundException("No order item found with id = " + orderItemId));
             orderItem.setOrder(order);
             order.addOrderItem(orderItem);
             appUser.addOrder(order);
@@ -121,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
     @Log
     public Order findOrderById(Long id) {
         return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No order found with id %s = " + id));
+                .orElseThrow(() -> new OrderNotFoundException("No order found with id %s = " + id));
     }
 
     @Override
@@ -141,16 +128,16 @@ public class OrderServiceImpl implements OrderService {
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
         if (appUser.getRole().name().equals("USER")) {
             if (!status.equals("CHECKOUT")) {
-                throw new RuntimeException("Invalid status: " + status);
+                throw new InvalidOrderStatusException("Invalid status: " + status);
             }
             if (!existingOrder.get().getStatus().name().equals("ACTIVE")) {
-                throw new RuntimeException("You are not allowed to change the status of this order");
+                throw new UpdateOrderStatusException("You are not allowed to change the status of this order");
             }
 
             existingOrder.ifPresent(updateOrder -> {
                 OrderStatus orderStatus = getOrderStatusFromString(status);
                 if (!updateOrder.getUser().equals(appUser)) {
-                    throw new RuntimeException("You are not allowed to change the status of another user's order");
+                    throw new UpdateOrderStatusException("You are not allowed to change the status of another user's order");
                 } else if (orderStatus != null) {
                     updateOrder.setStatus(orderStatus);
                 } else {
@@ -186,15 +173,14 @@ public class OrderServiceImpl implements OrderService {
         String currentUsername = authentication.getName();
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
         List<OrderDto> ordersDto = getAllOrders().stream()
-                .map(o -> orderConverter.convertModelToDto(o))
+                .map(orderConverter::convertModelToDto)
                 .toList();
-        List<Order> orders = ordersDto.stream()
+        return ordersDto.stream()
                 .filter(o -> o.getUserId().equals(appUser.getId()))
-                .map(o -> orderConverter.convertDtoToModel(o))
+                .map(orderConverter::convertDtoToModel)
                 .toList();
-        return orders;
     }
-    //for all orders with status placed, create a map with product name and quantity
+
     @Override
     @Log
     public Map<Long, Integer> getProductsQuantity() {
@@ -212,6 +198,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
+
         System.out.println("productsQuantity = " + productsQuantity);
         return productsQuantity;
     }

@@ -7,6 +7,7 @@ import com.qual.store.logger.Log;
 import com.qual.store.model.Product;
 import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.service.OrderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,20 +19,18 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/orders")
+@RequiredArgsConstructor
 @CrossOrigin("*")
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderConverter orderConverter;
+    private final OrderService orderService;
+    private final OrderConverter orderConverter;
 
     @GetMapping
     @Log
     public List<OrderDto> getAllOrders() {
         return orderService.getAllOrders().stream()
-                .map(order -> orderConverter.convertModelToDto(order))
+                .map(orderConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 
@@ -68,7 +67,7 @@ public class OrderController {
     @Log
     public List<OrderDto> getAllOrdersByUsername() {
         return orderService.getAllOrdersByUser().stream()
-                .map(order -> orderConverter.convertModelToDto(order))
+                .map(orderConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 
@@ -76,11 +75,6 @@ public class OrderController {
     @GetMapping(value = "/products")
     @Log
     public Map<Long, Integer> getProductsQuantity() {
-        Map<Long, Integer> productsQuantity = orderService.getProductsQuantity();
-        productsQuantity.forEach((k, v) -> System.out.println("product = " + k + " quantity = " + v));
-        return productsQuantity;
+        return orderService.getProductsQuantity();
     }
-
-
-
 }

@@ -65,6 +65,8 @@ public class AppUser extends BaseEntity<Long> {
     private List<Review> reviews = new ArrayList<>();
 
     public void addOrder(Order order) {
+        if (orders == null)
+            orders = new HashSet<>();
         orders.add(order);
     }
 
