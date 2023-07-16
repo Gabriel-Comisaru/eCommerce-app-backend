@@ -99,12 +99,12 @@ public class OrderItemServiceImpl implements OrderItemService {
     public OrderItem addOrderItem(Long id, Integer quantity) {
         OrderItem orderItem = new OrderItem();
         orderItem.setQuantity(quantity);
-        validator.validate(orderItem);
         // verify if the item is already in the cart
         Product product = productRepository.findById(id).
                 orElseThrow(() -> new ProductNotFoundException(
                         String.format("No product with is found:%s", id)));
         orderItem.setProduct(product);
+        validator.validate(orderItem);
         product.addOrderItem(orderItem);
         return orderItemRepository.save(orderItem);
     }

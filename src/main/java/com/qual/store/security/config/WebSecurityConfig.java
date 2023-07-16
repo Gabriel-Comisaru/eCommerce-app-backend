@@ -104,9 +104,9 @@ public class WebSecurityConfig {
                     auth.requestMatchers("/api/images/**").permitAll();
 
                     //order item can be created, deleted, updated by anyone
-                    auth.requestMatchers(HttpMethod.POST, "/api/order-items/**").permitAll();
-                    auth.requestMatchers(HttpMethod.PUT, "/api/order-items/**").permitAll();
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/order-items/**").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/api/orderItems/**").permitAll();
+                    auth.requestMatchers(HttpMethod.PUT, "/api/orderItems/**").permitAll();
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/orderItems/**").permitAll();
 
                     //order can be created by user and updated, deleted by admin
                     auth.requestMatchers(HttpMethod.POST, "/api/orders/**").authenticated();
