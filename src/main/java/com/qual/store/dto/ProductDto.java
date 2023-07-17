@@ -20,6 +20,7 @@ public class ProductDto extends BaseDto implements Serializable {
     private double price;
     private long unitsInStock;
     private double discountPercentage;
+    private double rating;
     private Date createTime;
     private Date updateTime;
     private List<Long> orderItems;

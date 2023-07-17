@@ -1,6 +1,7 @@
 package com.qual.store.controller;
 
 import com.qual.store.exceptions.*;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -116,6 +117,20 @@ public class ExceptionHandlingController {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("timestamp", LocalDateTime.now());
         responseBody.put("error message", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handlerConstraintViolationException(ConstraintViolationException exception) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("timestamp", LocalDateTime.now());
+        responseBody.put("error message", exception.getMessage()
+                .substring(
+                        exception.getMessage().indexOf("messageTemplate=") + "messageTemplate='".length(),
+                        exception.getMessage().indexOf("}") - 1
+                )
+        );
 
         return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
     }

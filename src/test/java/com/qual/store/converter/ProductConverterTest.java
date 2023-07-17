@@ -7,6 +7,7 @@ import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
 import com.qual.store.repository.ImageRepository;
 import com.qual.store.repository.ReviewRepository;
+import com.qual.store.utils.ProductRatingCalculator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class ProductConverterTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private ProductRatingCalculator productRatingCalculator;
 
     @Mock
     private AppUserRepository appUserRepository;
@@ -145,6 +149,7 @@ class ProductConverterTest {
                 .price(9.99)
                 .unitsInStock(10)
                 .discountPercentage(0.1)
+                .rating(5.0)
                 .userId(userId)
                 .createTime(null)
                 .updateTime(null)
@@ -158,6 +163,7 @@ class ProductConverterTest {
         expectedProductDto.setId(productId);
 
         // when
+        when(productRatingCalculator.calculateRating(any())).thenReturn(5.0);
         ProductDto actualProductDto = productConverter.convertModelToDto(product);
 
         // then
@@ -166,6 +172,7 @@ class ProductConverterTest {
         assertEquals(expectedProductDto.getPrice(), actualProductDto.getPrice());
         assertEquals(expectedProductDto.getUnitsInStock(), actualProductDto.getUnitsInStock());
         assertEquals(expectedProductDto.getDiscountPercentage(), actualProductDto.getDiscountPercentage());
+        assertEquals(expectedProductDto.getRating(), actualProductDto.getRating());
         assertEquals(expectedProductDto.getCategoryId(), actualProductDto.getCategoryId());
         assertEquals(expectedProductDto.getCategoryName(), actualProductDto.getCategoryName());
         assertEquals(expectedProductDto.getUserId(), actualProductDto.getUserId());

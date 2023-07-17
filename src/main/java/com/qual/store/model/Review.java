@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -19,6 +21,8 @@ import java.time.LocalDateTime;
 @Builder
 public class Review extends BaseEntity<Long> implements Serializable {
 
+    @Min(value = 1, message = "rating cannot be lower than 1")
+    @Max(value = 5, message = "rating cannot be higher than 5")
     private double rating;
 
     @Column(unique = true)

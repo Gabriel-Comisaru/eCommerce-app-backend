@@ -10,6 +10,7 @@ import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
 import com.qual.store.repository.ImageRepository;
 import com.qual.store.repository.ReviewRepository;
+import com.qual.store.utils.ProductRatingCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
     private final AppUserRepository appUserRepository;
     private final ReviewRepository reviewRepository;
     private final ImageRepository imageRepository;
+    private final ProductRatingCalculator productRatingCalculator;
 
     @Override
     public Product convertDtoToModel(ProductDto dto) {
@@ -53,6 +55,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .price(product.getPrice())
                 .unitsInStock(product.getUnitsInStock())
                 .discountPercentage(product.getDiscountPercentage())
+                .rating(productRatingCalculator.calculateRating(product))
                 .createTime(product.getCreateTime())
                 .updateTime(product.getUpdateTime())
                 .orderItems(product.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
