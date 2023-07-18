@@ -3,6 +3,8 @@ package com.qual.store.controller;
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.dto.paginated.PaginatedOrderResponse;
+import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Product;
 import com.qual.store.model.enums.OrderStatus;
@@ -25,6 +27,16 @@ public class OrderController {
 
     private final OrderService orderService;
     private final OrderConverter orderConverter;
+
+
+    @GetMapping("/display")
+    @Log
+    public ResponseEntity<PaginatedOrderResponse> getOrders(@RequestParam(defaultValue = "0") Integer pageNumber,
+                                                              @RequestParam(defaultValue = "10") Integer pageSize,
+                                                              @RequestParam(defaultValue = "id") String sortBy) {
+
+        return ResponseEntity.ok(orderService.getOrders(pageNumber, pageSize, sortBy));
+    }
 
     @GetMapping
     @Log

@@ -2,6 +2,8 @@ package com.qual.store.service.impl;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
+import com.qual.store.dto.paginated.PaginatedOrderResponse;
+import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.InvalidOrderStatusException;
 import com.qual.store.exceptions.OrderItemNotFoundException;
 import com.qual.store.exceptions.OrderNotFoundException;
@@ -10,6 +12,7 @@ import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Order;
 import com.qual.store.model.OrderItem;
+import com.qual.store.model.Product;
 import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
@@ -20,6 +23,10 @@ import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -29,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -201,5 +209,20 @@ public class OrderServiceImpl implements OrderService {
 
         System.out.println("productsQuantity = " + productsQuantity);
         return productsQuantity;
+    }
+
+    @Override
+    public PaginatedOrderResponse getOrders(Integer pageNumber, Integer pageSize, String sortBy) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+
+        Page<Order> page = orderRepository.findAllWithOrderItems(pageable);
+
+        return PaginatedOrderResponse.builder()
+                .orders(page.getContent().stream()
+                        .map(orderConverter::convertModelToDto)
+                        .collect(Collectors.toList()))
+                .numberOfItems(page.getTotalElements())
+                .numberOfPages(page.getTotalPages())
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.qual.store.service;
 
+import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.model.Order;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface OrderService {
     List<Order> getAllOrdersByUser();
 
     Map<Long, Integer> getProductsQuantity();
+
+    PaginatedOrderResponse getOrders(Integer pageNumber, Integer pageSize, String sortBy);
 }

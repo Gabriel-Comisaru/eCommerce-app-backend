@@ -3,6 +3,9 @@ package com.qual.store.service.impl;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
+import com.qual.store.dto.ProductDto;
+import com.qual.store.dto.paginated.PaginatedOrderResponse;
+import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.InvalidOrderStatusException;
 import com.qual.store.exceptions.OrderItemNotFoundException;
 import com.qual.store.exceptions.OrderNotFoundException;
@@ -24,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -509,6 +513,38 @@ public class OrderServiceImplTest {
         assertEquals(1, actualResult.size());
         assertEquals(2, actualResult.get(1L));
 
+    }
+
+    @Test
+    public void getOrdersPaginatedTest() {
+        // given
+        int pageNumber = 0;
+        int pageSize = 10;
+        String sortBy = "id";
+        Order order = new Order();
+        List<Order> orders = List.of(order);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        Page<Order> orderPage = new PageImpl<>(orders, pageable, orders.size());
+        OrderDto orderDto = new OrderDto();
+        PaginatedOrderResponse expectedResponse = PaginatedOrderResponse.builder()
+                .orders(List.of(orderDto))
+                .numberOfItems((long) orders.size())
+                .numberOfPages(1)
+                .build();
+
+        // when
+        when(orderRepository.findAllWithOrderItems(pageable)).thenReturn(orderPage);
+        when(orderConverter.convertModelToDto(any(Order.class))).thenReturn(orderDto);
+        PaginatedOrderResponse actualResponse = orderService.getOrders(pageNumber, pageSize, sortBy);
+
+        // then
+        assertEquals(expectedResponse.getOrders(), actualResponse.getOrders());
+        assertEquals(expectedResponse.getNumberOfItems(), actualResponse.getNumberOfItems());
+        assertEquals(expectedResponse.getNumberOfPages(), actualResponse.getNumberOfPages());
+
+        verify(orderRepository, times(1)).findAllWithOrderItems(pageable);
+        verify(orderConverter, times(1)).convertModelToDto(order);
+        verifyNoMoreInteractions(orderRepository);
     }
 
     @AfterEach
