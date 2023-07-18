@@ -104,7 +104,7 @@ public class OrderItemServiceImplTest {
         assertThrows(ProductNotFoundException.class, () ->
                 orderItemService.addOrderItem(productId, quantity)
         );
-        verify(validator, times(1)).validate(orderItem);
+        verify(validator, times(0)).validate(orderItem);
         verify(orderItemRepository, times(0)).save(orderItem);
         verify(orderItemRepository, times(0)).findAllWithProduct();
     }

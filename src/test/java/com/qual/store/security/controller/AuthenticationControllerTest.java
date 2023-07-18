@@ -16,11 +16,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -169,13 +167,14 @@ class AuthenticationControllerTest {
     }
 
     @Test
-    public void saveUserTest() throws Exception {
+    public void saveUserWithAdminRoleTest() throws Exception {
         String firstName = "John";
         String lastName = "Doe";
         String username = "johndoe";
         String email = "johndoe@example.com";
         String password = "password";
         String token = "testtoken";
+        String role = "admin";
 
         AppUser user = new AppUser();
         user.setFirstName(firstName);
@@ -186,15 +185,16 @@ class AuthenticationControllerTest {
         user.setUsername(username);
 
         UserDetails userDetails = mock(UserDetails.class);
-        when(userDetailsService.createUserDetails(username, password)).thenReturn(userDetails);
+        when(userDetailsService.createUserDetails(username, password, RoleName.ADMIN)).thenReturn(userDetails);
         when(jwtTokenUtil.generateToken(any())).thenReturn(token);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
+        mockMvc.perform(post("/auth/register")
                         .param("first_name", firstName)
                         .param("last_name", lastName)
                         .param("username", username)
                         .param("email", email)
-                        .param("password", password))
+                        .param("password", password)
+                        .param("role", role))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.error").value(false))
                 .andExpect(jsonPath("$.username").value(username))
@@ -203,7 +203,48 @@ class AuthenticationControllerTest {
                 .andReturn();
 
         verify(userRepository, times(1)).save(any(AppUser.class));
-        verify(userDetailsService, times(1)).createUserDetails(eq(username), anyString());
+        verify(userDetailsService, times(1))
+                .createUserDetails(eq(username), anyString(), any(RoleName.class));
+    }
+    @Test
+    public void saveUserWithUserRoleTest() throws Exception {
+        String firstName = "John";
+        String lastName = "Doe";
+        String username = "johndoe";
+        String email = "johndoe@example.com";
+        String password = "password";
+        String token = "testtoken";
+        String role = "user";
+
+        AppUser user = new AppUser();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setRole(RoleName.ADMIN);
+        user.setUsername(username);
+
+        UserDetails userDetails = mock(UserDetails.class);
+        when(userDetailsService.createUserDetails(username, password, RoleName.ADMIN)).thenReturn(userDetails);
+        when(jwtTokenUtil.generateToken(any())).thenReturn(token);
+
+        mockMvc.perform(post("/auth/register")
+                        .param("first_name", firstName)
+                        .param("last_name", lastName)
+                        .param("username", username)
+                        .param("email", email)
+                        .param("password", password)
+                        .param("role", role))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").value(false))
+                .andExpect(jsonPath("$.username").value(username))
+                .andExpect(jsonPath("$.message").value("Account created successfully"))
+                .andExpect(jsonPath("$.token").value(token))
+                .andReturn();
+
+        verify(userRepository, times(1)).save(any(AppUser.class));
+        verify(userDetailsService, times(1))
+                .createUserDetails(eq(username), anyString(), any(RoleName.class));
     }
 
     @AfterEach

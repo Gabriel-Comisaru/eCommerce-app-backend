@@ -32,9 +32,9 @@ public class JwtUserDetailsService implements UserDetailsService {
         return new User(user.getUsername(), user.getPassword(), authorityList);
     }
 
-    public UserDetails createUserDetails(String username, String password) {
+    public UserDetails createUserDetails(String username, String password, RoleName role) {
         List<GrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority(RoleName.ADMIN.name()));
+        authorityList.add(new SimpleGrantedAuthority(role.name()));
         return new User(username, password, authorityList);
     }
 }

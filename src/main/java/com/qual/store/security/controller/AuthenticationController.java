@@ -77,16 +77,21 @@ public class AuthenticationController {
                                       @RequestParam("last_name") String lastName,
                                       @RequestParam("username") String userName,
                                       @RequestParam("email") String email,
-                                      @RequestParam("password") String password) {
+                                      @RequestParam("password") String password,
+                                      @RequestParam("role") String role) {
         Map<String, Object> responseMap = new HashMap<>();
         AppUser user = new AppUser();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
         user.setPassword(new BCryptPasswordEncoder().encode(password));
-        user.setRole(RoleName.ADMIN);
+        user.setRole(getRoleFromInputString(role));
         user.setUsername(userName);
-        UserDetails userDetails = userDetailsService.createUserDetails(userName, user.getPassword());
+        UserDetails userDetails = userDetailsService.createUserDetails(
+                userName,
+                user.getPassword(),
+                getRoleFromInputString(role)
+        );
         String token = jwtTokenUtil.generateToken(userDetails);
         userRepository.save(user);
         responseMap.put("error", false);
@@ -94,5 +99,13 @@ public class AuthenticationController {
         responseMap.put("message", "Account created successfully");
         responseMap.put("token", token);
         return ResponseEntity.ok(responseMap);
+    }
+
+    private RoleName getRoleFromInputString(String role) {
+        try {
+            return RoleName.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return RoleName.USER;
+        }
     }
 }

@@ -66,15 +66,16 @@ class JwtUserDetailsServiceTest {
     public void createUserDetailsTest() {
         String username = "testuser";
         String password = "testpassword";
+        RoleName role = ADMIN;
 
-        UserDetails userDetails = jwtUserDetailsService.createUserDetails(username, password);
+        UserDetails userDetails = jwtUserDetailsService.createUserDetails(username, password, role);
 
         assertEquals(username, userDetails.getUsername());
         assertEquals(password, userDetails.getPassword());
 
         List<GrantedAuthority> authorities = new ArrayList<>(userDetails.getAuthorities());
         assertEquals(1, authorities.size());
-        assertEquals(ADMIN.name(), authorities.get(0).getAuthority());
+        assertEquals(role.name(), authorities.get(0).getAuthority());
     }
 
     @AfterEach
