@@ -127,6 +127,7 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/api/reviews/**").authenticated();
                     auth.requestMatchers(HttpMethod.DELETE, "/api/reviews/**").authenticated();
                     auth.requestMatchers(HttpMethod.GET, "/api/reviews").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/reviews/product/{productId}").permitAll();
 
                     auth.anyRequest().authenticated();
                 })
