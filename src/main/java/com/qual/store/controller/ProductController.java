@@ -13,6 +13,7 @@ import com.qual.store.dto.request.ProductRequestDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
+import com.qual.store.model.Order;
 import com.qual.store.model.Product;
 import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
@@ -194,5 +195,6 @@ public class ProductController {
 
         return allProducts;
     }
+
 
 }

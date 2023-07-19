@@ -19,6 +19,7 @@ import com.qual.store.model.enums.RoleName;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
 import com.qual.store.repository.OrderRepository;
+import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.utils.validators.Validator;
 import org.junit.jupiter.api.AfterEach;
@@ -56,6 +57,9 @@ public class OrderServiceImplTest {
 
     @Mock
     private OrderItemService orderItemService;
+
+    @Mock
+    private ProductRepository productRepository;
 
     @InjectMocks
     private OrderServiceImpl orderService;

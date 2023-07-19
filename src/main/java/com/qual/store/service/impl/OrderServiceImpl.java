@@ -17,6 +17,7 @@ import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
 import com.qual.store.repository.OrderRepository;
+import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.service.OrderService;
 import com.qual.store.utils.validators.Validator;
@@ -32,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,8 @@ public class OrderServiceImpl implements OrderService {
     private final Validator<Order> validator;
     private final OrderItemService orderItemService;
     private final OrderConverter orderConverter;
+    private final ProductRepository productRepository;
+
 
     @Override
     @Log
@@ -153,6 +157,27 @@ public class OrderServiceImpl implements OrderService {
                 }
             });
         } else {
+            //if the status is placed or cancelled, modify the stock of the products
+            Order order = existingOrder.get();
+            List<Product> productsToUpdate = new ArrayList<>();
+
+            if (status.equalsIgnoreCase("placed")&& !order.getStatus().equals(OrderStatus.PLACED)) {
+                for (OrderItem orderItem : order.getOrderItems()) {
+                    Product product = orderItem.getProduct();
+                    product.setUnitsInStock(product.getUnitsInStock() - orderItem.getQuantity());
+                    productsToUpdate.add(product);
+                }
+            } else if (status.equalsIgnoreCase("cancelled") && !order.getStatus().equals(OrderStatus.CANCELLED)) {
+                for (OrderItem orderItem : order.getOrderItems()) {
+                    Product product = orderItem.getProduct();
+                    product.setUnitsInStock(product.getUnitsInStock() + orderItem.getQuantity());
+                    productsToUpdate.add(product);
+                }
+            }
+
+            // Update product stock outside of the loop
+            productRepository.saveAll(productsToUpdate);
+
             existingOrder.ifPresent(updateOrder -> {
                 OrderStatus orderStatus = getOrderStatusFromString(status);
                 if (orderStatus != null) {
@@ -226,3 +251,4 @@ public class OrderServiceImpl implements OrderService {
                 .build();
     }
 }
+
