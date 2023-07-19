@@ -98,35 +98,6 @@ public class OrderItemControllerTest {
     }
 
     @Test
-    void addOrderItemTest() throws Exception {
-        // given
-        Long productId = 1L;
-        OrderItemDto orderItemDto = new OrderItemDto();
-        orderItemDto.setId(1L);
-        orderItemDto.setQuantity(3);
-
-        OrderItem orderItem = new OrderItem();
-        orderItem.setId(1L);
-        orderItem.setQuantity(3);
-
-        // when
-        when(orderItemService.addOrderItem(productId, 3)).thenReturn(orderItem);
-        when(orderItemConverter.convertModelToDto(orderItem)).thenReturn(orderItemDto);
-
-        // then
-        mockMvc.perform(post("/api/orderItems/{productId}", productId)
-                        .param("quantity", "3")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(orderItemDto.getId()))
-                .andExpect(jsonPath("$.quantity").value(orderItemDto.getQuantity()));
-
-        verify(orderItemService).addOrderItem(productId, 3);
-        verify(orderItemConverter).convertModelToDto(orderItem);
-    }
-
-    @Test
     void deleteOrderItemTest() throws Exception {
         mockMvc.perform(delete("/api/orderItems/{orderItemId}", 1L)
                         .accept(MediaType.APPLICATION_JSON))

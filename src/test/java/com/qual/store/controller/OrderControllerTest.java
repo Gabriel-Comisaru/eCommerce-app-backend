@@ -6,7 +6,9 @@ import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.model.Order;
+import com.qual.store.model.OrderItem;
 import com.qual.store.model.enums.OrderStatus;
+import com.qual.store.service.OrderItemService;
 import com.qual.store.service.OrderService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +35,9 @@ class OrderControllerTest {
 
     @Mock
     private OrderService orderService;
+
+    @Mock
+    private OrderItemService orderItemService;
 
     @Mock
     private OrderConverter orderConverter;
@@ -85,9 +90,15 @@ class OrderControllerTest {
     public void addToOrderTest() throws Exception {
         // given
         Long orderItemId = 1L;
+        Long productId = 1L;
+        Integer quantity = 1;
         Order order = new Order();
         order.setId(1L);
         order.setStatus(OrderStatus.ACTIVE);
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(orderItemId);
+        orderItem.setQuantity(1);
 
 
         OrderDto orderDto = new OrderDto();
@@ -95,18 +106,22 @@ class OrderControllerTest {
         orderDto.setStatus("ACTIVE");
 
         // when
+        when(orderItemService.addOrderItem(productId, quantity)).thenReturn(orderItem);
         when(orderService.addToOrder(orderItemId)).thenReturn(order);
         when(orderConverter.convertModelToDto(order)).thenReturn(orderDto);
 
         // then
-        mockMvc.perform(post("/api/orders/{orderItemId}", orderItemId)
+        mockMvc.perform(post("/api/orders/{productId}", productId)
+                        .param("quantity", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(orderDto.getId()))
                 .andExpect(jsonPath("$.status").value(orderDto.getStatus()));
 
+        verify(orderItemService, times(1)).addOrderItem(productId, quantity);
         verify(orderService, times(1)).addToOrder(orderItemId);
+        verify(orderConverter, times(1)).convertModelToDto(order);
     }
 
     @Test

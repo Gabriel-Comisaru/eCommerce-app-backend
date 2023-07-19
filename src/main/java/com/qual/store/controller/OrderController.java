@@ -2,12 +2,15 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
+import com.qual.store.dto.OrderItemDto;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.logger.Log;
+import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
 import com.qual.store.model.enums.OrderStatus;
+import com.qual.store.service.OrderItemService;
 import com.qual.store.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +29,15 @@ import java.util.stream.Collectors;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderItemService orderItemService;
     private final OrderConverter orderConverter;
 
 
     @GetMapping("/display")
     @Log
     public ResponseEntity<PaginatedOrderResponse> getOrders(@RequestParam(defaultValue = "0") Integer pageNumber,
-                                                              @RequestParam(defaultValue = "10") Integer pageSize,
-                                                              @RequestParam(defaultValue = "id") String sortBy) {
+                                                            @RequestParam(defaultValue = "10") Integer pageSize,
+                                                            @RequestParam(defaultValue = "id") String sortBy) {
 
         return ResponseEntity.ok(orderService.getOrders(pageNumber, pageSize, sortBy));
     }
@@ -46,12 +50,15 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping(value = "/{orderItemId}")
+    @PostMapping(value = "/{productId}")
     @Log
-    public OrderDto addToOrder(@PathVariable("orderItemId") Long orderItemId) {
-        return orderConverter.convertModelToDto(
-                orderService.addToOrder(orderItemId)
-        );
+    public ResponseEntity<?> addToOrder(@PathVariable("productId") Long productId, @RequestParam Integer quantity) {
+
+        OrderItem orderItem = orderItemService.addOrderItem(productId, quantity);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(orderConverter.convertModelToDto(
+                        orderService.addToOrder(orderItem.getId()))
+                );
     }
 
     @DeleteMapping(value = "/{id}")
