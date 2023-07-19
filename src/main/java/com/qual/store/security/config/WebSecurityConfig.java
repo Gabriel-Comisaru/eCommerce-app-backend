@@ -67,7 +67,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors(Customizer.withDefaults()) 
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/*").permitAll();
@@ -98,7 +98,7 @@ public class WebSecurityConfig {
                     auth.requestMatchers("/api/orders/display").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/api/order-items/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/orderItems/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/orders/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/categories/{categoryId}").permitAll();
 
@@ -119,6 +119,7 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.POST, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.GET, "/api/users/loggedInUser").authenticated();
                     auth.requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
 
                     //review can be created, updated, deleted, by logged-in user
