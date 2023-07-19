@@ -42,6 +42,8 @@ public class OrderConverter extends BaseConverter<Order, OrderDto> {
                 .deliveryDate(order.getDeliveryDate())
                 .status(order.getStatus().name())
                 .userId(order.getUser().getId())
+                .userName(order.getUser().getFirstName() + " " + order.getUser().getLastName())
+                .userEmail(order.getUser().getEmail())
                 .orderItems(order.getOrderItems().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .build();
         orderDto.setId(order.getId());

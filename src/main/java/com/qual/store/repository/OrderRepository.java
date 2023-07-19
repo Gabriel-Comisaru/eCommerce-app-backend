@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface OrderRepository extends ShopRepository<Order, Long> {
-    @Query("select distinct o from Order o")
+    @Query("select distinct o from Order o join fetch o.user")
     @EntityGraph(value = "orderWithOrderItems", type = EntityGraph.EntityGraphType.LOAD)
     List<Order> findAllWithOrderItems();
 
