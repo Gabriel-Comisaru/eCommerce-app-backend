@@ -1,8 +1,9 @@
 package com.qual.store.repository;
 
-import com.qual.store.model.Category;
 import com.qual.store.model.Order;
 import com.qual.store.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,7 +14,7 @@ public interface ProductRepository extends ShopRepository<Product, Long> {
     @EntityGraph(value = "productWithCategoryAndReviewsAndImages", type = EntityGraph.EntityGraphType.LOAD)
     List<Product> findAllWithCategoryAndReviewsAndImages();
 
-    @Query("select distinct o from Order o where o.user.id = ?1")
-    @EntityGraph(value = "productWithUser", type = EntityGraph.EntityGraphType.LOAD)
-    List<Order> findAllByAppUserId(Long id);
+    @Override
+    @EntityGraph(value = "productWithCategoryAndReviewsAndImages", type = EntityGraph.EntityGraphType.LOAD)
+    Page<Product> findAll(Pageable pageable);
 }

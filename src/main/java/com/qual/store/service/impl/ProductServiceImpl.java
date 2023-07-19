@@ -184,7 +184,6 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
 
         Page<Product> page = productRepository.findAll(pageable);
-
         return PaginatedProductResponse.builder()
                 .products(page.getContent().stream()
                         .map(productConverter::convertModelToDto)
