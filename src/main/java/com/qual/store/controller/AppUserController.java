@@ -37,6 +37,7 @@ public class AppUserController {
 
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("username", authentication.getName());
+        userMap.put("role", authentication.getAuthorities().stream().findFirst().orElseThrow().getAuthority());
         userMap.put("error", false);
         return userMap;
     }
