@@ -121,6 +121,24 @@ public class ExceptionHandlingController {
         return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(UpdateOrderStatusException.class)
+    public ResponseEntity<Object> handlerUpdateOrderStatusException(UpdateOrderStatusException exception) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("timestamp", LocalDateTime.now());
+        responseBody.put("error message", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidOrderStatusException.class)
+    public ResponseEntity<Object> handlerInvalidOrderStatusException(InvalidOrderStatusException exception) {
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("timestamp", LocalDateTime.now());
+        responseBody.put("error message", exception.getLocalizedMessage());
+
+        return new ResponseEntity<>(responseBody, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handlerConstraintViolationException(ConstraintViolationException exception) {
         Map<String, Object> responseBody = new HashMap<>();
