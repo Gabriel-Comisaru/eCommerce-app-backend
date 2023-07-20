@@ -36,6 +36,7 @@ public class OrderItemConverter extends BaseConverter<OrderItem, OrderItemDto> {
                 .productId(orderItem.getProduct().getId())
                 .productName(orderItem.getProduct().getName())
                 .unitsInStock(orderItem.getProduct().getUnitsInStock())
+                .productPrice(orderItem.getProduct().getPrice())
                 .categoryId(orderItem.getProduct().getCategory().getId())
                 .categoryName(orderItem.getProduct().getCategory().getName())
                 .build();
