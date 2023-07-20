@@ -22,4 +22,6 @@ public interface OrderService {
     Map<Long, Integer> getProductsQuantity();
 
     PaginatedOrderResponse getOrders(Integer pageNumber, Integer pageSize, String sortBy);
+
+    Order getBasket();
 }

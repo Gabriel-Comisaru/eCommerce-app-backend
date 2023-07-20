@@ -45,4 +45,5 @@ public class OrderItem extends BaseEntity<Long> {
     public int hashCode() {
         return super.hashCode();
     }
+
 }

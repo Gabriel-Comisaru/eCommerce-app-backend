@@ -1,6 +1,7 @@
 package com.qual.store.controller;
 
 import com.qual.store.converter.OrderConverter;
+import com.qual.store.converter.OrderItemConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.dto.OrderItemDto;
 import com.qual.store.dto.ProductDto;
@@ -31,6 +32,7 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final OrderConverter orderConverter;
+    private final OrderItemConverter orderItemConverter;
 
 
     @GetMapping("/display")
@@ -55,9 +57,9 @@ public class OrderController {
     public ResponseEntity<?> addToOrder(@PathVariable("productId") Long productId, @RequestParam Integer quantity) {
 
         OrderItem orderItem = orderItemService.addOrderItem(productId, quantity);
+        orderService.addToOrder(orderItem.getId());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(orderConverter.convertModelToDto(
-                        orderService.addToOrder(orderItem.getId()))
+                .body(orderItemConverter.convertModelToDto(orderItem)
                 );
     }
 
@@ -85,6 +87,15 @@ public class OrderController {
     public List<OrderDto> getAllOrdersByUsername() {
         return orderService.getAllOrdersByUser().stream()
                 .map(orderConverter::convertModelToDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping(value = "/me/basket")
+    @Log
+    public List<OrderItemDto> getBasket() {
+        return orderItemService.getAllOrderItems().stream()
+                .filter(orderItem -> orderItem.getOrder().getId().equals(orderService.getBasket().getId()))
+                .map(orderItemConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 

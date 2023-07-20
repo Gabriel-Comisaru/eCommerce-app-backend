@@ -217,6 +217,22 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Log
+    public Order getBasket() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
+        Order order = orderRepository.findAllWithOrderItems().stream()
+                .filter(o -> o.getUser().equals(appUser) && o.getStatus().equals(OrderStatus.ACTIVE))
+                .findFirst()
+                .orElse(null);
+        if (order == null) {
+            throw new OrderNotFoundException("No basket found for user " + currentUsername);
+        }
+        return order;
+    }
+
+    @Override
+    @Log
     public Map<Long, Integer> getProductsQuantity() {
         List<Order> orders = getAllOrders().stream()
                 .filter(o -> o.getStatus().equals(OrderStatus.PLACED))
