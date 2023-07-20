@@ -272,7 +272,7 @@ public class OrderServiceImplTest {
         when(orderRepository.findAllWithOrderItems()).thenReturn(List.of(order));
         when(orderRepository.findById(orderId)).thenReturn(optionalOrder);
         when(appUserRepository.findUserByUsername(anyString())).thenReturn(appUser);
-        Order actualResult = orderService.updateOrderStatus(orderId, "DELIVERED");
+        Order actualResult = orderService.updateOrderStatus(orderId, "delivered");
 
         // then
         assertNotNull(actualResult);
@@ -308,7 +308,7 @@ public class OrderServiceImplTest {
         when(orderRepository.findAllWithOrderItems()).thenReturn(List.of(order));
         when(orderRepository.findById(orderId)).thenReturn(optionalOrder);
         when(appUserRepository.findUserByUsername(anyString())).thenReturn(appUser);
-        Order actualResult = orderService.updateOrderStatus(orderId, "CHECKOUT");
+        Order actualResult = orderService.updateOrderStatus(orderId, "cHeckOut");
 
         // then
         assertNotNull(actualResult);

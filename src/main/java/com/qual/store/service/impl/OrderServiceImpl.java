@@ -127,6 +127,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Log
     public Order updateOrderStatus(Long id, String status) {
+        String uppStatus = status.toUpperCase();
         Optional<Order> existingOrder = orderRepository.findAllWithOrderItems().stream()
                 .filter(o -> o.getId().equals(id))
                 .findFirst();
@@ -139,21 +140,21 @@ public class OrderServiceImpl implements OrderService {
         String currentUsername = authentication.getName();
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
         if (appUser.getRole().name().equals("USER")) {
-            if (!status.equals("CHECKOUT")) {
-                throw new InvalidOrderStatusException("Invalid status: " + status);
+            if (!uppStatus.equals("CHECKOUT")) {
+                throw new InvalidOrderStatusException("Invalid status: " + uppStatus);
             }
             if (!existingOrder.get().getStatus().name().equals("ACTIVE")) {
                 throw new UpdateOrderStatusException("You are not allowed to change the status of this order");
             }
 
             existingOrder.ifPresent(updateOrder -> {
-                OrderStatus orderStatus = getOrderStatusFromString(status);
+                OrderStatus orderStatus = getOrderStatusFromString(uppStatus);
                 if (!updateOrder.getUser().equals(appUser)) {
                     throw new UpdateOrderStatusException("You are not allowed to change the status of another user's order");
                 } else if (orderStatus != null) {
                     updateOrder.setStatus(orderStatus);
                 } else {
-                    throw new InvalidOrderStatusException("Invalid status: " + status);
+                    throw new InvalidOrderStatusException("Invalid status: " + uppStatus);
                 }
             });
         } else {
@@ -161,13 +162,13 @@ public class OrderServiceImpl implements OrderService {
             Order order = existingOrder.get();
             List<Product> productsToUpdate = new ArrayList<>();
 
-            if (status.equalsIgnoreCase("placed")&& !order.getStatus().equals(OrderStatus.PLACED)) {
+            if (uppStatus.equalsIgnoreCase("placed")&& !order.getStatus().equals(OrderStatus.PLACED)) {
                 for (OrderItem orderItem : order.getOrderItems()) {
                     Product product = orderItem.getProduct();
                     product.setUnitsInStock(product.getUnitsInStock() - orderItem.getQuantity());
                     productsToUpdate.add(product);
                 }
-            } else if (status.equalsIgnoreCase("cancelled") && !order.getStatus().equals(OrderStatus.CANCELLED)) {
+            } else if (uppStatus.equalsIgnoreCase("cancelled") && !order.getStatus().equals(OrderStatus.CANCELLED)) {
                 for (OrderItem orderItem : order.getOrderItems()) {
                     Product product = orderItem.getProduct();
                     product.setUnitsInStock(product.getUnitsInStock() + orderItem.getQuantity());
@@ -179,11 +180,11 @@ public class OrderServiceImpl implements OrderService {
             productRepository.saveAll(productsToUpdate);
 
             existingOrder.ifPresent(updateOrder -> {
-                OrderStatus orderStatus = getOrderStatusFromString(status);
+                OrderStatus orderStatus = getOrderStatusFromString(uppStatus);
                 if (orderStatus != null) {
                     updateOrder.setStatus(orderStatus);
                 } else {
-                    throw new InvalidOrderStatusException("Invalid status: " + status);
+                    throw new InvalidOrderStatusException("Invalid status: " + uppStatus);
                 }
             });
         }

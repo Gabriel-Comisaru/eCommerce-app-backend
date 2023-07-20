@@ -52,25 +52,23 @@ public class ProductController {
                 .map(productConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
+
     @GetMapping("/discount")
     @Log
-    public List<ProductDto> getAllProductsbyDiscount() {
-        return productService.getAllProducts().stream()
-                .map(productConverter::convertModelToDto)
-                .filter(discount -> discount.getDiscountPercentage() > 0)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<ProductDto>> getAllProductsByDiscount() {
+        return ResponseEntity.ok()
+                .body(productService.getAllProductsByDiscount().stream()
+                        .map(productConverter::convertModelToDto)
+                        .collect(Collectors.toList()));
     }
 
     @GetMapping("/price")
     @Log
-    public List<ProductDto> getAllProductsByPriceRange(@RequestParam Double minPrice, @RequestParam Double maxPrice) {
-        return productService.getAllProductsByPriceRange(minPrice, maxPrice).stream()
-                .map(productConverter::convertModelToDto)
-                .collect(Collectors.toList());
-//        return productService.getAllProducts().stream()
-//                .map(productConverter::convertModelToDto)
-//                .filter(price -> price.getPrice() >= minPrice && price.getPrice() <= maxPrice)
-//                .collect(Collectors.toList());
+    public ResponseEntity<List<ProductDto>> getAllProductsByPriceRange(@RequestParam Double minPrice, @RequestParam Double maxPrice) {
+        return ResponseEntity.ok()
+                .body(productService.getAllProductsByPriceRange(minPrice, maxPrice).stream()
+                        .map(productConverter::convertModelToDto)
+                        .collect(Collectors.toList()));
     }
 
     @GetMapping("/{productId}")
@@ -104,11 +102,11 @@ public class ProductController {
 
     @PutMapping(
             path = "/{productId}",
-            consumes =  {"*/*"}
+            consumes = {"*/*"}
     )
     @Log
     public ResponseEntity<?> updateProduct(@PathVariable Long productId,
-                                           @RequestBody  @Valid ProductRequestDto productRequestDto) {
+                                           @RequestBody @Valid ProductRequestDto productRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productConverter.convertModelToDto(
                         productService.updateProduct(productId, productRequestDto)

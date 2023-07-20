@@ -143,6 +143,63 @@ class ProductServiceImplTest {
     }
 
     @Test
+    void getAllProductsByDiscount() {
+        // given
+        Product productOne = Product.builder().name("Product 1").discountPercentage(0.0).build();
+        productOne.setId(1L);
+
+        Product productTwo = Product.builder().name("Product 2").discountPercentage(20.0).build();
+        productTwo.setId(2L);
+
+        List<Product> products = new ArrayList<>();
+        products.add(productOne);
+        products.add(productTwo);
+
+        // when
+        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(products);
+        when(productConverter.convertModelToDto(any(Product.class))).thenReturn(new ProductDto());
+
+        // then
+        List<Product> result = productService.getAllProductsByDiscount();
+
+        assertEquals(1, result.size());
+        assertEquals(2L, result.get(0).getId());
+        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
+    }
+
+    @Test
+    void getAllProductsByPriceRange() {
+        // given
+        double minPrice = 10.0;
+        double maxPrice = 20.0;
+
+        Product productOne = Product.builder().name("Product 1").price(5.0).build();
+        productOne.setId(1L);
+
+        Product productTwo = Product.builder().name("Product 2").price(15.0).build();
+        productTwo.setId(2L);
+
+        Product productThree = Product.builder().name("Product 3").price(25.0).build();
+        productThree.setId(3L);
+
+        List<Product> products = new ArrayList<>();
+        products.add(productOne);
+        products.add(productTwo);
+        products.add(productThree);
+
+        // when
+        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(products);
+        when(productConverter.convertModelToDto(any(Product.class))).thenReturn(new ProductDto());
+
+        // then
+        List<Product> result = productService.getAllProductsByPriceRange(minPrice, maxPrice);
+
+        assertEquals(1, result.size());
+        assertEquals(2L, result.get(0).getId());
+        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
+    }
+
+    @Test
     void saveProductTest() {
         // given
         Product product = Product.builder().name("Test Product").build();

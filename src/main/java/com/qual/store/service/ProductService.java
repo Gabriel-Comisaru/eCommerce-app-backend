@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface ProductService {
     List<Product> getAllProducts();
+
+    List<Product> getAllProductsByDiscount();
     List<Product> getAllProductsByPriceRange(Double minPrice, Double maxPrice);
 
     Product saveProductCategory(ProductRequestDto productRequestDto, Long categoryId);

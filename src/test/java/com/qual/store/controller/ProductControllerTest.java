@@ -3,13 +3,11 @@ package com.qual.store.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.qual.store.converter.ProductConverter;
-import com.qual.store.converter.lazyConverter.ProductLazyConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.dto.request.ProductRequestDto;
 import com.qual.store.model.Product;
-import com.qual.store.repository.AppUserRepository;
-import com.qual.store.service.CategoryService;
+import com.qual.store.service.OrderService;
 import com.qual.store.service.ProductService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,8 +20,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -35,6 +36,9 @@ class ProductControllerTest {
 
     @Mock
     private ProductService productService;
+
+    @Mock
+    private OrderService orderService;
 
     @Mock
     private ProductConverter productConverter;
@@ -81,6 +85,120 @@ class ProductControllerTest {
         verify(productConverter, times(1)).convertModelToDto(product);
     }
 
+    @Test
+    public void getAllProductsByDiscount() throws Exception {
+        // given
+        double discount = 20.0;
+
+        Product product = new Product();
+        product.setId(1L);
+        product.setDiscountPercentage(discount);
+        product.setName("Test Product");
+
+        ProductDto productDto = new ProductDto();
+        productDto.setId(1L);
+        productDto.setDiscountPercentage(discount);
+        productDto.setName("Test Product");
+
+        List<Product> productList = new ArrayList<>();
+        productList.add(product);
+
+        // when
+        when(productService.getAllProductsByDiscount()).thenReturn(productList);
+        when(productConverter.convertModelToDto(product)).thenReturn(productDto);
+
+        // then
+        mockMvc.perform(get("/api/products/discount")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(productDto.getId()))
+                .andExpect(jsonPath("$[0].name").value(productDto.getName()))
+                .andExpect(jsonPath("$[0].discountPercentage").value(productDto.getDiscountPercentage()))
+                .andExpect(jsonPath("$.length()").value(productList.size()));
+
+        verify(productService, times(1)).getAllProductsByDiscount();
+        verify(productConverter, times(1)).convertModelToDto(product);
+    }
+
+    @Test
+    public void getAllProductsByPriceRangeTest() throws Exception {
+        // given
+        double minPrice = 10;
+        double maxPrice = 100;
+
+        Product product1 = new Product();
+        product1.setId(1L);
+        product1.setPrice(50.0);
+        product1.setName("Test Product 1");
+
+
+        ProductDto productDto = new ProductDto();
+        productDto.setId(1L);
+        productDto.setPrice(50.0);
+        productDto.setName("Test Product");
+
+        List<Product> productList = new ArrayList<>();
+        productList.add(product1);
+
+        // when
+        when(productService.getAllProductsByPriceRange(minPrice, maxPrice)).thenReturn(productList);
+        when(productConverter.convertModelToDto(product1)).thenReturn(productDto);
+
+        // then
+        mockMvc.perform(get("/api/products/price")
+                        .param("minPrice", String.valueOf(minPrice))
+                        .param("maxPrice", String.valueOf(maxPrice))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(productDto.getId()))
+                .andExpect(jsonPath("$[0].name").value(productDto.getName()))
+                .andExpect(jsonPath("$.length()").value(productList.size()));
+
+        verify(productService, times(1)).getAllProductsByPriceRange(minPrice, maxPrice);
+        verify(productConverter, times(1)).convertModelToDto(product1);
+    }
+
+    @Test
+    public void getProductsByOrderStatusPlaced() throws Exception {
+        // given
+        Integer quantity = 1;
+
+        Long productId = 1L;
+
+        Product product1 = new Product();
+        product1.setId(productId);
+        product1.setName("Test Product");
+
+        ProductDto productDto = new ProductDto();
+        productDto.setId(productId);
+        productDto.setName("Test Product");
+
+        List<Product> productList = new ArrayList<>();
+        productList.add(product1);
+
+        Map<Long, Integer> productQuantityMap = new HashMap<>();
+        productQuantityMap.put(productId, quantity);
+
+        // when
+        when(orderService.getProductsQuantity()).thenReturn(productQuantityMap);
+        when(productService.getAllProducts()).thenReturn(productList);
+        when(productConverter.convertModelToDto(product1)).thenReturn(productDto);
+
+        // then
+        mockMvc.perform(get("/api/products/placed")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(productDto.getId()))
+                .andExpect(jsonPath("$[0].name").value(productDto.getName()))
+                .andExpect(jsonPath("$.length()").value(productList.size()));
+
+        verify(orderService, times(1)).getProductsQuantity();
+        verify(productService, times(1)).getAllProducts();
+        verify(productConverter, times(1)).convertModelToDto(product1);
+    }
     @Test
     public void getProductByIdTest() throws Exception {
         // given

@@ -50,17 +50,6 @@ public class OrderItemController {
                 .collect(Collectors.toList());
     }
 
-
-//    @PostMapping(value = "/{productId}")
-//    @Log
-//    public ResponseEntity<?> addOrderItem(@PathVariable("productId") Long productId, @RequestParam Integer quantity) {
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body(orderItemConverter.convertModelToDto(
-//                                orderItemService.addOrderItem(productId, quantity)
-//                        )
-//                );
-//    }
-
     @DeleteMapping(value = "/{id}")
     @Log
     public ResponseEntity<?> deleteOrderItemById(@PathVariable("id") Long id) {

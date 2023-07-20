@@ -102,6 +102,14 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllWithCategoryAndReviewsAndImages();
     }
 
+    @Log
+    @Override
+    public List<Product> getAllProductsByDiscount() {
+        return productRepository.findAllWithCategoryAndReviewsAndImages()
+                .stream()
+                .filter(product -> product.getDiscountPercentage() > 0)
+                .collect(Collectors.toList());}
+
     @Override
     @Log
     public List<Product> getAllProductsByPriceRange(Double minPrice, Double maxPrice) {

@@ -73,8 +73,6 @@ public class OrderController {
     @Log
     public ResponseEntity<?> updateOrderStatus(@PathVariable("orderId") Long id,
                                                @RequestParam("status") String status) {
-
-        status = status.toUpperCase();
         return ResponseEntity.ok(
                 orderConverter.convertModelToDto(
                         orderService.updateOrderStatus(id, status)
