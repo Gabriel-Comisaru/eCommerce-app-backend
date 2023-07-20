@@ -140,12 +140,25 @@ public class OrderServiceImpl implements OrderService {
         String currentUsername = authentication.getName();
         AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
         if (appUser.getRole().name().equals("USER")) {
-            if (!uppStatus.equals("CHECKOUT")) {
+            if (!(uppStatus.equals("CHECKOUT") || uppStatus.equals("PLACED"))) {
                 throw new InvalidOrderStatusException("Invalid status: " + uppStatus);
             }
-            if (!existingOrder.get().getStatus().name().equals("ACTIVE")) {
+            if (uppStatus.equals("CHECKOUT") && !existingOrder.get().getStatus().name().equals("ACTIVE")
+                    || uppStatus.equals("PLACED") && !existingOrder.get().getStatus().name().equals("CHECKOUT")) {
                 throw new UpdateOrderStatusException("You are not allowed to change the status of this order");
             }
+
+            List<Product> productsToUpdate = new ArrayList<>();
+            Order order = existingOrder.get();
+
+            if (uppStatus.equals("PLACED")) {
+                for (OrderItem orderItem : order.getOrderItems()) {
+                    Product product = orderItem.getProduct();
+                    product.setUnitsInStock(product.getUnitsInStock() - orderItem.getQuantity());
+                    productsToUpdate.add(product);
+                }
+            }
+            productRepository.saveAll(productsToUpdate);
 
             existingOrder.ifPresent(updateOrder -> {
                 OrderStatus orderStatus = getOrderStatusFromString(uppStatus);
@@ -158,11 +171,11 @@ public class OrderServiceImpl implements OrderService {
                 }
             });
         } else {
-            //if the status is placed or cancelled, modify the stock of the products
+            // if the status is placed or cancelled, modify the stock of the products
             Order order = existingOrder.get();
             List<Product> productsToUpdate = new ArrayList<>();
 
-            if (uppStatus.equalsIgnoreCase("placed")&& !order.getStatus().equals(OrderStatus.PLACED)) {
+            if (uppStatus.equalsIgnoreCase("placed") && !order.getStatus().equals(OrderStatus.PLACED)) {
                 for (OrderItem orderItem : order.getOrderItems()) {
                     Product product = orderItem.getProduct();
                     product.setUnitsInStock(product.getUnitsInStock() - orderItem.getQuantity());
