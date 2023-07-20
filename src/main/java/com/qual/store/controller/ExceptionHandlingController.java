@@ -20,15 +20,6 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ExceptionHandlingController {
 
-    @ExceptionHandler(InvalidOrderStatusException.class)
-    public ResponseEntity<Object> handlerCompanyException(InvalidOrderStatusException exception) {
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("timestamp", LocalDateTime.now());
-        responseBody.put("error message", exception.getLocalizedMessage());
-
-        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<Object> handlerProductNotFoundException(ProductNotFoundException exception) {
         Map<String, Object> responseBody = new HashMap<>();
