@@ -1,7 +1,9 @@
 package com.qual.store.controller;
 
 import com.qual.store.converter.OrderConverter;
+import com.qual.store.converter.OrderItemConverter;
 import com.qual.store.dto.OrderDto;
+import com.qual.store.dto.OrderItemDto;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
@@ -41,6 +43,9 @@ class OrderControllerTest {
 
     @Mock
     private OrderConverter orderConverter;
+
+    @Mock
+    private OrderItemConverter orderItemConverter;
 
     @InjectMocks
     private OrderController orderController;
@@ -100,15 +105,14 @@ class OrderControllerTest {
         orderItem.setId(orderItemId);
         orderItem.setQuantity(1);
 
-
-        OrderDto orderDto = new OrderDto();
-        orderDto.setId(1L);
-        orderDto.setStatus("ACTIVE");
+        OrderItemDto orderItemDto = new OrderItemDto();
+        orderItemDto.setId(orderItemId);
+        orderItemDto.setQuantity(1);
 
         // when
         when(orderItemService.addOrderItem(productId, quantity)).thenReturn(orderItem);
         when(orderService.addToOrder(orderItemId)).thenReturn(order);
-        when(orderConverter.convertModelToDto(order)).thenReturn(orderDto);
+        when(orderItemConverter.convertModelToDto(orderItem)).thenReturn(orderItemDto);
 
         // then
         mockMvc.perform(post("/api/orders/{productId}", productId)
@@ -116,12 +120,12 @@ class OrderControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(orderDto.getId()))
-                .andExpect(jsonPath("$.status").value(orderDto.getStatus()));
+                .andExpect(jsonPath("$.id").value(orderItemDto.getId()))
+                .andExpect(jsonPath("$.quantity").value(orderItemDto.getQuantity()));
 
         verify(orderItemService, times(1)).addOrderItem(productId, quantity);
         verify(orderService, times(1)).addToOrder(orderItemId);
-        verify(orderConverter, times(1)).convertModelToDto(order);
+        verify(orderItemConverter, times(1)).convertModelToDto(orderItem);
     }
 
     @Test
