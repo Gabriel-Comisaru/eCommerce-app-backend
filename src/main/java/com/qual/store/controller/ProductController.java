@@ -1,9 +1,6 @@
 package com.qual.store.controller;
 
 import com.github.javafaker.Faker;
-
-import java.util.*;
-
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.converter.lazyConverter.ProductLazyConverter;
 import com.qual.store.dto.ProductDto;
@@ -13,9 +10,7 @@ import com.qual.store.dto.request.ProductRequestDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Category;
-import com.qual.store.model.Order;
 import com.qual.store.model.Product;
-import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.service.CategoryService;
 import com.qual.store.service.OrderService;
@@ -23,12 +18,15 @@ import com.qual.store.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,7 +36,6 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     private final ProductService productService;
-
     private final OrderService orderService;
     private final ProductConverter productConverter;
     private final CategoryService categoryService;
@@ -194,5 +191,23 @@ public class ProductController {
         return allProducts;
     }
 
+    @PostMapping("/fav")
+    @Log
+    public ResponseEntity<String> addToFavorites(@RequestParam("productId") Long productId) {
+        productService.addToFavorites(productId);
+        return ResponseEntity.ok("Product added to favorites successfully");
+    }
 
+    @DeleteMapping("/fav")
+    @Log
+    public ResponseEntity<String> removeFromFavorites(@RequestParam("productId") Long productId) {
+        productService.removeFromFavorites(productId);
+        return ResponseEntity.ok("Product removed from favorites successfully");
+    }
+
+    @GetMapping("/fav")
+    @Log
+    public ResponseEntity<List<ProductDto>> getFavProductsByLoggedInUser() {
+        return ResponseEntity.ok(productService.getFavProductsByLoggedInUser());
+    }
 }

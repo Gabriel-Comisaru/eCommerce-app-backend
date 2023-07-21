@@ -1,6 +1,5 @@
 package com.qual.store.repository;
 
-import com.qual.store.model.Order;
 import com.qual.store.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +16,5 @@ public interface ProductRepository extends ShopRepository<Product, Long> {
     @Override
     @EntityGraph(value = "productWithCategoryAndReviewsAndImages", type = EntityGraph.EntityGraphType.LOAD)
     Page<Product> findAll(Pageable pageable);
+
 }

@@ -19,12 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -199,6 +195,7 @@ class ProductControllerTest {
         verify(productService, times(1)).getAllProducts();
         verify(productConverter, times(1)).convertModelToDto(product1);
     }
+
     @Test
     public void getProductByIdTest() throws Exception {
         // given
@@ -377,6 +374,50 @@ class ProductControllerTest {
 
         verify(productService, times(1)).findProductsByCategory(categoryId);
         verify(productConverter, times(0)).convertModelToDto(any());
+    }
+
+    @Test
+    public void getFavProductsByLoggedInUserTest() throws Exception {
+        // given
+        List<ProductDto> mockFavProducts = Collections.singletonList(new ProductDto());
+
+        // when
+        when(productService.getFavProductsByLoggedInUser()).thenReturn(mockFavProducts);
+
+        // then
+        mockMvc.perform(get("/api/products/fav"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        verify(productService, times(1)).getFavProductsByLoggedInUser();
+    }
+
+    @Test
+    public void addToFavoritesTest() throws Exception {
+        // given
+        Long productId = 123L;
+
+        // when & then
+        mockMvc.perform(post("/api/products/fav")
+                        .param("productId", String.valueOf(productId)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Product added to favorites successfully"));
+
+        verify(productService, times(1)).addToFavorites(productId);
+    }
+
+    @Test
+    public void removeFromFavoritesTest() throws Exception {
+        // given
+        Long productId = 123L;
+
+        // when & then
+        mockMvc.perform(delete("/api/products/fav")
+                        .param("productId", String.valueOf(productId)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Product removed from favorites successfully"));
+
+        verify(productService, times(1)).removeFromFavorites(productId);
     }
 
     @AfterEach

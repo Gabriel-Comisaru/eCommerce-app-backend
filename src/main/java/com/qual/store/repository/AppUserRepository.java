@@ -10,10 +10,11 @@ import java.util.List;
 
 public interface AppUserRepository extends ShopRepository<AppUser, Long> {
 
+    @EntityGraph(value = "userWithOrders", type = EntityGraph.EntityGraphType.LOAD)
     AppUser findUserByUsername(String username);
 
     // print user with orders
-     @Query("select distinct u from AppUser u")
-     @EntityGraph(value = "userWithOrders", type = EntityGraph.EntityGraphType.LOAD)
-     List<AppUser> findAllWithOrders();
+    @Query("select distinct u from AppUser u")
+    @EntityGraph(value = "userWithOrders", type = EntityGraph.EntityGraphType.LOAD)
+    List<AppUser> findAllWithOrders();
 }

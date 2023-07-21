@@ -91,8 +91,10 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAuthority(RoleName.ADMIN.name());
 
                     //only admin can create, update, delete products
+                    auth.requestMatchers(HttpMethod.POST, "/api/products/fav").authenticated();
                     auth.requestMatchers(HttpMethod.POST, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/products/fav").authenticated();
                     auth.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
 
                     auth.requestMatchers("/api/orders/display").hasAuthority(RoleName.ADMIN.name());

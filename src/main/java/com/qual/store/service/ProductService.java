@@ -4,15 +4,14 @@ import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.dto.request.ProductRequestDto;
 import com.qual.store.model.Product;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProductService {
     List<Product> getAllProducts();
 
     List<Product> getAllProductsByDiscount();
+
     List<Product> getAllProductsByPriceRange(Double minPrice, Double maxPrice);
 
     Product saveProductCategory(ProductRequestDto productRequestDto, Long categoryId);
@@ -30,4 +29,10 @@ public interface ProductService {
     ProductDto getProductById(Long productId);
 
     List<Product> findProductsByCategory(Long categoryId);
+
+    void addToFavorites(Long productId);
+
+    void removeFromFavorites(Long productId);
+
+    List<ProductDto> getFavProductsByLoggedInUser();
 }

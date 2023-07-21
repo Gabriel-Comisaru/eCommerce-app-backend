@@ -4,8 +4,8 @@ import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.request.ProductRequestDto;
 import com.qual.store.model.ImageModel;
-import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.Product;
+import com.qual.store.model.base.BaseEntity;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.CategoryRepository;
 import com.qual.store.repository.ImageRepository;
@@ -64,6 +64,7 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .userId(product.getUser().getId())
                 .reviewsId(product.getReviews().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .imagesName(product.getImages().stream().map(ImageModel::getName).toList())
+                .favUserIds(product.getFavoriteByUsers().stream().map(BaseEntity::getId).collect(Collectors.toList()))
                 .build();
 
         productDto.setId(product.getId());

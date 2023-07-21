@@ -1,14 +1,16 @@
 package com.qual.store.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @NamedEntityGraphs({
@@ -17,7 +19,8 @@ import java.util.*;
                 attributeNodes = {
                         @NamedAttributeNode(value = "category"),
                         @NamedAttributeNode(value = "reviews"),
-                        @NamedAttributeNode(value = "images")
+                        @NamedAttributeNode(value = "images"),
+                        @NamedAttributeNode(value = "favoriteByUsers")
                 }
 
         ),
@@ -64,7 +67,6 @@ public class Product extends BaseEntity<Long> {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "product")
     @Builder.Default
-//    @JsonManagedReference
     private Set<OrderItem> orderItems = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
@@ -72,12 +74,13 @@ public class Product extends BaseEntity<Long> {
     private AppUser user;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
-//    @JsonManagedReference
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-//    @JsonManagedReference
     private Set<ImageModel> images;
+
+    @ManyToMany(mappedBy = "favoriteProducts", cascade = CascadeType.ALL)
+    private Set<AppUser> favoriteByUsers = new HashSet<>();
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);

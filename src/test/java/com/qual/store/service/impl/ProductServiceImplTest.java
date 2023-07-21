@@ -20,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 
 import java.util.*;
 
@@ -87,7 +88,7 @@ class ProductServiceImplTest {
         when(appUserRepository.findUserByUsername(anyString())).thenReturn(new AppUser());
         when(imageRepository.save(any(ImageModel.class))).thenReturn(new ImageModel());
 
-        Product savedProduct = productService.saveProductCategory(productRequestDto, categoryId);
+        productService.saveProductCategory(productRequestDto, categoryId);
 
         // then
         verify(validator, times(1)).validate(product);
@@ -492,6 +493,125 @@ class ProductServiceImplTest {
 
         verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
         verifyNoMoreInteractions(productRepository);
+    }
+
+    @Test
+    public void addToFavoritesTest() {
+        // given
+        Long productId = 123L;
+        Product product = Product.builder()
+                .favoriteByUsers(new HashSet<>())
+                .build();
+        product.setId(productId);
+
+        String currentUsername = "testUser";
+        AppUser appUser = AppUser.builder()
+                .username(currentUsername)
+                .favoriteProducts(new HashSet<>())
+                .build();
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(new AppUser(), new Object());
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        // when
+        when(appUserRepository.findUserByUsername(anyString())).thenReturn(appUser);
+        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(Collections.singletonList(product));
+        when(appUserRepository.save(appUser)).thenReturn(appUser);
+
+        productService.addToFavorites(productId);
+
+        // then
+        assertEquals(1, appUser.getFavoriteProducts().size());
+        verify(appUserRepository, times(1)).findUserByUsername(anyString());
+        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
+        verify(appUserRepository, times(1)).save(any(AppUser.class));
+        verifyNoMoreInteractions(appUserRepository);
+        verifyNoMoreInteractions(productRepository);
+    }
+
+
+    @Test
+    public void removeFromFavoritesTest() {
+        // given
+        Long productId = 123L;
+        Product product = Product.builder()
+                .favoriteByUsers(new HashSet<>())
+                .build();
+        product.setId(productId);
+
+        String currentUsername = "testUser";
+        AppUser appUser = AppUser.builder()
+                .username(currentUsername)
+                .favoriteProducts(new HashSet<>())
+                .build();
+        appUser.addFavoriteProduct(product);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(new AppUser(), new Object());
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        // when
+        when(appUserRepository.findUserByUsername(anyString())).thenReturn(appUser);
+        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(Collections.singletonList(product));
+        when(appUserRepository.save(appUser)).thenReturn(appUser);
+
+        productService.removeFromFavorites(productId);
+
+        // then
+        assertEquals(0, appUser.getFavoriteProducts().size());
+        verify(appUserRepository, times(1)).findUserByUsername(anyString());
+        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
+        verify(appUserRepository, times(1)).save(any(AppUser.class));
+        verifyNoMoreInteractions(appUserRepository);
+        verifyNoMoreInteractions(productRepository);
+    }
+
+    @Test
+    public void getFavProductsByLoggedInUserTest() {
+        // given
+        Long productId1 = 123L;
+        Long productId2 = 456L;
+
+        Product product1 = new Product();
+        product1.setId(productId1);
+
+        Product product2 = new Product();
+        product2.setId(productId2);
+
+        String currentUsername = "testUser";
+        AppUser appUser = AppUser.builder()
+                .username(currentUsername)
+                .favoriteProducts(new HashSet<>())
+                .build();
+        appUser.addFavoriteProduct(product1);
+        appUser.addFavoriteProduct(product2);
+
+        ProductDto productDto = ProductDto.builder()
+                .favUserIds(List.of(1L))
+                .build();
+        productDto.setId(1L);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(new AppUser(), new Object());
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        // when
+        when(appUserRepository.findUserByUsername(anyString())).thenReturn(appUser);
+        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(Arrays.asList(product1, product2));
+        when(productConverter.convertModelToDto(any(Product.class))).thenReturn(productDto);
+
+        productService.getFavProductsByLoggedInUser();
+
+        // then
+        verify(appUserRepository, times(1)).findUserByUsername(anyString());
+        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
+        verifyNoMoreInteractions(appUserRepository);
+        verifyNoMoreInteractions(productRepository);
+        verifyNoMoreInteractions(productConverter);
     }
 
     @AfterEach

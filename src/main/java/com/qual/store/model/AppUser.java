@@ -15,7 +15,8 @@ import java.util.*;
                 @NamedEntityGraph(
                         name = "userWithOrders",
                         attributeNodes = {
-                                @NamedAttributeNode(value = "orders")
+                                @NamedAttributeNode(value = "orders"),
+                                @NamedAttributeNode(value = "favoriteProducts")
                         }
                 ),
                 @NamedEntityGraph(
@@ -63,6 +64,22 @@ public class AppUser extends BaseEntity<Long> {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorite_products",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private Set<Product> favoriteProducts = new HashSet<>();
+
+    public void addFavoriteProduct(Product product) {
+        favoriteProducts.add(product);
+    }
+
+    public void removeFavoriteProduct(Product product) {
+        favoriteProducts.remove(product);
+    }
 
     public void addOrder(Order order) {
         if (orders == null)

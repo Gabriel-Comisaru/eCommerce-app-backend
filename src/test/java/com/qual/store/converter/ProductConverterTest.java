@@ -139,6 +139,7 @@ class ProductConverterTest {
                 .user(user)
                 .reviews(new ArrayList<>(List.of(reviewOne, reviewTwo)))
                 .images(new HashSet<>(List.of(imageModelOne, imageModelTwo)))
+                .favoriteByUsers(new HashSet<>())
                 .build();
 
         product.setId(productId);
@@ -158,6 +159,7 @@ class ProductConverterTest {
                 .categoryName("Category")
                 .reviewsId(reviewIds)
                 .imagesName(imageNames)
+                .favUserIds(new ArrayList<>())
                 .build();
 
         expectedProductDto.setId(productId);

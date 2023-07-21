@@ -108,7 +108,8 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllWithCategoryAndReviewsAndImages()
                 .stream()
                 .filter(product -> product.getDiscountPercentage() > 0)
-                .collect(Collectors.toList());}
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Log
@@ -188,6 +189,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Log
     public PaginatedProductResponse getProducts(Integer pageNumber, Integer pageSize, String sortBy) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
 
@@ -202,6 +204,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Log
     public ProductDto getProductById(Long productId) {
         Product product = productRepository.findAllWithCategoryAndReviewsAndImages()
                 .stream()
@@ -221,5 +224,49 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .filter(product -> product.getCategory().getId().equals(categoryId))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Log
+    public void addToFavorites(Long productId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
+
+        Product product = productRepository.findAllWithCategoryAndReviewsAndImages()
+                .stream()
+                .filter(prod -> prod.getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        appUser.addFavoriteProduct(product);
+        appUserRepository.save(appUser);
+    }
+
+    @Override
+    @Log
+    public void removeFromFavorites(Long productId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
+
+        Product product = productRepository.findAllWithCategoryAndReviewsAndImages()
+                .stream()
+                .filter(prod -> prod.getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        appUser.removeFavoriteProduct(product);
+        appUserRepository.save(appUser);
+    }
+
+    @Override
+    public List<ProductDto> getFavProductsByLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        AppUser appUser = appUserRepository.findUserByUsername(currentUsername);
+
+        return productRepository.findAllWithCategoryAndReviewsAndImages().stream()
+                .filter(product -> product.getFavoriteByUsers().contains(appUser))
+                .map(productConverter::convertModelToDto)
+                .toList();
     }
 }
