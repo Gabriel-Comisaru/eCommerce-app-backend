@@ -187,7 +187,7 @@ public class OrderServiceImplTest {
 
         // then
         verify(orderRepository, times(1)).findById(order.getId());
-        verify(orderItemRepository, times(1)).saveAll(orderItems);
+        verify(orderItemService, times(1)).deleteOrderItemById(orderItems.get(0).getId());
         verify(orderRepository, times(1)).deleteById(order.getId());
 
     }

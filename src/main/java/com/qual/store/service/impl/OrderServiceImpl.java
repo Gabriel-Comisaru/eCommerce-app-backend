@@ -111,7 +111,9 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(null);
         orderItems.forEach(orderItem -> orderItem.setOrder(null));
 
-        orderItemRepository.saveAll(orderItems);
+        for (OrderItem orderItem : orderItems) {
+            orderItemService.deleteOrderItemById(orderItem.getId());
+        }
 
         orderRepository.deleteById(id);
     }
