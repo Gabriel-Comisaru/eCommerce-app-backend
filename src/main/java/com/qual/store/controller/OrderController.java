@@ -8,6 +8,7 @@ import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.logger.Log;
+import com.qual.store.model.Order;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
 import com.qual.store.model.enums.OrderStatus;
@@ -57,7 +58,8 @@ public class OrderController {
     public ResponseEntity<?> addToOrder(@PathVariable("productId") Long productId, @RequestParam Integer quantity) {
 
         OrderItem orderItem = orderItemService.addOrderItem(productId, quantity);
-        orderService.addToOrder(orderItem.getId());
+        Order order = orderService.addToOrder(orderItem.getId());
+        orderItem.setOrder(order);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(orderItemConverter.convertModelToDto(orderItem)
                 );

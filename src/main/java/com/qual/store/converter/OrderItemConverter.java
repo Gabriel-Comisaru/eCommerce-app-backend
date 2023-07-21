@@ -2,6 +2,7 @@ package com.qual.store.converter;
 
 import com.qual.store.converter.base.BaseConverter;
 import com.qual.store.dto.OrderItemDto;
+import com.qual.store.model.ImageModel;
 import com.qual.store.model.OrderItem;
 import com.qual.store.repository.OrderRepository;
 import com.qual.store.repository.ProductRepository;
@@ -39,11 +40,16 @@ public class OrderItemConverter extends BaseConverter<OrderItem, OrderItemDto> {
                 .productPrice(orderItem.getProduct().getPrice())
                 .categoryId(orderItem.getProduct().getCategory().getId())
                 .categoryName(orderItem.getProduct().getCategory().getName())
+//                .imageName(orderItem.getProduct().getImages().stream().map(ImageModel::getName).findFirst().orElse(null))
                 .build();
         
         if (orderItem.getOrder() != null) {
             orderItemDto.setOrderId(orderItem.getOrder().getId());
         }
+        productRepository.findAllWithCategoryAndReviewsAndImages().stream()
+                .filter(product -> product.getId().equals(orderItem.getProduct().getId()))
+                .findFirst()
+                .ifPresent(product -> orderItemDto.setImageName(product.getImages().stream().map(ImageModel::getName).findFirst().orElse(null)));
 
         orderItemDto.setId(orderItem.getId());
         return orderItemDto;

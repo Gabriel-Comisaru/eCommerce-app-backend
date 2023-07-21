@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface OrderItemRepository extends ShopRepository<OrderItem, Long> {
-    @Query("select distinct oi from OrderItem oi")
+    @Query("select distinct oi from OrderItem oi join fetch oi.product p join fetch p.images")
     @EntityGraph(value = "orderItemWithProduct", type = EntityGraph.EntityGraphType.LOAD)
     List<OrderItem> findAllWithProduct();
 }

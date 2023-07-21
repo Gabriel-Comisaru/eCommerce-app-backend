@@ -20,4 +20,5 @@ public class OrderItemDto extends BaseDto implements Serializable {
     private double productPrice;
     private long unitsInStock;
     private Long orderId;
+    private String imageName;
 }
