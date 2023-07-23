@@ -193,16 +193,18 @@ public class ProductController {
 
     @PostMapping("/fav")
     @Log
-    public ResponseEntity<String> addToFavorites(@RequestParam("productId") Long productId) {
+    public ResponseEntity<?> addToFavorites(@RequestParam("productId") Long productId) {
         productService.addToFavorites(productId);
-        return ResponseEntity.ok("Product added to favorites successfully");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Product added to favorites successfully");
     }
 
     @DeleteMapping("/fav")
     @Log
-    public ResponseEntity<String> removeFromFavorites(@RequestParam("productId") Long productId) {
+    public ResponseEntity<?> removeFromFavorites(@RequestParam("productId") Long productId) {
         productService.removeFromFavorites(productId);
-        return ResponseEntity.ok("Product removed from favorites successfully");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Product removed from favorites successfully");
     }
 
     @GetMapping("/fav")
