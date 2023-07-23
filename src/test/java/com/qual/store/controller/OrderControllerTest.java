@@ -2,9 +2,11 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.converter.OrderItemConverter;
+import com.qual.store.converter.lazyConverter.OrderWithOrderItemsConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.dto.OrderItemDto;
 import com.qual.store.dto.ProductDto;
+import com.qual.store.dto.lazyDto.OrderWithOrderItemDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.model.Order;
@@ -25,6 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -46,6 +49,9 @@ class OrderControllerTest {
 
     @Mock
     private OrderItemConverter orderItemConverter;
+
+    @Mock
+    private OrderWithOrderItemsConverter orderWithOrderItemConverter;
 
     @InjectMocks
     private OrderController orderController;
@@ -203,6 +209,90 @@ class OrderControllerTest {
     }
 
     @Test
+    public void getAllOrdersWithOrderItemsByUsernameTest() throws Exception {
+        // given
+        Order order = new Order();
+        order.setId(1L);
+        order.setStatus(OrderStatus.ACTIVE);
+
+        OrderWithOrderItemDto orderDto = OrderWithOrderItemDto.builder()
+                .deliveryPrice(200)
+                .orderItems(new ArrayList<>())
+                .deliveryDate(LocalDate.now().plus(2, ChronoUnit.DAYS))
+                .status("ACTIVE")
+                .build();
+
+        OrderItemDto orderItemDto = OrderItemDto.builder()
+                .quantity(1)
+                .build();
+        orderItemDto.setId(1L);
+
+        orderDto.getOrderItems().add(orderItemDto);
+
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(order);
+
+        // when
+        when(orderService.getAllOrdersByUser()).thenReturn(orderList);
+        when(orderWithOrderItemConverter.convertModelToDto(order)).thenReturn(orderDto);
+
+        // then
+        mockMvc.perform(get("/api/orders/me/lazy")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(orderDto.getId()))
+                .andExpect(jsonPath("$[0].status").value(orderDto.getStatus()))
+                .andExpect(jsonPath("$[0].orderItems[0].id").value(orderItemDto.getId()))
+                .andExpect(jsonPath("$[0].orderItems[0].quantity").value(orderItemDto.getQuantity()))
+                .andExpect(jsonPath("$.length()").value(orderList.size()))
+                .andExpect(jsonPath("$[0].orderItems.length()").value(orderDto.getOrderItems().size()));
+
+        verify(orderService, times(1)).getAllOrdersByUser();
+    }
+
+    @Test
+    void getBasketTest() throws Exception {
+        // given
+        Order order = new Order();
+        order.setId(1L);
+        order.setStatus(OrderStatus.ACTIVE);
+        order.setOrderItems(new HashSet<>());
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
+        orderItem.setQuantity(1);
+
+        OrderItemDto orderItemDto = new OrderItemDto();
+        orderItemDto.setId(1L);
+        orderItemDto.setQuantity(1);
+
+        orderItem.setOrder(order);
+        orderItemDto.setOrderId(1L);
+        order.addOrderItem(orderItem);
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(orderItem);
+
+        // when
+        when(orderService.getBasketAsOrderItems()).thenReturn(orderItemList);
+        when(orderItemConverter.convertModelToDto(orderItem)).thenReturn(orderItemDto);
+
+        // then
+        mockMvc.perform(get("/api/orders/me/basket")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(orderItemDto.getId()))
+                .andExpect(jsonPath("$[0].orderId").value(order.getId()))
+                .andExpect(jsonPath("$[0].quantity").value(orderItemDto.getQuantity()))
+                .andExpect(jsonPath("$.length()").value(order.getOrderItems().size()));
+
+        verify(orderService, times(1)).getBasketAsOrderItems();
+        verify(orderItemConverter, times(1)).convertModelToDto(orderItem);
+    }
+
+    @Test
     void getOrdersPaginatedTest() throws Exception {
         // given
         int pageNumber = 0;
@@ -252,6 +342,7 @@ class OrderControllerTest {
 
         verify(orderService, times(1)).getOrders(pageNumber, pageSize, sortBy);
     }
+
 
     @AfterEach
     public void closeService() throws Exception {

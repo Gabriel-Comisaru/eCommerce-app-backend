@@ -5,9 +5,11 @@ import com.qual.store.dto.OrderItemDto;
 import com.qual.store.exceptions.OrderItemNotFoundException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.model.Category;
+import com.qual.store.model.Order;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
 import com.qual.store.repository.OrderItemRepository;
+import com.qual.store.repository.OrderRepository;
 import com.qual.store.repository.ProductRepository;
 import com.qual.store.utils.validators.Validator;
 import org.junit.After;
@@ -27,6 +29,9 @@ public class OrderItemServiceImplTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderItemConverter orderItemConverter;
@@ -162,15 +167,23 @@ public class OrderItemServiceImplTest {
         product.getOrderItems().add(orderItem);
         orderItem.setProduct(product);
 
+        Order order = Order.builder().build();
+        order.setId(1L);
+        order.setOrderItems(new HashSet<>());
+        order.getOrderItems().add(orderItem);
+        orderItem.setOrder(order);
+
         // when
         when(orderItemRepository.findById(orderItem.getId())).thenReturn(Optional.of(orderItem));
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+        when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
         when(productRepository.save(product)).thenReturn(product);
         orderItemService.deleteOrderItemById(orderItem.getId());
 
         // then
         verify(orderItemRepository, times(1)).findById(orderItem.getId());
         verify(productRepository, times(1)).findById(product.getId());
+        verify(orderRepository, times(1)).findById(order.getId());
         verify(productRepository, times(1)).save(any(Product.class));
         verify(orderItemRepository, times(1)).deleteById(orderItem.getId());
     }

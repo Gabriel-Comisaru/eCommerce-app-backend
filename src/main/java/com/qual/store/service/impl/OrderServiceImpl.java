@@ -248,6 +248,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Log
+    public List<OrderItem> getBasketAsOrderItems() {
+        return orderItemRepository.findAllWithProduct().stream()
+                .filter(oi -> oi.getOrder().getId().equals(getBasket().getId()))
+                .toList();
+    }
+
+    @Override
+    @Log
     public Map<Long, Integer> getProductsQuantity() {
         List<Order> orders = getAllOrders().stream()
                 .filter(o -> o.getStatus().equals(OrderStatus.PLACED))

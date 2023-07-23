@@ -6,10 +6,12 @@ import com.qual.store.exceptions.OrderItemNotFoundException;
 import com.qual.store.exceptions.ProductNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
+import com.qual.store.model.Order;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.Product;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
+import com.qual.store.repository.OrderRepository;
 import com.qual.store.repository.ProductRepository;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.utils.validators.Validator;
@@ -30,6 +32,8 @@ public class OrderItemServiceImpl implements OrderItemService {
     private final OrderItemRepository orderItemRepository;
 
     private final OrderItemConverter orderItemConverter;
+
+    private final OrderRepository orderRepository;
 
     private final Validator<OrderItem> validator;
 
@@ -72,7 +76,11 @@ public class OrderItemServiceImpl implements OrderItemService {
         Product product = productRepository.findById(orderItem.getProduct().getId())
                 .orElseThrow();
 
+        Order order = orderRepository.findById(orderItem.getOrder().getId())
+                .orElseThrow();
+
         product.getOrderItems().remove(orderItem);
+        order.getOrderItems().remove(orderItem);
         orderItem.setProduct(null);
         orderItem.setOrder(null);
         productRepository.save(product);
