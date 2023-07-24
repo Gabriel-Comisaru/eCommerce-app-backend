@@ -551,6 +551,84 @@ public class OrderServiceImplTest {
         verifyNoMoreInteractions(orderRepository);
     }
 
+    @Test
+    public void getBasketTest() {
+        // given
+        Long userId = 1L;
+        AppUser appUser = new AppUser();
+        appUser.setId(userId);
+        appUser.setUsername("username");
+        appUser.setRole(RoleName.USER);
+
+        Order order = Order.builder()
+                .status(OrderStatus.ACTIVE)
+                .deliveryPrice(200.0)
+                .orderItems(new HashSet<>())
+                .build();
+        order.setUser(appUser);
+
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(appUser, new Object());
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        // when
+        when(appUserRepository.findUserByUsername(anyString())).thenReturn(appUser);
+        when(orderRepository.findAllWithOrderItems()).thenReturn(List.of(order));
+        Order actualResult = orderService.getBasket();
+
+        // then
+        assertNotNull(actualResult);
+        assertEquals(order, actualResult);
+        verify(appUserRepository, times(1)).findUserByUsername(anyString());
+        verify(orderRepository, times(1)).findAllWithOrderItems();
+    }
+
+    @Test
+    public void getBasketAsOrderItems() {
+        // given
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
+        orderItem.setQuantity(1);
+        orderItem.setProduct(new Product());
+        orderItem.getProduct().setId(1L);
+        orderItem.getProduct().setName("product");
+        orderItem.getProduct().setPrice(100.0);
+
+        Order order = new Order();
+        order.setId(1L);
+        order.setStatus(OrderStatus.ACTIVE);
+        order.setDeliveryPrice(200.0);
+        order.setOrderItems(new HashSet<>());
+        orderItem.setOrder(order);
+        order.getOrderItems().add(orderItem);
+
+        AppUser appUser = new AppUser();
+        appUser.setId(1L);
+        appUser.setUsername("username");
+        appUser.setRole(RoleName.USER);
+        order.setUser(appUser);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(appUser, new Object());
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        // when
+        when(appUserRepository.findUserByUsername(anyString())).thenReturn(appUser);
+        when(orderRepository.findAllWithOrderItems()).thenReturn(List.of(order));
+        when(orderItemRepository.findAllWithProduct()).thenReturn(List.of(orderItem));
+        List<OrderItem> actualResult = orderService.getBasketAsOrderItems();
+
+        // then
+        assertNotNull(actualResult);
+        assertEquals(1, actualResult.size());
+        assertEquals(orderItem, actualResult.get(0));
+        assertEquals(order.getId(), actualResult.get(0).getOrder().getId());
+        verify(orderItemRepository, times(1)).findAllWithProduct();
+    }
+
     @AfterEach
     public void closeService() throws Exception {
         closeable.close();

@@ -2,20 +2,17 @@ package com.qual.store.controller;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.converter.OrderItemConverter;
+import com.qual.store.converter.lazyConverter.OrderWithOrderItemsConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.dto.OrderItemDto;
-import com.qual.store.dto.ProductDto;
+import com.qual.store.dto.lazyDto.OrderWithOrderItemDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
-import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.logger.Log;
 import com.qual.store.model.Order;
 import com.qual.store.model.OrderItem;
-import com.qual.store.model.Product;
-import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.service.OrderItemService;
 import com.qual.store.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +30,7 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderItemService orderItemService;
     private final OrderConverter orderConverter;
+    private final OrderWithOrderItemsConverter orderWithOrderItemsConverter;
     private final OrderItemConverter orderItemConverter;
 
 
@@ -92,11 +90,18 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping(value = "/me/lazy")
+    @Log
+    public List<OrderWithOrderItemDto> getAllOrdersWithOrderItemsByUsername() {
+        return orderService.getAllOrdersByUser().stream()
+                .map(orderWithOrderItemsConverter::convertModelToDto)
+                .collect(Collectors.toList());
+    }
+
     @GetMapping(value = "/me/basket")
     @Log
     public List<OrderItemDto> getBasket() {
-        return orderItemService.getAllOrderItems().stream()
-                .filter(orderItem -> orderItem.getOrder().getId().equals(orderService.getBasket().getId()))
+        return orderService.getBasketAsOrderItems().stream()
                 .map(orderItemConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
