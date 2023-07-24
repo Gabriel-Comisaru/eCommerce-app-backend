@@ -3,6 +3,7 @@ package com.qual.store.controller;
 import com.github.javafaker.Faker;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.converter.lazyConverter.ProductLazyConverter;
+import com.qual.store.dto.MessageResponse;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.lazyDto.ProductDtoWithCategory;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
@@ -196,7 +197,7 @@ public class ProductController {
     public ResponseEntity<?> addToFavorites(@RequestParam("productId") Long productId) {
         productService.addToFavorites(productId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Product added to favorites successfully");
+                .body(MessageResponse.builder().message("Product added to favorites successfully").build());
     }
 
     @DeleteMapping("/fav")
@@ -204,7 +205,7 @@ public class ProductController {
     public ResponseEntity<?> removeFromFavorites(@RequestParam("productId") Long productId) {
         productService.removeFromFavorites(productId);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("Product removed from favorites successfully");
+                .body(MessageResponse.builder().message("Product removed from favorites successfully").build());
     }
 
     @GetMapping("/fav")
