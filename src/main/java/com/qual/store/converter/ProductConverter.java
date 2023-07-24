@@ -82,6 +82,8 @@ public class ProductConverter extends BaseConverter<Product, ProductDto> {
                 .images(new HashSet<>())
                 .reviews(new ArrayList<>())
                 .orderItems(new HashSet<>())
+                .favoriteByUsers(new HashSet<>())
                 .build();
     }
+
 }
