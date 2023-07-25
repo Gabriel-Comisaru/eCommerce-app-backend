@@ -75,12 +75,13 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         Product product = productRepository.findById(orderItem.getProduct().getId())
                 .orElseThrow();
-
-        Order order = orderRepository.findById(orderItem.getOrder().getId())
-                .orElseThrow();
+        if (orderItem.getOrder() != null) {
+            Order order = orderRepository.findById(orderItem.getOrder().getId())
+                    .orElseThrow();
+            order.getOrderItems().remove(orderItem);
+        }
 
         product.getOrderItems().remove(orderItem);
-        order.getOrderItems().remove(orderItem);
         orderItem.setProduct(null);
         orderItem.setOrder(null);
         productRepository.save(product);

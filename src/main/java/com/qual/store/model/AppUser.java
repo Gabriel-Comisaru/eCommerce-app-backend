@@ -4,6 +4,7 @@ import com.qual.store.model.base.BaseEntity;
 import com.qual.store.model.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.catalina.User;
 import org.hibernate.Hibernate;
 
 import java.util.*;
@@ -64,6 +65,8 @@ public class AppUser extends BaseEntity<Long> {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<Review> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<UserAdress> userAdress = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(

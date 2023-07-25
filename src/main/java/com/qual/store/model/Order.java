@@ -44,6 +44,7 @@ public class Order extends BaseEntity<Long> {
     @Column
     private LocalDate deliveryDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
 
