@@ -27,6 +27,9 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 @Server(
                         description = "Docker ENV",
                         url = "http://localhost:8081"
+                ),@Server(
+                        description = "Google Cloud ENV",
+                        url = "http://34.132.132.163:8081"
                 )
         },
         security = {
