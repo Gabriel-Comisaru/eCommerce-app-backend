@@ -35,4 +35,6 @@ public interface ProductService {
     void removeFromFavorites(Long productId);
 
     List<ProductDto> getFavProductsByLoggedInUser();
+
+    List<ProductDto> searchProductByName(String name);
 }

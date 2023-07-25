@@ -213,4 +213,10 @@ public class ProductController {
     public ResponseEntity<List<ProductDto>> getFavProductsByLoggedInUser() {
         return ResponseEntity.ok(productService.getFavProductsByLoggedInUser());
     }
+
+    @GetMapping("/search")
+    @Log
+    public ResponseEntity<List<ProductDto>> searchProductByName(@RequestParam("name") String name) {
+        return ResponseEntity.ok(productService.searchProductByName(name));
+    }
 }

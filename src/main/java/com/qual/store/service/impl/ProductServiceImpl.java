@@ -269,4 +269,13 @@ public class ProductServiceImpl implements ProductService {
                 .map(productConverter::convertModelToDto)
                 .toList();
     }
+
+    @Override
+    public List<ProductDto> searchProductByName(String name) {
+        return productRepository.findAllWithCategoryAndReviewsAndImages()
+                .stream()
+                .filter(product -> product.getName().toLowerCase().contains(name.toLowerCase()))
+                .map(productConverter::convertModelToDto)
+                .toList();
+    }
 }

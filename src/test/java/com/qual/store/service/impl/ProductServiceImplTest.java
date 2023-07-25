@@ -614,6 +614,124 @@ class ProductServiceImplTest {
         verifyNoMoreInteractions(productConverter);
     }
 
+    @Test
+    void searchProductByNameTest() {
+        // given
+        String searchQuery = "test";
+
+        Product product1 = Product.builder()
+                .name("Test Product 1")
+                .build();
+        product1.setId(1L);
+        Product product2 = Product.builder()
+                .name("Another Test Product")
+                .build();
+        product2.setId(2L);
+        Product product3 = Product.builder()
+                .name("Sample Product")
+                .build();
+        product3.setId(3L);
+
+        ProductDto productDto1 = ProductDto.builder()
+                .name("Test Product 1")
+                .build();
+        productDto1.setId(1L);
+        ProductDto productDto2 = ProductDto.builder()
+                .name("Another Test Product")
+                .build();
+        productDto2.setId(2L);
+
+        // when
+        when(productRepository.findAllWithCategoryAndReviewsAndImages())
+                .thenReturn(Arrays.asList(product1, product2, product3));
+        when(productConverter.convertModelToDto(product1)).thenReturn(productDto1);
+        when(productConverter.convertModelToDto(product2)).thenReturn(productDto2);
+
+        List<ProductDto> result = productService.searchProductByName(searchQuery);
+
+        // then
+        assertEquals(2, result.size());
+        assertEquals("Test Product 1", result.get(0).getName());
+        assertEquals("Another Test Product", result.get(1).getName());
+
+        List<String> actualProductNames = result.stream()
+                .map(ProductDto::getName)
+                .toList();
+
+        assertTrue(actualProductNames.contains("Test Product 1"));
+        assertTrue(actualProductNames.contains("Another Test Product"));
+
+        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
+        verify(productConverter, times(1)).convertModelToDto(product1);
+        verify(productConverter, times(1)).convertModelToDto(product2);
+        verifyNoMoreInteractions(productRepository);
+        verifyNoMoreInteractions(productConverter);
+    }
+
+    @Test
+    void searchProductByNameTest_NoMatch() {
+        // given
+        String searchQuery = "xyz";
+
+        Product product1 = Product.builder()
+                .name("Test Product 1")
+                .build();
+        product1.setId(1L);
+        Product product2 = Product.builder()
+                .name("Another Test Product")
+                .build();
+        product2.setId(2L);
+        Product product3 = Product.builder()
+                .name("Sample Product")
+                .build();
+        product3.setId(3L);
+
+        // when
+        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(Arrays.asList(product1, product2, product3));
+
+        List<ProductDto> result = productService.searchProductByName(searchQuery);
+
+        // then
+        assertEquals(0, result.size());
+
+        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
+        verifyNoMoreInteractions(productRepository);
+        verifyNoMoreInteractions(productConverter);
+    }
+
+
+    @Test
+    void searchProductByNameTest_EmptyQuery() {
+        // given
+        String searchQuery = "";
+
+        Product product1 = Product.builder()
+                .name("Test Product 1")
+                .build();
+        product1.setId(1L);
+        Product product2 = Product.builder()
+                .name("Another Test Product")
+                .build();
+        product2.setId(2L);
+        Product product3 = Product.builder()
+                .name("Sample Product")
+                .build();
+        product3.setId(3L);
+
+        // when
+        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(Arrays.asList(product1, product2, product3));
+
+        List<ProductDto> result = productService.searchProductByName(searchQuery);
+
+        // then
+        assertEquals(3, result.size());
+
+        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
+        verify(productConverter, times(3)).convertModelToDto(any(Product.class));
+        verifyNoMoreInteractions(productRepository);
+        verifyNoMoreInteractions(productConverter);
+    }
+
     @AfterEach
     public void closeService() throws Exception {
         closeable.close();
