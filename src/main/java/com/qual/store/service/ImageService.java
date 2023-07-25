@@ -20,5 +20,5 @@ public interface ImageService {
 
     byte[] downloadImage(String fileName);
 
-    void deleteImageModelById(Long id);
+    void deleteImageModelByName(String imageName);
 }

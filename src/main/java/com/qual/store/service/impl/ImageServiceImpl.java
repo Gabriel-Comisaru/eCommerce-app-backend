@@ -112,7 +112,18 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @Log
-    public void deleteImageModelById(Long id) {
+    public void deleteImageModelByName(String imageName) {
+        ImageModel dbImageData = imageRepository.findByName(imageName)
+                .orElseThrow(() -> new ImageModelException(String.format("image with name = %s not found", imageName)));
 
+
+        Product product = productRepository.findAllWithCategoryAndReviewsAndImages()
+                .stream().filter(prod -> prod.getId().equals(dbImageData.getProduct().getId()))
+                .findFirst()
+                .orElseThrow(() -> new ProductNotFoundException("product not found"));
+
+        productRepository.save(product);
+
+        imageRepository.deleteById(dbImageData.getId());
     }
 }

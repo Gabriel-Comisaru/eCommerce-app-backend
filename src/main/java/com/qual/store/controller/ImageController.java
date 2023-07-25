@@ -3,9 +3,9 @@ package com.qual.store.controller;
 import com.qual.store.converter.ImageConverter;
 import com.qual.store.converter.ProductConverter;
 import com.qual.store.dto.ImageModelDto;
+import com.qual.store.dto.MessageResponse;
 import com.qual.store.dto.ProductDto;
 import com.qual.store.logger.Log;
-import com.qual.store.model.Product;
 import com.qual.store.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,6 +36,7 @@ public class ImageController {
                 .contentType(MediaType.valueOf("image/png"))
                 .body(imageService.downloadImage(imageName));
     }
+
     @Log
     @GetMapping("/getById")
     public ResponseEntity<ImageModelDto> getImageById(@RequestParam("id") Long imageId) {
@@ -46,5 +47,17 @@ public class ImageController {
     @GetMapping("/getByName")
     public ResponseEntity<ImageModelDto> getImageByName(@RequestParam("name") String imageName) {
         return ResponseEntity.ok(imageConverter.convertModelToDto(imageService.findImageModelByName(imageName)));
+    }
+
+    @Log
+    @DeleteMapping("/delete")
+    public ResponseEntity<MessageResponse> deleteImageByName(@RequestParam("name") String imageName) {
+        imageService.deleteImageModelByName(imageName);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(MessageResponse.builder()
+                        .message(String.format("Image with id %s deleted successfully.", imageName))
+                        .build()
+                );
     }
 }
