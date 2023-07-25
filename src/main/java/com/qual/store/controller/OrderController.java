@@ -5,6 +5,7 @@ import com.qual.store.converter.OrderItemConverter;
 import com.qual.store.converter.lazyConverter.OrderWithOrderItemsConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.dto.OrderItemDto;
+import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.lazyDto.OrderWithOrderItemDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.logger.Log;
@@ -111,5 +112,11 @@ public class OrderController {
     @Log
     public Map<Long, Integer> getProductsQuantity() {
         return orderService.getProductsQuantity();
+    }
+
+    @GetMapping("/search")
+    @Log
+    public ResponseEntity<List<OrderDto>> searchOrdersByUserName(@RequestParam("user") String username) {
+        return ResponseEntity.ok(orderService.searchOrdersByUsername(username));
     }
 }

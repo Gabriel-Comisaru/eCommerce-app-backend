@@ -1,5 +1,6 @@
 package com.qual.store.service;
 
+import com.qual.store.dto.OrderDto;
 import com.qual.store.dto.OrderItemDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.model.Order;
@@ -27,4 +28,6 @@ public interface OrderService {
     PaginatedOrderResponse getOrders(Integer pageNumber, Integer pageSize, String sortBy);
 
     Order getBasket();
+
+    List<OrderDto> searchOrdersByUsername(String username);
 }

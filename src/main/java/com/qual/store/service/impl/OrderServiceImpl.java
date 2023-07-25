@@ -2,6 +2,7 @@ package com.qual.store.service.impl;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
+import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
 import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.InvalidOrderStatusException;
@@ -290,5 +291,16 @@ public class OrderServiceImpl implements OrderService {
                 .numberOfPages(page.getTotalPages())
                 .build();
     }
+    //search orders by user like we did for products
+    @Override
+    public List<OrderDto> searchOrdersByUsername(String username) {
+        List<Order> orders = orderRepository.findAllWithOrderItems().stream()
+                .filter(o -> o.getUser().getUsername().equals(username))
+                .toList();
+        return orders.stream()
+                .map(orderConverter::convertModelToDto)
+                .toList();
+    }
+
 }
 
