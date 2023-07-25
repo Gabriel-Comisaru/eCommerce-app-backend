@@ -2,9 +2,7 @@ package com.qual.store.service.impl;
 
 import com.qual.store.converter.OrderConverter;
 import com.qual.store.dto.OrderDto;
-import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
-import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.exceptions.InvalidOrderStatusException;
 import com.qual.store.exceptions.OrderItemNotFoundException;
 import com.qual.store.exceptions.OrderNotFoundException;
@@ -24,7 +22,6 @@ import com.qual.store.service.OrderService;
 import com.qual.store.utils.validators.Validator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,10 +32,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -291,16 +284,12 @@ public class OrderServiceImpl implements OrderService {
                 .numberOfPages(page.getTotalPages())
                 .build();
     }
-    //search orders by user like we did for products
+
     @Override
     public List<OrderDto> searchOrdersByUsername(String username) {
-        List<Order> orders = orderRepository.findAllWithOrderItems().stream()
+        return orderRepository.findAllWithOrderItems().stream()
                 .filter(o -> o.getUser().getUsername().equals(username))
-                .toList();
-        return orders.stream()
                 .map(orderConverter::convertModelToDto)
                 .toList();
     }
-
 }
-

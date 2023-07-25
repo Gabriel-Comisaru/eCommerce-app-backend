@@ -5,10 +5,8 @@ import com.qual.store.converter.OrderItemConverter;
 import com.qual.store.converter.lazyConverter.OrderWithOrderItemsConverter;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.dto.OrderItemDto;
-import com.qual.store.dto.ProductDto;
 import com.qual.store.dto.lazyDto.OrderWithOrderItemDto;
 import com.qual.store.dto.paginated.PaginatedOrderResponse;
-import com.qual.store.dto.paginated.PaginatedProductResponse;
 import com.qual.store.model.Order;
 import com.qual.store.model.OrderItem;
 import com.qual.store.model.enums.OrderStatus;
@@ -343,6 +341,48 @@ class OrderControllerTest {
         verify(orderService, times(1)).getOrders(pageNumber, pageSize, sortBy);
     }
 
+    @Test
+    void searchOrdersByUsernameTest() throws Exception {
+        // given
+        String username = "testuser";
+
+        Order order1 = new Order();
+        order1.setId(1L);
+        order1.setStatus(OrderStatus.ACTIVE);
+
+        Order order2 = new Order();
+        order2.setId(2L);
+        order2.setStatus(OrderStatus.DELIVERED);
+
+        OrderDto orderDto1 = new OrderDto();
+        orderDto1.setId(1L);
+        orderDto1.setStatus("ACTIVE");
+
+        OrderDto orderDto2 = new OrderDto();
+        orderDto2.setId(2L);
+        orderDto2.setStatus("DELIVERED");
+
+        List<OrderDto> orderList = new ArrayList<>();
+        orderList.add(orderDto1);
+        orderList.add(orderDto2);
+
+        // when
+        when(orderService.searchOrdersByUsername(username)).thenReturn(orderList);
+
+        // then
+        mockMvc.perform(get("/api/orders/search")
+                        .param("user", username)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(orderDto1.getId()))
+                .andExpect(jsonPath("$[0].status").value(orderDto1.getStatus()))
+                .andExpect(jsonPath("$[1].id").value(orderDto2.getId()))
+                .andExpect(jsonPath("$[1].status").value(orderDto2.getStatus()))
+                .andExpect(jsonPath("$.length()").value(orderList.size()));
+
+        verify(orderService, times(1)).searchOrdersByUsername(username);
+    }
 
     @AfterEach
     public void closeService() throws Exception {

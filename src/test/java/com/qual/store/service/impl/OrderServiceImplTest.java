@@ -629,6 +629,69 @@ public class OrderServiceImplTest {
         verify(orderItemRepository, times(1)).findAllWithProduct();
     }
 
+    @Test
+    void searchOrdersByUsernameTest() {
+        // given
+        String username = "username";
+        Long userId = 1L;
+        AppUser appUser = new AppUser();
+        appUser.setId(userId);
+        appUser.setUsername(username);
+        appUser.setRole(RoleName.USER);
+
+        Order order1 = Order.builder()
+                .status(OrderStatus.ACTIVE)
+                .deliveryPrice(200.0)
+                .orderItems(new HashSet<>())
+                .build();
+        order1.setId(1L);
+        order1.setUser(appUser);
+
+        Order order2 = Order.builder()
+                .status(OrderStatus.PLACED)
+                .deliveryPrice(300.0)
+                .orderItems(new HashSet<>())
+                .build();
+        order2.setId(2L);
+        order2.setUser(appUser);
+
+        List<Order> orders = List.of(order1, order2);
+
+        OrderDto orderDto1 = new OrderDto();
+        orderDto1.setId(1L);
+        orderDto1.setStatus("ACTIVE");
+        orderDto1.setDeliveryPrice(200.0);
+        orderDto1.setUserId(userId);
+
+        OrderDto orderDto2 = new OrderDto();
+        orderDto2.setId(2L);
+        orderDto2.setStatus("PLACED");
+        orderDto2.setDeliveryPrice(300.0);
+        orderDto2.setUserId(userId);
+
+        // when
+        when(orderRepository.findAllWithOrderItems()).thenReturn(orders);
+        when(orderConverter.convertModelToDto(order1)).thenReturn(orderDto1);
+        when(orderConverter.convertModelToDto(order2)).thenReturn(orderDto2);
+        List<OrderDto> actualResult = orderService.searchOrdersByUsername(username);
+
+        // then
+        assertNotNull(actualResult);
+        assertEquals(2, actualResult.size());
+        assertEquals(orderDto1.getId(), actualResult.get(0).getId());
+        assertEquals(orderDto1.getStatus(), actualResult.get(0).getStatus());
+        assertEquals(orderDto1.getDeliveryPrice(), actualResult.get(0).getDeliveryPrice());
+        assertEquals(orderDto1.getUserId(), actualResult.get(0).getUserId());
+        assertEquals(orderDto2.getId(), actualResult.get(1).getId());
+        assertEquals(orderDto2.getStatus(), actualResult.get(1).getStatus());
+        assertEquals(orderDto2.getDeliveryPrice(), actualResult.get(1).getDeliveryPrice());
+        assertEquals(orderDto2.getUserId(), actualResult.get(1).getUserId());
+
+        verify(orderRepository, times(1)).findAllWithOrderItems();
+        verify(orderConverter, times(1)).convertModelToDto(order1);
+        verify(orderConverter, times(1)).convertModelToDto(order2);
+    }
+
     @AfterEach
     public void closeService() throws Exception {
         closeable.close();

@@ -116,7 +116,7 @@ public class OrderController {
 
     @GetMapping("/search")
     @Log
-    public ResponseEntity<List<OrderDto>> searchOrdersByUserName(@RequestParam("user") String username) {
+    public ResponseEntity<List<OrderDto>> searchOrdersByUsername(@RequestParam("user") String username) {
         return ResponseEntity.ok(orderService.searchOrdersByUsername(username));
     }
 }
