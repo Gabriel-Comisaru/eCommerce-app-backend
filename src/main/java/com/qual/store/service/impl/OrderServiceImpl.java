@@ -235,7 +235,7 @@ public class OrderServiceImpl implements OrderService {
                 .findFirst()
                 .orElse(null);
         if (order == null) {
-            throw new OrderNotFoundException("No basket found for user " + currentUsername);
+            return new Order();
         }
         return order;
     }
