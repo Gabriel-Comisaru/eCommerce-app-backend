@@ -17,4 +17,6 @@ public interface ProductRepository extends ShopRepository<Product, Long> {
     @EntityGraph(value = "productWithCategoryAndReviewsAndImages", type = EntityGraph.EntityGraphType.LOAD)
     Page<Product> findAll(Pageable pageable);
 
+    @EntityGraph(value = "productWithCategoryAndReviewsAndImages", type = EntityGraph.EntityGraphType.LOAD)
+    Page<Product> findAllByNameContainingIgnoreCase(String matchingName, Pageable pageable);
 }

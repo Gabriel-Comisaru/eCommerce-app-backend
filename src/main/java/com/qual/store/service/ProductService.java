@@ -36,5 +36,5 @@ public interface ProductService {
 
     List<ProductDto> getFavProductsByLoggedInUser();
 
-    List<ProductDto> searchProductByName(String name);
+    PaginatedProductResponse searchProductByName(String name, Integer pageNumber, Integer pageSize, String sortBy);
 }

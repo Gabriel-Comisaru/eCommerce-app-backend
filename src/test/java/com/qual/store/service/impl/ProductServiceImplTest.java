@@ -20,7 +20,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 
 import java.util.*;
 
@@ -615,121 +614,100 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void searchProductByNameTest() {
+    public void searchProductByName_MatchingProductsTest() {
         // given
-        String searchQuery = "test";
+        String searchQuery = "Test";
+        int pageNumber = 0;
+        int pageSize = 10;
+        String sortBy = "id";
 
-        Product product1 = Product.builder()
-                .name("Test Product 1")
-                .build();
+        Product product1 = Product.builder().name("Test Product 1").build();
         product1.setId(1L);
-        Product product2 = Product.builder()
-                .name("Another Test Product")
-                .build();
+        Product product2 = Product.builder().name("Another Test Product").build();
         product2.setId(2L);
-        Product product3 = Product.builder()
-                .name("Sample Product")
-                .build();
-        product3.setId(3L);
 
-        ProductDto productDto1 = ProductDto.builder()
-                .name("Test Product 1")
-                .build();
+        List<Product> productList = Arrays.asList(product1, product2);
+        Page<Product> productPage = new PageImpl<>(productList);
+
+        when(productRepository
+                .findAllByNameContainingIgnoreCase(searchQuery, PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))))
+                .thenReturn(productPage);
+
+        ProductDto productDto1 = ProductDto.builder().name("Test Product 1").build();
         productDto1.setId(1L);
-        ProductDto productDto2 = ProductDto.builder()
-                .name("Another Test Product")
-                .build();
+        ProductDto productDto2 = ProductDto.builder().name("Another Test Product").build();
         productDto2.setId(2L);
 
-        // when
-        when(productRepository.findAllWithCategoryAndReviewsAndImages())
-                .thenReturn(Arrays.asList(product1, product2, product3));
         when(productConverter.convertModelToDto(product1)).thenReturn(productDto1);
         when(productConverter.convertModelToDto(product2)).thenReturn(productDto2);
 
-        List<ProductDto> result = productService.searchProductByName(searchQuery);
+        // when
+        PaginatedProductResponse result =
+                productService.searchProductByName(searchQuery, pageNumber, pageSize, sortBy);
 
         // then
-        assertEquals(2, result.size());
-        assertEquals("Test Product 1", result.get(0).getName());
-        assertEquals("Another Test Product", result.get(1).getName());
-
-        List<String> actualProductNames = result.stream()
-                .map(ProductDto::getName)
-                .toList();
-
-        assertTrue(actualProductNames.contains("Test Product 1"));
-        assertTrue(actualProductNames.contains("Another Test Product"));
-
-        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
-        verify(productConverter, times(1)).convertModelToDto(product1);
-        verify(productConverter, times(1)).convertModelToDto(product2);
-        verifyNoMoreInteractions(productRepository);
-        verifyNoMoreInteractions(productConverter);
+        assertEquals(2, result.getProducts().size());
+        assertEquals(productDto1.getName(), result.getProducts().get(0).getName());
+        assertEquals(productDto2.getName(), result.getProducts().get(1).getName());
     }
 
     @Test
-    void searchProductByNameTest_NoMatch() {
+    void searchProductByName_NoMatchingProductsTest() {
         // given
-        String searchQuery = "xyz";
+        String searchQuery = "XYZ";
+        int pageNumber = 0;
+        int pageSize = 10;
+        String sortBy = "id";
 
-        Product product1 = Product.builder()
-                .name("Test Product 1")
-                .build();
-        product1.setId(1L);
-        Product product2 = Product.builder()
-                .name("Another Test Product")
-                .build();
-        product2.setId(2L);
-        Product product3 = Product.builder()
-                .name("Sample Product")
-                .build();
-        product3.setId(3L);
+        List<Product> productList = Collections.emptyList();
+        Page<Product> productPage = new PageImpl<>(productList);
+
+        when(productRepository
+                .findAllByNameContainingIgnoreCase(searchQuery, PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))))
+                .thenReturn(productPage);
 
         // when
-        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(Arrays.asList(product1, product2, product3));
-
-        List<ProductDto> result = productService.searchProductByName(searchQuery);
+        PaginatedProductResponse result =
+                productService.searchProductByName(searchQuery, pageNumber, pageSize, sortBy);
 
         // then
-        assertEquals(0, result.size());
-
-        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
-        verifyNoMoreInteractions(productRepository);
-        verifyNoMoreInteractions(productConverter);
+        assertEquals(0, result.getProducts().size());
     }
 
-
     @Test
-    void searchProductByNameTest_EmptyQuery() {
+    void searchProductByName_EmptyQueryTest() {
         // given
         String searchQuery = "";
+        int pageNumber = 0;
+        int pageSize = 10;
+        String sortBy = "id";
 
-        Product product1 = Product.builder()
-                .name("Test Product 1")
-                .build();
+        Product product1 = Product.builder().name("Test Product 1").build();
         product1.setId(1L);
-        Product product2 = Product.builder()
-                .name("Another Test Product")
-                .build();
+        Product product2 = Product.builder().name("Another Test Product").build();
         product2.setId(2L);
-        Product product3 = Product.builder()
-                .name("Sample Product")
-                .build();
-        product3.setId(3L);
+
+        List<Product> productList = Arrays.asList(product1, product2);
+        Page<Product> productPage = new PageImpl<>(productList);
+
+        when(productRepository.findAllByNameContainingIgnoreCase(searchQuery, PageRequest.of(pageNumber, pageSize, Sort.by(sortBy))))
+                .thenReturn(productPage);
+
+        ProductDto productDto1 = ProductDto.builder().name("Test Product 1").build();
+        productDto1.setId(1L);
+        ProductDto productDto2 = ProductDto.builder().name("Another Test Product").build();
+        productDto2.setId(2L);
+
+        when(productConverter.convertModelToDto(product1)).thenReturn(productDto1);
+        when(productConverter.convertModelToDto(product2)).thenReturn(productDto2);
 
         // when
-        when(productRepository.findAllWithCategoryAndReviewsAndImages()).thenReturn(Arrays.asList(product1, product2, product3));
-
-        List<ProductDto> result = productService.searchProductByName(searchQuery);
+        PaginatedProductResponse result = productService.searchProductByName(searchQuery, pageNumber, pageSize, sortBy);
 
         // then
-        assertEquals(3, result.size());
-
-        verify(productRepository, times(1)).findAllWithCategoryAndReviewsAndImages();
-        verify(productConverter, times(3)).convertModelToDto(any(Product.class));
-        verifyNoMoreInteractions(productRepository);
-        verifyNoMoreInteractions(productConverter);
+        assertEquals(2, result.getProducts().size());
+        assertEquals(productDto1.getName(), result.getProducts().get(0).getName());
+        assertEquals(productDto2.getName(), result.getProducts().get(1).getName());
     }
 
     @AfterEach

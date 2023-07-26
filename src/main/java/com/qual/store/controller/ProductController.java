@@ -216,7 +216,11 @@ public class ProductController {
 
     @GetMapping("/search")
     @Log
-    public ResponseEntity<List<ProductDto>> searchProductByName(@RequestParam("name") String name) {
-        return ResponseEntity.ok(productService.searchProductByName(name));
+    public ResponseEntity<PaginatedProductResponse> searchProductByName(@RequestParam("name") String name,
+                                                                        @RequestParam(defaultValue = "0") Integer pageNumber,
+                                                                        @RequestParam(defaultValue = "10") Integer pageSize,
+                                                                        @RequestParam(defaultValue = "id") String sortBy) {
+
+        return ResponseEntity.ok(productService.searchProductByName(name, pageNumber, pageSize, sortBy));
     }
 }

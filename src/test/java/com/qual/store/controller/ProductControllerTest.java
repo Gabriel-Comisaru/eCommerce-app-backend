@@ -438,20 +438,25 @@ class ProductControllerTest {
         foundProducts.add(productDto2);
 
         // when
-        when(productService.searchProductByName(productName)).thenReturn(foundProducts);
+        when(productService.searchProductByName(eq(productName), any(), any(), anyString()))
+                .thenReturn(PaginatedProductResponse.builder()
+                        .products(foundProducts)
+                        .build()
+                );
 
         // then
         mockMvc.perform(get("/api/products/search")
                         .param("name", productName))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(foundProducts.size()))
-                .andExpect(jsonPath("$[0].id").value(productDto1.getId()))
-                .andExpect(jsonPath("$[0].name").value(productDto1.getName()))
-                .andExpect(jsonPath("$[1].id").value(productDto2.getId()))
-                .andExpect(jsonPath("$[1].name").value(productDto2.getName()));
+                .andExpect(jsonPath("$.products.length()").value(foundProducts.size()))
+                .andExpect(jsonPath("$.products[0].id").value(productDto1.getId()))
+                .andExpect(jsonPath("$.products[0].name").value(productDto1.getName()))
+                .andExpect(jsonPath("$.products[1].id").value(productDto2.getId()))
+                .andExpect(jsonPath("$.products[1].name").value(productDto2.getName()));
 
-        verify(productService, times(1)).searchProductByName(productName);
+        verify(productService, times(1))
+                .searchProductByName(eq(productName), any(), any(), anyString());
     }
 
     @Test
@@ -461,16 +466,20 @@ class ProductControllerTest {
         List<ProductDto> foundProducts = new ArrayList<>();
 
         // when
-        when(productService.searchProductByName(productName)).thenReturn(foundProducts);
+        when(productService.searchProductByName(eq(productName), any(), any(), anyString()))
+                .thenReturn(PaginatedProductResponse.builder()
+                        .products(foundProducts)
+                        .build());
 
         // then
         mockMvc.perform(get("/api/products/search")
                         .param("name", productName))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(foundProducts.size()));
+                .andExpect(jsonPath("$.products.length()").value(foundProducts.size()));
 
-        verify(productService, times(1)).searchProductByName(productName);
+        verify(productService, times(1))
+                .searchProductByName(eq(productName), any(), any(), anyString());
     }
 
     @AfterEach

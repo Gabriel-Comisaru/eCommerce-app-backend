@@ -271,11 +271,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> searchProductByName(String name) {
-        return productRepository.findAllWithCategoryAndReviewsAndImages()
-                .stream()
-                .filter(product -> product.getName().toLowerCase().contains(name.toLowerCase()))
-                .map(productConverter::convertModelToDto)
-                .toList();
+    public PaginatedProductResponse searchProductByName(String name,
+                                                        Integer pageNumber, Integer pageSize, String sortBy) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+
+        Page<Product> products = productRepository.findAllByNameContainingIgnoreCase(name, pageable);
+
+        return PaginatedProductResponse.builder()
+                .products(products.getContent().stream().map(productConverter::convertModelToDto).toList())
+                .numberOfItems(products.getTotalElements())
+                .numberOfPages(products.getTotalPages())
+                .build();
     }
 }
