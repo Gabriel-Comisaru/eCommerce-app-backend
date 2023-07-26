@@ -1,5 +1,7 @@
 package com.qual.store.service.impl;
 
+import com.qual.store.converter.AppUserConverter;
+import com.qual.store.dto.AppUserDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Order;
@@ -8,6 +10,8 @@ import com.qual.store.repository.OrderRepository;
 import com.qual.store.service.AppUserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,7 @@ import java.util.List;
 public class AppUserImpl implements AppUserService {
     private final OrderRepository orderRepository;
     private final AppUserRepository appUserRepository;
+    private final AppUserConverter appUserConverter;
 
     @Override
     @Log
@@ -53,5 +58,13 @@ public class AppUserImpl implements AppUserService {
         AppUser userToUpdate = appUserRepository.findUserByUsername(username);
         userToUpdate.setPassword(new BCryptPasswordEncoder().encode(password));
         return appUserRepository.save(userToUpdate);
+    }
+
+    @Override
+    public AppUserDto getUserByLoggedInUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return appUserConverter.convertModelToDto(
+                appUserRepository.findUserByUsername(authentication.getName())
+        );
     }
 }

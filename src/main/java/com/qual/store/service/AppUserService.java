@@ -13,4 +13,6 @@ public interface AppUserService {
     void deleteUserByUsername(String username);
 
     AppUser updateUserByUsername(String username, String password);
+
+    AppUserDto getUserByLoggedInUsername();
 }

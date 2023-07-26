@@ -50,6 +50,11 @@ public class AppUserController {
                 .collect(Collectors.toList());
     }
 
+    @Log
+    @GetMapping("/info/me")
+    public AppUserDto getUserByLoggedInUsername() {
+        return appUserService.getUserByLoggedInUsername();
+    }
 
     @DeleteMapping(value = "/{username}")
     @Log

@@ -125,6 +125,7 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.PUT, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.GET, "/api/users/loggedInUser").authenticated();
+                    auth.requestMatchers(HttpMethod.GET, "/api/users/info/me").authenticated();
                     auth.requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority(RoleName.ADMIN.name());
 
                     //review can be created, updated, deleted, by logged-in user
