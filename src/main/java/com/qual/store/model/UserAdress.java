@@ -21,11 +21,13 @@ public class UserAdress extends BaseEntity<Long> {
         @Column
         private String phone_number;
         @Column
-        private String adresa;
+
+        private String adress;
         @Column
-        private String oras;
+        private String city;
         @Column
-        private String judet;
+        private String county;
+
         @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
         @JoinColumn(name = "user_id")
         private AppUser user;

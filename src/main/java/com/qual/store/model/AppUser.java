@@ -68,6 +68,7 @@ public class AppUser extends BaseEntity<Long> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<UserAdress> userAdress = new ArrayList<>();
 
+
     @ManyToMany
     @JoinTable(
             name = "user_favorite_products",
@@ -83,7 +84,6 @@ public class AppUser extends BaseEntity<Long> {
     public void removeFavoriteProduct(Product product) {
         favoriteProducts.remove(product);
     }
-
     public void addOrder(Order order) {
         if (orders == null)
             orders = new HashSet<>();

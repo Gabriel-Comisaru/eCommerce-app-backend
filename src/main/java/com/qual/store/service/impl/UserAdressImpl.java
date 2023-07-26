@@ -78,10 +78,11 @@ public class UserAdressImpl implements UserAdressService {
             // Convert UserAdressDto to UserAdress entity
             UserAdress updatedUserAdress = userAdressConverter.convertDtoToModel(updatedUserAdressDto);
 
-            // Update the user address fields
-            existingUserAdress.setAdresa(updatedUserAdress.getAdresa());
-            existingUserAdress.setOras(updatedUserAdress.getOras());
-            existingUserAdress.setJudet(updatedUserAdress.getJudet());
+
+            existingUserAdress.setAdress(updatedUserAdress.getAdress());
+            existingUserAdress.setCity(updatedUserAdress.getCity());
+            existingUserAdress.setCounty(updatedUserAdress.getCounty());
+
             existingUserAdress.setFirst_name(updatedUserAdress.getFirst_name());
             existingUserAdress.setLast_name(updatedUserAdress.getLast_name());
             existingUserAdress.setPhone_number(updatedUserAdress.getPhone_number());

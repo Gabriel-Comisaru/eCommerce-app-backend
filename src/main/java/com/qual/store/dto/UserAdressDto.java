@@ -21,21 +21,24 @@ public class UserAdressDto extends BaseDto implements Serializable {
 
     private String phone_number;
 
-    private String adresa;
-    private String oras;
 
-    private String judet;
+    private String adress;
+    private String city;
+
+    private String county;
 
     private Long user_id;
 
-    public UserAdressDto(String first_name,String last_name,String phone_number,String adresa,String oras,String judet)
+    public UserAdressDto(String first_name,String last_name,String phone_number,String adress,String city,String county)
+
     {
         this.phone_number = phone_number;
         this.first_name = first_name;
         this.last_name = last_name;
-        this.oras = oras;
-        this.judet = judet;
-        this.adresa = adresa;
+        this.city = city;
+        this.county = county;
+        this.adress = adress;
+
     }
 
 }

@@ -22,9 +22,9 @@ public class UserAdressConverter extends BaseConverter<UserAdress, UserAdressDto
                 .last_name(dto.getLast_name())
                 .phone_number(dto.getPhone_number())
                 .user(appUserRepository.findById(dto.getUser_id()).orElse(null))
-                .judet(dto.getJudet())
-                .adresa(dto.getAdresa())
-                .oras(dto.getOras())
+                .county(dto.getCounty())
+                .adress(dto.getAdress())
+                .city(dto.getCity())
                 .build();
     }
 
@@ -34,9 +34,10 @@ public class UserAdressConverter extends BaseConverter<UserAdress, UserAdressDto
                 .first_name(userAdress.getFirst_name())
                 .last_name(userAdress.getLast_name())
                 .phone_number(userAdress.getPhone_number())
-                .judet(userAdress.getJudet())
-                .oras(userAdress.getOras())
-                .adresa(userAdress.getAdresa())
+
+                .county(userAdress.getCounty())
+                .city(userAdress.getCity())
+                .adress(userAdress.getAdress())
                 .user_id(userAdress.getUser().getId())
                 .build();
         userAdressDto.setId(userAdress.getId());

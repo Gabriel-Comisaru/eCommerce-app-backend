@@ -127,9 +127,10 @@ public class UserAdressController {
                 userAddressDto.setFirst_name(firstName);
                 userAddressDto.setLast_name(lastName);
                 userAddressDto.setPhone_number(phoneNumber);
-                userAddressDto.setAdresa(address);
-                userAddressDto.setOras(city);
-                userAddressDto.setJudet(county);
+                userAddressDto.setAdress(address);
+                userAddressDto.setCity(city);
+                userAddressDto.setCounty(county);
+
                 userAddressDto.setUser_id(appUser.getId());
 
                 userAdressService.saveUserAdress(userAddressDto);

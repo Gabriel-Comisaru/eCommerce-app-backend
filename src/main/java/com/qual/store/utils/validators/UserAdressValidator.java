@@ -17,8 +17,10 @@ public class UserAdressValidator implements Validator<UserAdress>{
         conditions.put(adress -> adress.getPhone_number() == null, "Phone number cannot be null");
         conditions.put(adress -> adress.getFirst_name() == null, "First name cannot be null");
         conditions.put(adress -> adress.getLast_name() == null, "Last name cannot be null");
-        conditions.put(adress -> adress.getOras() == null, "Oras cannot be null");
-        conditions.put(adress -> adress.getJudet() == null, "Judet cannot be null");
+
+        conditions.put(adress -> adress.getCity() == null, "Oras cannot be null");
+        conditions.put(adress -> adress.getCounty() == null, "Judet cannot be null");
+
         conditions.put(adress -> adress.getPhone_number() != null && adress.getPhone_number().length() != 11,
                 "Phone number must have exactly 11 characters");
 
