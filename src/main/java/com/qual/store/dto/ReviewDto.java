@@ -24,4 +24,8 @@ public class ReviewDto extends BaseDto implements Serializable {
     private Long productId;
 
     private Long userId;
+
+    private String username;
+
+    private String fullName;
 }

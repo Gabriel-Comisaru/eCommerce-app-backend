@@ -15,4 +15,6 @@ public interface AppUserService {
     AppUser updateUserByUsername(String username, String password);
 
     AppUserDto getUserByLoggedInUsername();
+
+    AppUserDto getUserById(Long userId);
 }

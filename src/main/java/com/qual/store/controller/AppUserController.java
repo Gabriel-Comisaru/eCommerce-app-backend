@@ -56,6 +56,12 @@ public class AppUserController {
         return appUserService.getUserByLoggedInUsername();
     }
 
+    @Log
+    @GetMapping("/{userId}")
+    public AppUserDto getUserById(@PathVariable("userId") Long userId) {
+        return appUserService.getUserById(userId);
+    }
+
     @DeleteMapping(value = "/{username}")
     @Log
     public ResponseEntity<?> deleteUserByUsername(@PathVariable("username") String username) {

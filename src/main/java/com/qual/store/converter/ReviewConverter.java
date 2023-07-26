@@ -40,6 +40,8 @@ public class ReviewConverter extends BaseConverter<Review, ReviewDto> {
                 .date(review.getDate())
                 .productId(review.getProduct().getId())
                 .userId(review.getUser().getId())
+                .username(review.getUser().getUsername())
+                .fullName(review.getUser().getFirstName() + " " + review.getUser().getLastName())
                 .build();
 
         reviewDto.setId(review.getId());

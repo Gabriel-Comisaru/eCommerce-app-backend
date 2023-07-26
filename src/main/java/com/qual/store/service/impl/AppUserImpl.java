@@ -2,6 +2,7 @@ package com.qual.store.service.impl;
 
 import com.qual.store.converter.AppUserConverter;
 import com.qual.store.dto.AppUserDto;
+import com.qual.store.exceptions.AppUserNotFoundException;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Order;
@@ -61,10 +62,20 @@ public class AppUserImpl implements AppUserService {
     }
 
     @Override
+    @Log
     public AppUserDto getUserByLoggedInUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return appUserConverter.convertModelToDto(
                 appUserRepository.findUserByUsername(authentication.getName())
+        );
+    }
+
+    @Override
+    @Log
+    public AppUserDto getUserById(Long userId) {
+        return appUserConverter.convertModelToDto(
+                appUserRepository.findById(userId)
+                        .orElseThrow(() -> new AppUserNotFoundException("no user with id " + userId))
         );
     }
 }
