@@ -23,6 +23,20 @@ import java.util.Set;
                         attributeNodes = {
                                 @NamedAttributeNode(value = "user")
                         }
+                ),
+                @NamedEntityGraph(
+                        name = "orderWithOrderItemsAndProducts",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "orderItems", subgraph = "orderItemsWithProduct")
+                        },
+                        subgraphs = {
+                                @NamedSubgraph(
+                                        name = "orderItemsWithProduct",
+                                        attributeNodes = {
+                                                @NamedAttributeNode("product")
+                                        }
+                                )
+                        }
                 )
         }
 )

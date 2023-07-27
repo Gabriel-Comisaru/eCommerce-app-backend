@@ -26,4 +26,7 @@ public interface OrderRepository extends ShopRepository<Order, Long> {
     @EntityGraph(value = "orderWithOrderItems", type = EntityGraph.EntityGraphType.LOAD)
     Page<Order> findAllWithOrderItems(Pageable pageable);
 
+    @Query("select distinct o from Order o join fetch o.user")
+    @EntityGraph(value = "orderWithOrderItemsAndProducts", type = EntityGraph.EntityGraphType.LOAD)
+    List<Order> findAllWithOrderItemsAndProducts();
 }
