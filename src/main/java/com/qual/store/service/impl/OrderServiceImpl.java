@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Log
     public List<Order> getAllOrders() {
-        return orderRepository.findAllWithOrderItems();
+        return orderRepository.findAllWithOrderItemsAndProducts();
     }
 
     @Transactional
@@ -70,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
             order = Order.builder()
                     .deliveryPrice(orderItemService.priceOfOrderItem(orderItemId))
                     .startDate(LocalDate.now())
-                    .deliveryDate(null)
+                    .deliveryDate(LocalDate.now().plusDays(7))
                     .status(orderStatus)
                     .user(appUser)
                     .build();

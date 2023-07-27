@@ -21,4 +21,5 @@ public class OrderDto extends BaseDto implements Serializable {
     private String userName;
     private String userEmail;
     private List<Long> orderItems;
+    private List<String> productNames;
 }
