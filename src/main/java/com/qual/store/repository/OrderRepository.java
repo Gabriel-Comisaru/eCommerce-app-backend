@@ -23,7 +23,7 @@ public interface OrderRepository extends ShopRepository<Order, Long> {
     List<Order> findAllByAppUserId(Long id);
 
     @Query("select distinct o from Order o join fetch o.user")
-    @EntityGraph(value = "orderWithOrderItems", type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(value = "orderWithOrderItemsAndProducts", type = EntityGraph.EntityGraphType.LOAD)
     Page<Order> findAllWithOrderItems(Pageable pageable);
 
     @Query("select distinct o from Order o join fetch o.user")
