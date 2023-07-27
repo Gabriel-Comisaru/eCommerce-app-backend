@@ -1,6 +1,5 @@
 package com.qual.store.model;
 
-import com.github.javafaker.App;
 import com.qual.store.model.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class UserAdress extends BaseEntity<Long> {
+public class UserAddress extends BaseEntity<Long> {
         @Column
         private String first_name;
         @Column
@@ -22,7 +21,7 @@ public class UserAdress extends BaseEntity<Long> {
         private String phone_number;
         @Column
 
-        private String adress;
+        private String address;
         @Column
         private String city;
         @Column

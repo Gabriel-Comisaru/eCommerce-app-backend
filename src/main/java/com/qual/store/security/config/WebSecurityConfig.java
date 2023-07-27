@@ -101,7 +101,7 @@ public class WebSecurityConfig {
 
                     auth.requestMatchers("/api/orders/display").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/api/adresses/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/addresses/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/orderItems/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/orders/**").permitAll();

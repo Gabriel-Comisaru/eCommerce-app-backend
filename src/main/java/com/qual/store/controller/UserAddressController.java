@@ -1,16 +1,13 @@
 package com.qual.store.controller;
 
 import com.github.javafaker.Faker;
-import com.qual.store.converter.UserAdressConverter;
-import com.qual.store.dto.UserAdressDto;
+import com.qual.store.converter.UserAddressConverter;
+import com.qual.store.dto.UserAddressDto;
 import com.qual.store.logger.Log;
 import com.qual.store.model.AppUser;
-import com.qual.store.model.Category;
-import com.qual.store.model.Product;
-import com.qual.store.model.UserAdress;
+import com.qual.store.model.UserAddress;
 import com.qual.store.repository.AppUserRepository;
-import com.qual.store.service.UserAdressService;
-import com.qual.store.utils.validators.UserAdressValidator;
+import com.qual.store.service.UserAddressService;
 import com.qual.store.utils.validators.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,31 +21,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/adresses")
+@RequestMapping(value = "/api/addresses")
 @RequiredArgsConstructor
 @CrossOrigin("*")
-public class UserAdressController {
-    private final Validator<UserAdress> validator;
+public class UserAddressController {
+    private final Validator<UserAddress> validator;
 
-    private final UserAdressService userAdressService;
-    private final UserAdressConverter userAdressConverter;
+    private final UserAddressService userAddressService;
+    private final UserAddressConverter userAddressConverter;
     private final AppUserRepository appUserRepository;
 
     @GetMapping()
     @Log
-    public List<UserAdressDto> getAllUserAdresses()
+    public List<UserAddressDto> getAllUserAddresses()
     {
-        return userAdressService.getAllUserAdresses().
-                stream().map(userAdressConverter::convertModelToDto)
+        return userAddressService.getAllUserAddresses().
+                stream().map(userAddressConverter::convertModelToDto)
                 .collect(Collectors.toList());
     }
 
 
     @PutMapping("/{id}")
     @Log
-    public ResponseEntity<?> updateUserAdress(@PathVariable Long id, @RequestBody UserAdressDto updatedUserAdressDto) {
+    public ResponseEntity<?> updateUserAddress(@PathVariable Long id, @RequestBody UserAddressDto updatedUserAddressDto) {
         try {
-            userAdressService.updateUserAdress(id, updatedUserAdressDto);
+            userAddressService.updateUserAddress(id, updatedUserAddressDto);
             return ResponseEntity.status(HttpStatus.OK).body("User address updated successfully.");
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -59,15 +56,15 @@ public class UserAdressController {
 
     @DeleteMapping("/{id}")
     @Log
-    public ResponseEntity<?> deleteUserAdress(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUserAddress(@PathVariable Long id) {
         try {
             // Check if the user address with the given ID exists
-            UserAdress userAdress = userAdressService.getUserAdressById(id);
-            if (userAdress == null) {
+            UserAddress userAddress = userAddressService.getUserAddressById(id);
+            if (userAddress == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User address not found.");
             }
             // Delete the user address
-            userAdressService.deleteUserAdress(id);
+            userAddressService.deleteUserAddress(id);
 
             return ResponseEntity.status(HttpStatus.OK).body("User address deleted successfully.");
         } catch (Exception e) {
@@ -77,10 +74,10 @@ public class UserAdressController {
 
     @PostMapping()
     @Log
-    public ResponseEntity<?> addUserAdress(@RequestBody UserAdressDto userAdressDto) {
+    public ResponseEntity<?> addUserAddress(@RequestBody UserAddressDto userAddressDto) {
 
         try {
-            userAdressService.saveUserAdress(userAdressDto);
+            userAddressService.saveUserAddress(userAddressDto);
             return ResponseEntity.status(HttpStatus.CREATED).body("User address added successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -88,18 +85,39 @@ public class UserAdressController {
     }
     @GetMapping("/{id}")
     @Log
-    public ResponseEntity<?> getUserAdressById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserAddressById(@PathVariable Long id) {
         try {
             // Find the user address with the given ID
-            UserAdress userAdress = userAdressService.getUserAdressById(id);
+            UserAddress userAddress = userAddressService.getUserAddressById(id);
 
-            if (userAdress == null) {
+            if (userAddress == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User address not found.");
             }
 
-            // Convert UserAdress entity to UserAdressDto and return it in the response body
-            UserAdressDto userAdressDto = userAdressConverter.convertModelToDto(userAdress);
-            return ResponseEntity.status(HttpStatus.OK).body(userAdressDto);
+            // Convert UserAddress entity to UserAddressDto and return it in the response body
+            UserAddressDto userAddressDto = userAddressConverter.convertModelToDto(userAddress);
+            return ResponseEntity.status(HttpStatus.OK).body(userAddressDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    //get all user addresses by user id
+    @GetMapping("/user/{id}")
+    @Log
+    public ResponseEntity<?> getUserAddressesByUserId(@PathVariable Long id) {
+        try {
+            // Find the user address with the given ID
+            List<UserAddress> userAddresses = userAddressService.getUserAddressByUserId(id);
+
+            if (userAddresses == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User address not found.");
+            }
+
+            // Convert UserAddress entity to UserAddressDto and return it in the response body
+            List<UserAddressDto> userAddressDtos = userAddresses.stream().map(userAddressConverter::convertModelToDto)
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.OK).body(userAddressDtos);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -123,17 +141,17 @@ public class UserAdressController {
                 String city = faker.address().city();
                 String county = faker.address().state();
 
-                UserAdressDto userAddressDto = new UserAdressDto();
+                UserAddressDto userAddressDto = new UserAddressDto();
                 userAddressDto.setFirst_name(firstName);
                 userAddressDto.setLast_name(lastName);
                 userAddressDto.setPhone_number(phoneNumber);
-                userAddressDto.setAdress(address);
+                userAddressDto.setAddress(address);
                 userAddressDto.setCity(city);
                 userAddressDto.setCounty(county);
 
                 userAddressDto.setUser_id(appUser.getId());
 
-                userAdressService.saveUserAdress(userAddressDto);
+                userAddressService.saveUserAddress(userAddressDto);
             }
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Database populated with fake data");

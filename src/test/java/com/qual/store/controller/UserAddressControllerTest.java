@@ -1,15 +1,14 @@
 package com.qual.store.controller;
 
-import com.qual.store.converter.UserAdressConverter;
-import com.qual.store.dto.UserAdressDto;
-import com.qual.store.model.UserAdress;
-import com.qual.store.service.UserAdressService;
+import com.qual.store.converter.UserAddressConverter;
+import com.qual.store.dto.UserAddressDto;
+import com.qual.store.model.UserAddress;
+import com.qual.store.service.UserAddressService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,46 +21,46 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class UserAdressControllerTest {
+class UserAddressControllerTest {
 
     private MockMvc mockMvc;
 
     @Mock
-    private UserAdressService userAdressService;
+    private UserAddressService userAddressService;
 
     @Mock
-    private UserAdressConverter userAdressConverter;
+    private UserAddressConverter userAddressConverter;
 
     @InjectMocks
-    private UserAdressController userAdressController;
+    private UserAddressController userAddressController;
 
     private AutoCloseable closeable;
 
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(userAdressController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(userAddressController).build();
     }
 
     @Test
-    void getAllUserAdressesTest() throws Exception {
+    void getAllUserAddressesTest() throws Exception {
         // given
-        UserAdress userAdress = new UserAdress();
-        userAdress.setId(1L);
-        userAdress.setFirst_name("John");
-        userAdress.setLast_name("Doe");
+        UserAddress userAddress = new UserAddress();
+        userAddress.setId(1L);
+        userAddress.setFirst_name("John");
+        userAddress.setLast_name("Doe");
 
-        UserAdressDto userAdressDto = new UserAdressDto();
+        UserAddressDto userAdressDto = new UserAddressDto();
         userAdressDto.setId(1L);
         userAdressDto.setFirst_name("John");
         userAdressDto.setLast_name("Doe");
 
-        List<UserAdress> userAdressList = new ArrayList<>();
-        userAdressList.add(userAdress);
+        List<UserAddress> userAddressList = new ArrayList<>();
+        userAddressList.add(userAddress);
 
         // when
-        when(userAdressService.getAllUserAdresses()).thenReturn(userAdressList);
-        when(userAdressConverter.convertModelToDto(userAdress)).thenReturn(userAdressDto);
+        when(userAddressService.getAllUserAddresses()).thenReturn(userAddressList);
+        when(userAddressConverter.convertModelToDto(userAddress)).thenReturn(userAdressDto);
 
         // then
         mockMvc.perform(get("/api/adresses")
@@ -71,21 +70,21 @@ class UserAdressControllerTest {
                 .andExpect(jsonPath("$[0].id").value(userAdressDto.getId()))
                 .andExpect(jsonPath("$[0].first_name").value(userAdressDto.getFirst_name()))
                 .andExpect(jsonPath("$[0].last_name").value(userAdressDto.getLast_name()))
-                .andExpect(jsonPath("$.length()").value(userAdressList.size()));
+                .andExpect(jsonPath("$.length()").value(userAddressList.size()));
 
-        verify(userAdressService, times(1)).getAllUserAdresses();
-        verify(userAdressConverter, times(1)).convertModelToDto(userAdress);
+        verify(userAddressService, times(1)).getAllUserAddresses();
+        verify(userAddressConverter, times(1)).convertModelToDto(userAddress);
     }
 
     @Test
-    void addUserAdressTest() throws Exception {
+    void addUserAddressTest() throws Exception {
         // given
-        UserAdressDto userAdressDto = new UserAdressDto();
+        UserAddressDto userAdressDto = new UserAddressDto();
         userAdressDto.setFirst_name("John");
         userAdressDto.setLast_name("Doe");
 
         // when
-        doNothing().when(userAdressService).saveUserAdress(any(UserAdressDto.class));
+        doNothing().when(userAddressService).saveUserAddress(any(UserAddressDto.class));
 
         // then
         mockMvc.perform(post("/api/adresses")
@@ -94,22 +93,22 @@ class UserAdressControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string("User address added successfully."));
 
-        verify(userAdressService, times(1)).saveUserAdress(any(UserAdressDto.class));
+        verify(userAddressService, times(1)).saveUserAddress(any(UserAddressDto.class));
     }
 
     @Test
-    void deleteUserAdressTest() throws Exception {
+    void deleteUserAddressTest() throws Exception {
         // given
         Long userId = 1L;
 
-        UserAdress userAdress = new UserAdress();
-        userAdress.setId(userId);
-        userAdress.setFirst_name("John");
-        userAdress.setLast_name("Doe");
+        UserAddress userAddress = new UserAddress();
+        userAddress.setId(userId);
+        userAddress.setFirst_name("John");
+        userAddress.setLast_name("Doe");
 
         // when
-        when(userAdressService.getUserAdressById(userId)).thenReturn(userAdress);
-        doNothing().when(userAdressService).deleteUserAdress(userId);
+        when(userAddressService.getUserAddressById(userId)).thenReturn(userAddress);
+        doNothing().when(userAddressService).deleteUserAddress(userId);
 
         // then
         mockMvc.perform(delete("/api/adresses/{id}", userId)
@@ -117,22 +116,22 @@ class UserAdressControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("User address deleted successfully."));
 
-        verify(userAdressService, times(1)).getUserAdressById(userId);
-        verify(userAdressService, times(1)).deleteUserAdress(userId);
+        verify(userAddressService, times(1)).getUserAddressById(userId);
+        verify(userAddressService, times(1)).deleteUserAddress(userId);
     }
 
     @Test
-    void updateUserAdressTest() throws Exception {
+    void updateUserAddressTest() throws Exception {
         // given
         Long userId = 1L;
 
-        UserAdressDto updatedUserAdressDto = new UserAdressDto();
+        UserAddressDto updatedUserAdressDto = new UserAddressDto();
         updatedUserAdressDto.setId(userId);
         updatedUserAdressDto.setFirst_name("Updated John");
         updatedUserAdressDto.setLast_name("Updated Doe");
 
         // when
-        doNothing().when(userAdressService).updateUserAdress(userId, updatedUserAdressDto);
+        doNothing().when(userAddressService).updateUserAddress(userId, updatedUserAdressDto);
 
         // then
         mockMvc.perform(post("/api/adresses/{id}", userId)
@@ -141,7 +140,7 @@ class UserAdressControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("User address updated successfully."));
 
-        verify(userAdressService, times(1)).updateUserAdress(userId, updatedUserAdressDto);
+        verify(userAddressService, times(1)).updateUserAddress(userId, updatedUserAdressDto);
     }
 
     @Test
@@ -149,19 +148,19 @@ class UserAdressControllerTest {
         // given
         Long userId = 1L;
 
-        UserAdress userAdress = new UserAdress();
-        userAdress.setId(userId);
-        userAdress.setFirst_name("John");
-        userAdress.setLast_name("Doe");
+        UserAddress userAddress = new UserAddress();
+        userAddress.setId(userId);
+        userAddress.setFirst_name("John");
+        userAddress.setLast_name("Doe");
 
-        UserAdressDto userAdressDto = new UserAdressDto();
+        UserAddressDto userAdressDto = new UserAddressDto();
         userAdressDto.setId(userId);
         userAdressDto.setFirst_name("John");
         userAdressDto.setLast_name("Doe");
 
         // when
-        when(userAdressService.getUserAdressById(userId)).thenReturn(userAdress);
-        when(userAdressConverter.convertModelToDto(userAdress)).thenReturn(userAdressDto);
+        when(userAddressService.getUserAddressById(userId)).thenReturn(userAddress);
+        when(userAddressConverter.convertModelToDto(userAddress)).thenReturn(userAdressDto);
 
         // then
         mockMvc.perform(get("/api/adresses/{id}", userId)
@@ -172,8 +171,8 @@ class UserAdressControllerTest {
                 .andExpect(jsonPath("$.first_name").value(userAdressDto.getFirst_name()))
                 .andExpect(jsonPath("$.last_name").value(userAdressDto.getLast_name()));
 
-        verify(userAdressService, times(1)).getUserAdressById(userId);
-        verify(userAdressConverter, times(1)).convertModelToDto(userAdress);
+        verify(userAddressService, times(1)).getUserAddressById(userId);
+        verify(userAddressConverter, times(1)).convertModelToDto(userAddress);
     }
 
     // Helper method to convert object to JSON string
