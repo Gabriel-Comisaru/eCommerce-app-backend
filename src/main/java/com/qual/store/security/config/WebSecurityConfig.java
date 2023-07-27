@@ -99,7 +99,7 @@ public class WebSecurityConfig {
                     auth.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.DELETE, "/api/adresses/**").hasAuthority(RoleName.ADMIN.name());
 
-                    auth.requestMatchers("/api/orders/display").hasAuthority(RoleName.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.GET,"/api/orders/display").hasAuthority(RoleName.ADMIN.name());
                     auth.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/addresses/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll();
