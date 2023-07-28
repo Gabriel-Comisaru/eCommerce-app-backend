@@ -83,14 +83,13 @@ class AppUserControllerTest {
     public void updateUserByUsernameTest() throws Exception {
         String username = "testuser";
         String password = "newpassword";
-        String email = "newemail@yahoo.com";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/users/{username}", username)
-                        .param("password", password).param("email", email))
+                        .param("password", password))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("User updated"));
 
-        verify(appUserService, times(1)).updateUserByUsername(username, password,email);
+        verify(appUserService, times(1)).updateUserByUsername(username, password);
     }
 
     @AfterEach

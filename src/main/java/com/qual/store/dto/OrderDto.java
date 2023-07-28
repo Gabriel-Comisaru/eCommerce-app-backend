@@ -6,7 +6,6 @@ import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -22,6 +21,5 @@ public class OrderDto extends BaseDto implements Serializable {
     private String userName;
     private String userEmail;
     private List<Long> orderItems;
-    //private List<String> productNames;
-    private Map<Long, String> productIdsAndNames;
+    private List<String> productNames;
 }
