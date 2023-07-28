@@ -96,13 +96,14 @@ class AppUserImplTest {
     public void updateUserByUsernameTest() {
         String username = "testuser";
         String password = "newpassword";
+        String email = "newemail@yahoo.com";
         AppUser userToUpdate = new AppUser();
         userToUpdate.setUsername(username);
 
         when(appUserRepository.findUserByUsername(username)).thenReturn(userToUpdate);
         when(appUserRepository.save(userToUpdate)).thenReturn(userToUpdate);
 
-        AppUser result = appUserImpl.updateUserByUsername(username, password);
+        AppUser result = appUserImpl.updateUserByUsername(username, password,email);
 
         assertEquals(userToUpdate, result);
         verify(appUserRepository, times(1)).findUserByUsername(username);

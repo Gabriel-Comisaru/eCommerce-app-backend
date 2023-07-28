@@ -73,8 +73,8 @@ public class AppUserController {
     @PutMapping("/{username}")
     @Log
     public ResponseEntity<?> updateUserByUsername(@PathVariable("username") String username,
-                                                   @RequestParam String password) {
-        appUserService.updateUserByUsername(username, password);
+                                                   @RequestParam String password, @RequestParam String email) {
+        appUserService.updateUserByUsername(username, password,email);
         return ResponseEntity.ok("User updated");
     }
 }

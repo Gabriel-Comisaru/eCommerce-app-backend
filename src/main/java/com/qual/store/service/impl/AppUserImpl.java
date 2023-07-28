@@ -55,9 +55,10 @@ public class AppUserImpl implements AppUserService {
     @Override
     @Transactional
     @Log
-    public AppUser updateUserByUsername(String username, String password) {
+    public AppUser updateUserByUsername(String username, String password, String email) {
         AppUser userToUpdate = appUserRepository.findUserByUsername(username);
         userToUpdate.setPassword(new BCryptPasswordEncoder().encode(password));
+        userToUpdate.setEmail(email);
         return appUserRepository.save(userToUpdate);
     }
 
