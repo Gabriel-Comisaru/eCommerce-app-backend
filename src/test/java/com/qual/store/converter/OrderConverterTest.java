@@ -5,6 +5,7 @@ import com.qual.store.dto.OrderDto;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Order;
 import com.qual.store.model.OrderItem;
+import com.qual.store.model.Product;
 import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
@@ -93,6 +94,7 @@ public class OrderConverterTest {
 
         OrderItem orderItem = OrderItem.builder()
                 .quantity(3)
+                .product(new Product())
                 .build();
         orderItem.setId(orderItemId);
 

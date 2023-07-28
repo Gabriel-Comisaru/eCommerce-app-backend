@@ -100,12 +100,12 @@ public class OrderServiceImplTest {
         expectedResult.add(order);
 
         // when
-        when(orderRepository.findAllWithOrderItems()).thenReturn(expectedResult);
+        when(orderRepository.findAllWithOrderItemsAndProducts()).thenReturn(expectedResult);
         List<Order> actualResult = orderService.getAllOrders();
 
         // then
         assertEquals(expectedResult, actualResult);
-        verify(orderRepository, times(1)).findAllWithOrderItems();
+        verify(orderRepository, times(1)).findAllWithOrderItemsAndProducts();
     }
 
     @Test

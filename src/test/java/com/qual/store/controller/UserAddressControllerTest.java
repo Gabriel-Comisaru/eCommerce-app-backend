@@ -4,6 +4,7 @@ import com.qual.store.converter.UserAddressConverter;
 import com.qual.store.dto.UserAddressDto;
 import com.qual.store.model.UserAddress;
 import com.qual.store.service.UserAddressService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,26 +51,26 @@ class UserAddressControllerTest {
         userAddress.setFirst_name("John");
         userAddress.setLast_name("Doe");
 
-        UserAddressDto userAdressDto = new UserAddressDto();
-        userAdressDto.setId(1L);
-        userAdressDto.setFirst_name("John");
-        userAdressDto.setLast_name("Doe");
+        UserAddressDto userAddressDto = new UserAddressDto();
+        userAddressDto.setId(1L);
+        userAddressDto.setFirst_name("John");
+        userAddressDto.setLast_name("Doe");
 
         List<UserAddress> userAddressList = new ArrayList<>();
         userAddressList.add(userAddress);
 
         // when
         when(userAddressService.getAllUserAddresses()).thenReturn(userAddressList);
-        when(userAddressConverter.convertModelToDto(userAddress)).thenReturn(userAdressDto);
+        when(userAddressConverter.convertModelToDto(userAddress)).thenReturn(userAddressDto);
 
         // then
-        mockMvc.perform(get("/api/adresses")
+        mockMvc.perform(get("/api/addresses")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(userAdressDto.getId()))
-                .andExpect(jsonPath("$[0].first_name").value(userAdressDto.getFirst_name()))
-                .andExpect(jsonPath("$[0].last_name").value(userAdressDto.getLast_name()))
+                .andExpect(jsonPath("$[0].id").value(userAddressDto.getId()))
+                .andExpect(jsonPath("$[0].first_name").value(userAddressDto.getFirst_name()))
+                .andExpect(jsonPath("$[0].last_name").value(userAddressDto.getLast_name()))
                 .andExpect(jsonPath("$.length()").value(userAddressList.size()));
 
         verify(userAddressService, times(1)).getAllUserAddresses();
@@ -79,17 +80,17 @@ class UserAddressControllerTest {
     @Test
     void addUserAddressTest() throws Exception {
         // given
-        UserAddressDto userAdressDto = new UserAddressDto();
-        userAdressDto.setFirst_name("John");
-        userAdressDto.setLast_name("Doe");
+        UserAddressDto userAddressDto = new UserAddressDto();
+        userAddressDto.setFirst_name("John");
+        userAddressDto.setLast_name("Doe");
 
         // when
         doNothing().when(userAddressService).saveUserAddress(any(UserAddressDto.class));
 
         // then
-        mockMvc.perform(post("/api/adresses")
+        mockMvc.perform(post("/api/addresses")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(userAdressDto)))
+                        .content(asJsonString(userAddressDto)))
                 .andExpect(status().isCreated())
                 .andExpect(content().string("User address added successfully."));
 
@@ -111,7 +112,7 @@ class UserAddressControllerTest {
         doNothing().when(userAddressService).deleteUserAddress(userId);
 
         // then
-        mockMvc.perform(delete("/api/adresses/{id}", userId)
+        mockMvc.perform(delete("/api/addresses/{id}", userId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User address deleted successfully."));
@@ -125,26 +126,27 @@ class UserAddressControllerTest {
         // given
         Long userId = 1L;
 
-        UserAddressDto updatedUserAdressDto = new UserAddressDto();
-        updatedUserAdressDto.setId(userId);
-        updatedUserAdressDto.setFirst_name("Updated John");
-        updatedUserAdressDto.setLast_name("Updated Doe");
+        UserAddressDto updatedUserAddressDto = new UserAddressDto();
+        updatedUserAddressDto.setId(userId);
+        updatedUserAddressDto.setFirst_name("Updated John");
+        updatedUserAddressDto.setLast_name("Updated Doe");
 
         // when
-        doNothing().when(userAddressService).updateUserAddress(userId, updatedUserAdressDto);
+        doNothing().when(userAddressService).updateUserAddress(userId, updatedUserAddressDto);
 
         // then
-        mockMvc.perform(post("/api/adresses/{id}", userId)
+        mockMvc.perform(put("/api/addresses/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(updatedUserAdressDto)))
+                        .content(asJsonString(updatedUserAddressDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User address updated successfully."));
 
-        verify(userAddressService, times(1)).updateUserAddress(userId, updatedUserAdressDto);
+        verify(userAddressService, times(1))
+                .updateUserAddress(eq(userId), any(UserAddressDto.class));
     }
 
     @Test
-    void getUserAdressByIdTest() throws Exception {
+    void getUserAddressByIdTest() throws Exception {
         // given
         Long userId = 1L;
 
@@ -153,26 +155,31 @@ class UserAddressControllerTest {
         userAddress.setFirst_name("John");
         userAddress.setLast_name("Doe");
 
-        UserAddressDto userAdressDto = new UserAddressDto();
-        userAdressDto.setId(userId);
-        userAdressDto.setFirst_name("John");
-        userAdressDto.setLast_name("Doe");
+        UserAddressDto userAddressDto = new UserAddressDto();
+        userAddressDto.setId(userId);
+        userAddressDto.setFirst_name("John");
+        userAddressDto.setLast_name("Doe");
 
         // when
         when(userAddressService.getUserAddressById(userId)).thenReturn(userAddress);
-        when(userAddressConverter.convertModelToDto(userAddress)).thenReturn(userAdressDto);
+        when(userAddressConverter.convertModelToDto(userAddress)).thenReturn(userAddressDto);
 
         // then
-        mockMvc.perform(get("/api/adresses/{id}", userId)
+        mockMvc.perform(get("/api/addresses/{id}", userId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(userAdressDto.getId()))
-                .andExpect(jsonPath("$.first_name").value(userAdressDto.getFirst_name()))
-                .andExpect(jsonPath("$.last_name").value(userAdressDto.getLast_name()));
+                .andExpect(jsonPath("$.id").value(userAddressDto.getId()))
+                .andExpect(jsonPath("$.first_name").value(userAddressDto.getFirst_name()))
+                .andExpect(jsonPath("$.last_name").value(userAddressDto.getLast_name()));
 
         verify(userAddressService, times(1)).getUserAddressById(userId);
         verify(userAddressConverter, times(1)).convertModelToDto(userAddress);
+    }
+
+    @AfterEach
+    public void closeService() throws Exception {
+        closeable.close();
     }
 
     // Helper method to convert object to JSON string
