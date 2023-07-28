@@ -1,6 +1,5 @@
 package com.qual.store.converter;
 
-import com.github.javafaker.App;
 import com.qual.store.dto.OrderDto;
 import com.qual.store.model.AppUser;
 import com.qual.store.model.Order;
@@ -9,13 +8,15 @@ import com.qual.store.model.Product;
 import com.qual.store.model.enums.OrderStatus;
 import com.qual.store.repository.AppUserRepository;
 import com.qual.store.repository.OrderItemRepository;
-import org.junit.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -92,20 +93,30 @@ public class OrderConverterTest {
         Long orderItemId = 2L;
         Long userId = 3L;
 
+        Product product = Product.builder()
+                .name("name")
+                .build();
+        product.setId(1L);
+
         OrderItem orderItem = OrderItem.builder()
                 .quantity(3)
-                .product(new Product())
+                .product(product)
                 .build();
         orderItem.setId(orderItemId);
 
         AppUser appUser = AppUser.builder()
                 .username("username")
+                .email("email")
+                .firstName("fn")
+                .lastName("ln")
                 .build();
         appUser.setId(userId);
 
         Order order = Order.builder()
                 .status(OrderStatus.ACTIVE)
                 .deliveryPrice(10.0)
+                .startDate(LocalDate.now())
+                .deliveryDate(LocalDate.now().plus(2, ChronoUnit.DAYS))
                 .user(appUser)
                 .orderItems(Set.of(orderItem))
                 .build();
